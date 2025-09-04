@@ -24,7 +24,7 @@ namespace Yatzy
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = FuncLayer;
+            DataContext = FuncLayer.DefaultDataContent();
             //MainGrid.Children.Add(TerningUserControl);
         }
 

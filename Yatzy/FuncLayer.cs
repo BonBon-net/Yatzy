@@ -25,6 +25,7 @@ namespace Yatzy
             "Stor straight", "Fuldt hus", "Chance", "Yatzy", "Sum"
         };
         public List<string> PlayerList { get; set; } = new List<string>() { "Henning" };
+        public string DefaultDataContent(string DataContent = "FuncLayer") { return DataContent; }
 
         public string TilføjSpiller(string spillerNavn)
         {
@@ -66,6 +67,16 @@ namespace Yatzy
             PlayerList.Remove(spillerNavn);
             RaisePropertyChanged(nameof(PlayerList));
             return spillerNavn;
+        }
+    }
+
+    class Spiller
+    {
+        public string Navn { get; set; }
+        public int[] Score { get; set; } = new int[18];
+        public Spiller(string navn)
+        {
+            Navn = navn;
         }
     }
 }

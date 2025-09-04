@@ -43,7 +43,7 @@ namespace Yatzy
         public Terninger()
         {
             InitializeComponent();
-            DataContext = FuncLayer;
+            DataContext = FuncLayer.DefaultDataContent();
             for (int i = 0; i < TerningSloget.Count(); i++)
             {
                 setTerningImage((Image)FindName($"imgTerning{i + 1}"));
