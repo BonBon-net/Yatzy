@@ -13,5 +13,10 @@
         <Image x:Name="imgTerning4" HorizontalAlignment="Left" Height="100" Margin="340,10,0,0" VerticalAlignment="Top" Width="100"/>
         <Image x:Name="imgTerning5" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100"/>
         <Button Content="Kast" HorizontalAlignment="Left" Margin="375,155,0,0" VerticalAlignment="Top" Click="KastTerninger_Click"/>
+        <DataGrid Margin="22,180,67,10" ItemsSource="{Binding YatzyBlock}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Navn" Binding="{Binding }" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
