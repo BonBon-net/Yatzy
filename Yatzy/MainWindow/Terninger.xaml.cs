@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
@@ -20,7 +21,9 @@ namespace Yatzy
     /// </summary>
     public partial class Terninger : UserControl
     {
+        Terninger TerningUserControl = new Terninger();
         FuncLayer FuncLayer = new FuncLayer();
+        Model Model { get; set; } = new Model();
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();

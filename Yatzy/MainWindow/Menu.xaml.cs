@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
@@ -20,9 +21,71 @@ namespace Yatzy
     /// </summary>
     public partial class Menu : UserControl
     {
-        public Menu()
+        FuncLayer FuncLayer;
+        private IUserControlManager UserControlManager { get; set; }
+
+        public Menu(FuncLayer FuncLayer, IUserControlManager userControlManager)
         {
             InitializeComponent();
+            this.FuncLayer = FuncLayer;
+            UserControlManager = userControlManager;
+            if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+            else { btnStartSpil.IsEnabled = false; }
+        }
+
+        private void TilføjSpiller_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
+                txtSpillerNavn.Clear();
+                if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+                else { btnStartSpil.IsEnabled = false; }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void FjernSpiller_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FuncLayer.FjernSpiller(dgbPlayerList.SelectedItem.ToString());
+                txtSpillerNavn.Clear();
+                if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+                else { btnStartSpil.IsEnabled = false; }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void dgbPlayerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dgbPlayerList.SelectedItem != null)
+            {
+                btnFjernSpiller.IsEnabled = true;
+                txtSpillerNavn.Text = dgbPlayerList.SelectedItem.ToString();
+            }
+            else
+            {
+                btnFjernSpiller.IsEnabled = false;
+            }
+        }
+
+        private void StartSpil_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                UserControlManager.StartGame();
+            }
+            catch
+            {
+                MessageBox.Show("Noget gik galt, prøv igen.");
+            }
         }
     }
 }

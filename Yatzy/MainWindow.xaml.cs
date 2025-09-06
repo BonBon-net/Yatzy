@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
@@ -20,51 +21,40 @@ namespace Yatzy
     {
         Terninger TerningUserControl = new Terninger();
         FuncLayer FuncLayer = new FuncLayer();
+        Menu MenuUserControl;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = FuncLayer.DefaultDataContent();
-            //MainGrid.Children.Add(TerningUserControl);
+            MenuUserControl = new Menu(FuncLayer, );
+            DataContext = FuncLayer;
+            ChangeUserControl(MenuUserControl);
         }
 
-        private void TilføjSpiller_Click(object sender, RoutedEventArgs e)
+        public void StartGame()
         {
-            try
-            {
-                FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
-                txtSpillerNavn.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            ChangeUserControl(TerningUserControl);
         }
 
-        private void FjernSpiller_Click(object sender, RoutedEventArgs e)
+        public void StopGame()
         {
-            try
-            {
-                FuncLayer.FjernSpiller(dgbPlayerList.SelectedItem.ToString());
-                txtSpillerNavn.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            ChangeUserControl(MenuUserControl);
         }
 
-        private void dgbPlayerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void ChangeUserControl(UserControl newControl)
         {
-            if (dgbPlayerList.SelectedItem != null)
-            {
-                btnFjernSpiller.IsEnabled = true;
-                txtSpillerNavn.Text = dgbPlayerList.SelectedItem.ToString();
-            }
-            else
-            {
-                btnFjernSpiller.IsEnabled = false;
-            }
+            this.MainGrid.Children.Clear();
+            this.MainGrid.Children.Add(newControl);
+        }
+
+        public void TilføjUserControl(UserControl newControl)
+        {
+            this.MainGrid.Children.Add(newControl);
+        }
+
+        public void FjernUserControl(UserControl newControl)
+        {
+            this.MainGrid.Children.Remove(newControl);
         }
     }
 }
