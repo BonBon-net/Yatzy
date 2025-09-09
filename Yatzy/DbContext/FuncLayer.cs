@@ -27,8 +27,6 @@ namespace Yatzy
         {
             Model.SpillerTabel.Load();
             RaisePropertyChanged(nameof(SpillerListe));
-
-            string[][] TEST;
         }
 
         public ObservableCollection<Spiller> SpillerListe
@@ -97,7 +95,7 @@ namespace Yatzy
         }
 
         public List<string> GetPlayerList()
-        {
+        { 
             return PlayerList.ToList();
         }
     }

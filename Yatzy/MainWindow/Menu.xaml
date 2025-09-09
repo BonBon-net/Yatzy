@@ -10,7 +10,7 @@
         <TextBox x:Name="txtSpillerNavn" HorizontalAlignment="Left" Margin="647,61,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
         <DataGrid x:Name="dgbPlayerList" ItemsSource="{Binding PlayerList}" Margin="367,184,10,10" SelectionChanged="dgbPlayerList_SelectionChanged" AutoGenerateColumns="False" >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Navn" Binding="{Binding Navn}"/>
+                <DataGridTextColumn Header="Navn" Binding="{Binding }"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="btnTilføjSpiller" Content="Tilføj Spiller" HorizontalAlignment="Left" Margin="674,84,0,0" VerticalAlignment="Top" Click="TilføjSpiller_Click"/>

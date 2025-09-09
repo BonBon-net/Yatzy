@@ -21,9 +21,9 @@ namespace Yatzy
     /// </summary>
     public partial class Terninger : UserControl
     {
-        Terninger TerningUserControl = new Terninger();
+        //Terninger TerningUserControl = new Terninger();
         FuncLayer FuncLayer = new FuncLayer();
-        Model Model { get; set; } = new Model();
+        //Model Model { get; set; } = new Model();
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();

@@ -17,13 +17,14 @@ namespace Yatzy.YatzyDbContext
     public class Spiller : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        public int Id { get; set; }
-        public string Navn { get; set; }
-        public int[] Score { get; set; } = new int[18];
         public Spiller(int id, string navn)
         {
             Id = id;
             Navn = navn;
         }
+
+        public int Id { get; set; }
+        public string Navn { get; set; }
+        public int[] Score { get; set; } = new int[18];
     }
 }

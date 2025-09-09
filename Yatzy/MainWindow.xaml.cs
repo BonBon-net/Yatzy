@@ -17,7 +17,7 @@ namespace Yatzy
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IUserControlManager
     {
         Terninger TerningUserControl = new Terninger();
         FuncLayer FuncLayer = new FuncLayer();
@@ -26,7 +26,7 @@ namespace Yatzy
         public MainWindow()
         {
             InitializeComponent();
-            MenuUserControl = new Menu(FuncLayer, );
+            MenuUserControl = new Menu(FuncLayer, this);
             DataContext = FuncLayer;
             ChangeUserControl(MenuUserControl);
         }
