@@ -42,11 +42,11 @@ namespace Yatzy
             return rndIndex + 1;
         }
 
-        bool CheckDataIsTrue = true;
+        bool ManualDeveloper_CheckDataIsTrue = true;
         public Terninger()
         {
             InitializeComponent();
-            DataContext = FuncLayer.DefaultDataContent();
+            DataContext = FuncLayer; //.DefaultDataContent();
             for (int i = 0; i < TerningSloget.Count(); i++)
             {
                 setTerningImage((Image)FindName($"imgTerning{i + 1}"));
@@ -76,14 +76,14 @@ namespace Yatzy
                     }
                 }
             }
-            if (CheckDataIsTrue)
+            if (ManualDeveloper_CheckDataIsTrue)
             {
                 MessageBox.Show(
                     TerningSloget[0].ToString() + "-" +
                     TerningSloget[1].ToString() + "-" +
                     TerningSloget[2].ToString() + "-" +
                     TerningSloget[3].ToString() + "-" +
-                    TerningSloget[4].ToString());
+                    TerningSloget[4].ToString(), "Test data for terninger");
             }
         }
     }

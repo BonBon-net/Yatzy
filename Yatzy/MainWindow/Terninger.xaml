@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yatzy"
              mc:Ignorable="d" 
+             Height="450" Width="800"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Image x:Name="imgTerning1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100"/>
@@ -12,8 +13,64 @@
         <Image x:Name="imgTerning3" HorizontalAlignment="Left" Height="100" Margin="230,10,0,0" VerticalAlignment="Top" Width="100"/>
         <Image x:Name="imgTerning4" HorizontalAlignment="Left" Height="100" Margin="340,10,0,0" VerticalAlignment="Top" Width="100"/>
         <Image x:Name="imgTerning5" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100"/>
-        <Button Content="Kast" HorizontalAlignment="Left" Margin="375,155,0,0" VerticalAlignment="Top" Click="KastTerninger_Click"/>
-        <DataGrid Margin="22,0,67,10" ItemsSource="{Binding SpillerListe}" AutoGenerateColumns="False" Height="260" VerticalAlignment="Bottom" >
+        <Button Content="Kast" HorizontalAlignment="Left" Margin="230,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
+        <DataGrid ItemsSource="{Binding SpillerListe}"
+                FlowDirection="RightToLeft"
+                IsReadOnly="True" HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                AutoGenerateColumns="False" MinHeight="231"
+                Margin="40,40,40,40"
+                MinWidth="532">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90"/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.LayoutTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90"/>
+                </TransformGroup>
+            </DataGrid.LayoutTransform>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
+                <DataGridTextColumn Header="enere" Binding="{Binding Score[0]}" />
+                <DataGridTextColumn Header="toere" Binding="{Binding Score[1]}" />
+                <DataGridTextColumn Header="3'ere" Binding="{Binding Score[2]}" />
+                <DataGridTextColumn Header="4'ere" Binding="{Binding Score[3]}" />
+                <DataGridTextColumn Header="5'ere" Binding="{Binding Score[4]}" />
+                <DataGridTextColumn Header="6'ere" Binding="{Binding Score[5]}" />
+                <DataGridTextColumn Header="sum" Binding="{Binding Score[6]}" />
+                <DataGridTextColumn Header="Bonus" Binding="{Binding Score[7]}" />
+                <DataGridTextColumn Header="Et Par" Binding="{Binding Score[8]}" />
+                <DataGridTextColumn Header="To Par" Binding="{Binding Score[9]}" />
+                <DataGridTextColumn Header="tre Par" Binding="{Binding Score[10]}" />
+                <DataGridTextColumn Header="Fire Par" Binding="{Binding Score[11]}" />
+                <DataGridTextColumn Header="Lille straight" Binding="{Binding Score[12]}" />
+                <DataGridTextColumn Header="Stor straight" Binding="{Binding Score[13]}" />
+                <DataGridTextColumn Header="Hus" Binding="{Binding Score[14]}" />
+                <DataGridTextColumn Header="Chance" Binding="{Binding Score[15]}" />
+                <DataGridTextColumn Header="Yatzy" Binding="{Binding Score[16]}" />
+                <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <!--<DataGrid Margin="22,0,29,10" ItemsSource="{Binding SpillerListe}" AutoGenerateColumns="False" Height="260" VerticalAlignment="Bottom" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
                 <DataGridTextColumn Header="1'ere" Binding="{Binding Score[0]}" />
@@ -35,6 +92,6 @@
                 <DataGridTextColumn Header="Yatzy" Binding="{Binding Score[16]}" />
                 <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
     </Grid>
 </UserControl>

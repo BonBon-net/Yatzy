@@ -29,6 +29,7 @@ namespace Yatzy
             RaisePropertyChanged(nameof(SpillerListe));
         }
 
+        //public ObservableCollection<string> PlayerList { get; set; } = new ObservableCollection<string>() { };
         public ObservableCollection<Spiller> SpillerListe
         {
             get
@@ -43,10 +44,9 @@ namespace Yatzy
             "Stor straight", "hus", "Chance", "Yatzy", "Sum"
         };
 
-        public ObservableCollection<string> PlayerList { get; set; } = new ObservableCollection<string>() { };
         public string DefaultDataContent(string DataContent = "FuncLayer") { return DataContent; }
 
-        public string TilføjSpiller(string spillerNavn)
+        public Spiller TilføjSpiller(string spillerNavn)
         {
             if (string.IsNullOrWhiteSpace(spillerNavn))
             { 
@@ -59,44 +59,50 @@ namespace Yatzy
             //{
             //    spillerNavn += spillerNavnChars[i];
             //}
-            if (PlayerList.Contains(spillerNavn))
-            {
-                throw new ArgumentException("Spillernavnet findes allerede. Vælg et andet navn.");
-            }
-            PlayerList.Add(spillerNavn);
-            return spillerNavn;
+
+            //if (SpillerListe.Contains(Spiller p => p spillerNavn))
+            //{
+            //    throw new ArgumentException("Spillernavnet findes allerede. Vælg et andet navn.");
+            //}
+            Spiller spiller = new Spiller(0, spillerNavn);
+            SpillerListe.Add(spiller);
+            Model.SaveChanges();
+            return spiller;
         }
 
-        public string FjernSpiller(string spillerNavn)
+        public Spiller FjernSpiller(Spiller spiller)
         {
-            if (string.IsNullOrWhiteSpace(spillerNavn))
+            if (spiller == null)
             {
                 throw new ArgumentException("Spillernavn kan ikke være tomt eller kun indeholde mellemrum.");
             }
+
             //string spillerNavnChars = spillerNavn.ToLower();
             //spillerNavn = spillerNavnChars.First() + spillerNavnChars.Last(spillerNavnChars.Length - 1);
-            spillerNavn = spillerNavn.ToCharArray().First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
+
             //spillerNavn = spillerNavnChars.First().ToString().ToUpper();
             //for (int i = 1; i < spillerNavnChars.Length; i++)
             //{
             //    spillerNavn += spillerNavnChars[i];
             //}
-            if (!PlayerList.Contains(spillerNavn))
-            {
-                throw new ArgumentException("Spillernavnet findes ikke. Kan derfor ikke fjernes.");
-            }
-            PlayerList.Remove(spillerNavn);
-            return spillerNavn;
+
+            //if (!SpillerListe.Contains(spillerNavn))
+            //{
+            //    throw new ArgumentException("Spillernavnet findes ikke. Kan derfor ikke fjernes.");
+            //}
+            SpillerListe.Remove(spiller);
+            Model.SaveChanges();
+            return spiller;
         }
 
-        public List<string> GetYatzyBlock()
-        {
-            return YatzyBlock;
-        }
+        //public List<string> GetYatzyBlock()
+        //{
+        //    return YatzyBlock;
+        //}
 
-        public List<string> GetPlayerList()
-        { 
-            return PlayerList.ToList();
-        }
+        //public List<string> GetPlayerList()
+        //{ 
+        //    return SpillerListe.ToList();
+        //}
     }
 }

@@ -29,7 +29,7 @@ namespace Yatzy
             InitializeComponent();
             this.FuncLayer = FuncLayer;
             UserControlManager = userControlManager;
-            if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+            if (FuncLayer.SpillerListe != null) { btnStartSpil.IsEnabled = true; }
             else { btnStartSpil.IsEnabled = false; }
         }
 
@@ -39,7 +39,7 @@ namespace Yatzy
             {
                 FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
                 txtSpillerNavn.Clear();
-                if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+                if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }
                 else { btnStartSpil.IsEnabled = false; }
             }
             catch (Exception ex)
@@ -52,9 +52,9 @@ namespace Yatzy
         {
             try
             {
-                FuncLayer.FjernSpiller(dgbPlayerList.SelectedItem.ToString());
+                FuncLayer.FjernSpiller(dgbPlayerList.SelectedItem as Spiller);
                 txtSpillerNavn.Clear();
-                if (FuncLayer.PlayerList != null) { btnStartSpil.IsEnabled = true; }
+                if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }
                 else { btnStartSpil.IsEnabled = false; }
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace Yatzy
             if (dgbPlayerList.SelectedItem != null)
             {
                 btnFjernSpiller.IsEnabled = true;
-                txtSpillerNavn.Text = dgbPlayerList.SelectedItem.ToString();
+                txtSpillerNavn.Text = (dgbPlayerList.SelectedItem as Spiller).Navn;
             }
             else
             {
@@ -80,11 +80,18 @@ namespace Yatzy
         {
             try
             {
-                UserControlManager.StartGame();
+                if (FuncLayer.SpillerListe.Count < 1)
+                {
+                    throw new Exception("Der skal være mindst 1 spillere for at starte spillet.");
+                }
+                else
+                {
+                    UserControlManager.StartGame();
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Noget gik galt, prøv igen.");
+                MessageBox.Show(ex.Message);
             }
         }
     }
