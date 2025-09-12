@@ -32,6 +32,7 @@ namespace Yatzy
             "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\3.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\4.jpg",
             "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\5.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\6.jpg"
         };
+        public string SelectetTerning = "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\00bfff.png";
         private int[] TerningSloget = new int[] { 0, 0, 0, 0, 0 };
         private int[] RulleTerninger = new int[] { 0, 0, 0, 0, 0 };
         private int setTerningImage(Image imgTerning)
@@ -41,12 +42,17 @@ namespace Yatzy
             TerningSloget[(int)char.GetNumericValue(imgTerning.Name.ToCharArray().Last()) - 1] = rndIndex + 1;
             return rndIndex + 1;
         }
+        private void ChangeTerningImage(Image imgTerning, string imagePath)
+        {
+            imgTerning.SetValue(Image.SourceProperty, new BitmapImage(new Uri(imagePath)));
+        }
 
         bool ManualDeveloper_CheckDataIsTrue = true;
         public Terninger()
         {
             InitializeComponent();
-            DataContext = FuncLayer; //.DefaultDataContent();
+            DataContext = FuncLayer;
+            imgTerningSelected1.Visibility = Visibility.Hidden;
             for (int i = 0; i < TerningSloget.Count(); i++)
             {
                 setTerningImage((Image)FindName($"imgTerning{i + 1}"));
@@ -84,6 +90,64 @@ namespace Yatzy
                     TerningSloget[2].ToString() + "-" +
                     TerningSloget[3].ToString() + "-" +
                     TerningSloget[4].ToString(), "Test data for terninger");
+            }
+        }
+
+        private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            if (img != null)
+            {
+                SelectedTerning(imgTerning1, img);
+            }
+        }
+
+        private void Terning2Selected_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            if (img != null)
+            {
+                SelectedTerning(imgTerning2, img);
+            }
+        }
+
+        private void Terning3Selected_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            if (img != null)
+            {
+                SelectedTerning(imgTerning3, img);
+            }
+        }
+
+        private void Terning4Selected_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            if (img != null)
+            {
+                SelectedTerning(imgTerning4, img);
+            }
+        }
+
+        private void Terning5Selected_MouseClick(object sender, MouseButtonEventArgs e)
+        {
+            Image img = sender as Image;
+            if (img != null)
+            {
+                SelectedTerning(imgTerning5, img);
+            }
+        }
+
+        private void SelectedTerning(Image imgTerning, Image img)
+        {
+            if (imgTerningSelected1.Visibility == Visibility.Hidden)
+            {
+                ChangeTerningImage(imgTerningSelected1, SelectetTerning);
+                imgTerningSelected1.Visibility = Visibility.Visible;
+            }
+            else if (imgTerningSelected1.Visibility == Visibility.Visible)
+            {
+                imgTerningSelected1.Visibility = Visibility.Hidden;
             }
         }
     }

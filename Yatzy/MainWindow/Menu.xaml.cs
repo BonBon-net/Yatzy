@@ -27,9 +27,10 @@ namespace Yatzy
         public Menu(FuncLayer FuncLayer, IUserControlManager userControlManager)
         {
             InitializeComponent();
+            DataContext = this.FuncLayer;
             this.FuncLayer = FuncLayer;
             UserControlManager = userControlManager;
-            if (FuncLayer.SpillerListe != null) { btnStartSpil.IsEnabled = true; }
+            if (FuncLayer.SpillerListe != null) { btnStartSpil.IsEnabled = true; } 
             else { btnStartSpil.IsEnabled = false; }
         }
 
