@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +21,24 @@ namespace Yatzy
     /// <summary>
     /// Interaction logic for Terninger.xaml
     /// </summary>
+    /// 
+
+    public class Terning : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int DiceValue { get; set; }
+        public Image Terningside { get; set; }
+        public Image TerningRamme { get; set; }
+        public bool IsHeld { get; set; }
+    }
+
     public partial class Terninger : UserControl
     {
         //Terninger TerningUserControl = new Terninger();
         FuncLayer FuncLayer = new FuncLayer();
+
+        Terning[] AlleTerninger = new Terning[5];
         //Model Model { get; set; } = new Model();
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
@@ -33,15 +49,18 @@ namespace Yatzy
             "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\5.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\6.jpg"
         };
         public string SelectetTerning = "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\00bfff.png";
-        private int[] TerningSloget = new int[] { 0, 0, 0, 0, 0 };
-        private int[] RulleTerninger = new int[] { 0, 0, 0, 0, 0 };
-        private int setTerningImage(Image imgTerning)
+        private int setRndTerningImage(Image imgTerning)
         {
-            int rndIndex = rnd.Next(0, TerningSides.Count());
-            imgTerning.SetValue(Image.SourceProperty, new BitmapImage(new Uri(TerningSides[rndIndex])));
-            TerningSloget[(int)char.GetNumericValue(imgTerning.Name.ToCharArray().Last()) - 1] = rndIndex + 1;
-            return rndIndex + 1;
+            int diceValue = rnd.Next(0, TerningSides.Count()) + 1;
+            imgTerning.SetValue(Image.SourceProperty, new BitmapImage(new Uri(TerningSides[diceValue - 1])));
+            return diceValue;
         }
+
+        private void VisTerningKast(Terning terning)
+        {
+            terning.Terningside.SetValue(Image.SourceProperty, new BitmapImage(new Uri(TerningSides[terning.DiceValue - 1])));
+        }
+
         private void ChangeTerningImage(Image imgTerning, string imagePath)
         {
             imgTerning.SetValue(Image.SourceProperty, new BitmapImage(new Uri(imagePath)));
@@ -53,14 +72,26 @@ namespace Yatzy
             InitializeComponent();
             DataContext = FuncLayer;
             imgTerningSelected1.Visibility = Visibility.Hidden;
-            for (int i = 0; i < TerningSloget.Count(); i++)
+
+
+
+            for (int i = 0; i < 5; i++)
             {
-                setTerningImage((Image)FindName($"imgTerning{i + 1}"));
+                Terning terning = new Terning();
+                terning.DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
+                terning.TerningRamme = (Image)FindName($"imgTerning{i + 1}");
+                VisTerningKast(terning);
+                terning.IsHeld = false;
+
+                AlleTerninger[i] = terning;
+
+                //AlleTerninger[i].diceValue = setRndTerningImage((Image)FindName($"imgTerning{i + 1}"));
             }
         }
 
         private async void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
+            int[] RulleTerninger = new int[] { 0, 0, 0, 0, 0 };
             int kastet = 0;
             for (int i = 0; i < RulleTerninger.Count(); i++)
             {
@@ -77,7 +108,7 @@ namespace Yatzy
                 {
                     if (RulleTerninger[j] > 0)
                     {
-                        setTerningImage((Image)FindName($"imgTerning{j + 1}"));
+                        setRndTerningImage((Image)FindName($"imgTerning{j + 1}"));
                         RulleTerninger[j] -= 1;
                     }
                 }
@@ -85,11 +116,11 @@ namespace Yatzy
             if (ManualDeveloper_CheckDataIsTrue)
             {
                 MessageBox.Show(
-                    TerningSloget[0].ToString() + "-" +
-                    TerningSloget[1].ToString() + "-" +
-                    TerningSloget[2].ToString() + "-" +
-                    TerningSloget[3].ToString() + "-" +
-                    TerningSloget[4].ToString(), "Test data for terninger");
+                    AlleTerninger[0].DiceValue.ToString() + "-" +
+                    AlleTerninger[1].DiceValue.ToString() + "-" +
+                    AlleTerninger[2].DiceValue.ToString() + "-" +
+                    AlleTerninger[3].DiceValue.ToString() + "-" +
+                    AlleTerninger[4].DiceValue.ToString(), "Test data for terninger");
             }
         }
 
@@ -98,7 +129,7 @@ namespace Yatzy
             Image img = sender as Image;
             if (img != null)
             {
-                SelectedTerning(imgTerning1, img);
+                SelectedTerning(imgTerningSelected1, img);
             }
         }
 
@@ -107,7 +138,7 @@ namespace Yatzy
             Image img = sender as Image;
             if (img != null)
             {
-                SelectedTerning(imgTerning2, img);
+                SelectedTerning(imgTerningSelected2, img);
             }
         }
 
@@ -116,7 +147,7 @@ namespace Yatzy
             Image img = sender as Image;
             if (img != null)
             {
-                SelectedTerning(imgTerning3, img);
+                SelectedTerning(imgTerningSelected3, img);
             }
         }
 
@@ -125,7 +156,7 @@ namespace Yatzy
             Image img = sender as Image;
             if (img != null)
             {
-                SelectedTerning(imgTerning4, img);
+                SelectedTerning(imgTerningSelected4, img);
             }
         }
 
@@ -134,20 +165,20 @@ namespace Yatzy
             Image img = sender as Image;
             if (img != null)
             {
-                SelectedTerning(imgTerning5, img);
+                SelectedTerning(imgTerningSelected5, img);
             }
         }
 
         private void SelectedTerning(Image imgTerning, Image img)
         {
-            if (imgTerningSelected1.Visibility == Visibility.Hidden)
+            if (imgTerning.Visibility == Visibility.Hidden)
             {
-                ChangeTerningImage(imgTerningSelected1, SelectetTerning);
-                imgTerningSelected1.Visibility = Visibility.Visible;
+                ChangeTerningImage(imgTerning, SelectetTerning);
+                imgTerning.Visibility = Visibility.Visible;
             }
-            else if (imgTerningSelected1.Visibility == Visibility.Visible)
+            else if (imgTerning.Visibility == Visibility.Visible)
             {
-                imgTerningSelected1.Visibility = Visibility.Hidden;
+                imgTerning.Visibility = Visibility.Hidden;
             }
         }
     }

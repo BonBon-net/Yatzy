@@ -22,17 +22,17 @@ namespace Yatzy
             }
         }
 
-        Model Model { get; set; } = new Model();
+        Model model { get; set; } = new Model();
         public FuncLayer()
         {
-            Model.SpillerTabel.Load();
+            model.SpillerTabel.Load();
             RaisePropertyChanged(nameof(SpillerListe));
         }
         public ObservableCollection<Spiller> SpillerListe
         {
             get
             {
-                return Model.SpillerTabel.Local.ToObservableCollection();
+                return model.SpillerTabel.Local.ToObservableCollection();
             }
         }
 
@@ -53,7 +53,7 @@ namespace Yatzy
             spillerNavn = spillerNavn.ToCharArray().First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
             Spiller spiller = new Spiller(0, spillerNavn);
             SpillerListe.Add(spiller);
-            Model.SaveChanges();
+            model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
             return spiller;
         }
@@ -65,7 +65,7 @@ namespace Yatzy
                 throw new ArgumentException("Spillernavn kan ikke være tomt eller kun indeholde mellemrum.");
             }
             SpillerListe.Remove(spiller);
-            Model.SaveChanges();
+            model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
             return spiller;
         }
