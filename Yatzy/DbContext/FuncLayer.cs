@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -23,7 +24,15 @@ namespace Yatzy
             }
         }
 
-        Model model { get; set; } = new Model();
+        public void RaisePropertyChanged_test(string propName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
+
+        private Model model { get; set; } = new Model();
         public FuncLayer()
         {
             model.SpillerTabel.Load();

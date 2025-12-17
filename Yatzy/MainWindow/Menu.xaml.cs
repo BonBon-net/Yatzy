@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,8 +28,9 @@ namespace Yatzy
         public Menu(FuncLayer FuncLayer, IUserControlManager userControlManager)
         {
             InitializeComponent();
-            DataContext = this.FuncLayer;
+            //DataContext = MainWindow.funcLayer;
             this.FuncLayer = FuncLayer;
+            DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
             if (this.FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; } 
             else { btnStartSpil.IsEnabled = false; }
@@ -40,6 +42,7 @@ namespace Yatzy
         {
             try
             {
+                MessageBox.Show(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
                 FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
                 txtSpillerNavn.Clear();
                 if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }

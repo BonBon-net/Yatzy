@@ -19,15 +19,16 @@ namespace Yatzy
     /// </summary>
     public partial class MainWindow : Window, IUserControlManager
     {
-        Terninger TerningUserControl = new Terninger();
-        FuncLayer FuncLayer = new FuncLayer();
+        FuncLayer funcLayer = new FuncLayer();
+        Terninger TerningUserControl;
         Menu MenuUserControl;
 
         public MainWindow()
         {
             InitializeComponent();
-            MenuUserControl = new Menu(FuncLayer, this);
-            DataContext = FuncLayer;
+            MenuUserControl = new Menu(funcLayer, this);
+            TerningUserControl = new Terninger(funcLayer);
+            DataContext = funcLayer;
             ChangeUserControl(MenuUserControl);
         }
 
