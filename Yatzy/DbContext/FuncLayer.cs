@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Yatzy
         public FuncLayer()
         {
             model.SpillerTabel.Load();
-            RaisePropertyChanged(nameof(SpillerListe));
+            //RaisePropertyChanged(nameof(SpillerListe));
         }
         public ObservableCollection<Spiller> SpillerListe
         {
@@ -36,21 +37,19 @@ namespace Yatzy
             }
         }
 
-        public List<string> YatzyBlock { get; set; } = new List<string>() {
+        public static List<string> YatzyBlock { get; set; } = new List<string>() {
             "1'ere", "2'ere", "3'ere", "4'ere", "5'ere", "6'ere", "Sum",
             "Bonus", "Et Par", "To par", "Tre ens", "Fire ens", "Lille straight",
             "Stor straight", "hus", "Chance", "Yatzy", "Sum"
         };
 
-        public string DefaultDataContent(string DataContent = "FuncLayer") { return DataContent; }
-
         public Spiller TilføjSpiller(string spillerNavn)
         {
-            if (string.IsNullOrWhiteSpace(spillerNavn))
-            { 
-                throw new ArgumentException("Spillernavn kan ikke være tomt eller kun indeholde mellemrum."); 
+            if (string.IsNullOrEmpty(spillerNavn))
+            {
+                throw new ArgumentException("Spillernavn kan ikke være tomt"); 
             }
-            spillerNavn = spillerNavn.ToCharArray().First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
+            spillerNavn = spillerNavn.First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
             Spiller spiller = new Spiller(0, spillerNavn);
             SpillerListe.Add(spiller);
             model.SaveChanges();
@@ -62,7 +61,7 @@ namespace Yatzy
         {
             if (spiller == null)
             {
-                throw new ArgumentException("Spillernavn kan ikke være tomt eller kun indeholde mellemrum.");
+                throw new NullReferenceException($"spiller can't be null");
             }
             SpillerListe.Remove(spiller);
             model.SaveChanges();

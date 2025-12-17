@@ -30,8 +30,10 @@ namespace Yatzy
             DataContext = this.FuncLayer;
             this.FuncLayer = FuncLayer;
             UserControlManager = userControlManager;
-            if (FuncLayer.SpillerListe != null) { btnStartSpil.IsEnabled = true; } 
+            if (this.FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; } 
             else { btnStartSpil.IsEnabled = false; }
+            btnFjernSpiller.IsEnabled = false;
+            //this.FuncLayer.RaisePropertyChanged(nameof(this.FuncLayer.SpillerListe));
         }
 
         private void TilføjSpiller_Click(object sender, RoutedEventArgs e)
@@ -53,7 +55,7 @@ namespace Yatzy
         {
             try
             {
-                FuncLayer.FjernSpiller(dgbPlayerList.SelectedItem as Spiller);
+                FuncLayer.FjernSpiller(SpillerListe.SelectedItem as Spiller);
                 txtSpillerNavn.Clear();
                 if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }
                 else { btnStartSpil.IsEnabled = false; }
@@ -66,10 +68,10 @@ namespace Yatzy
 
         private void dgbPlayerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgbPlayerList.SelectedItem != null)
+            if (SpillerListe.SelectedItem != null)
             {
                 btnFjernSpiller.IsEnabled = true;
-                txtSpillerNavn.Text = (dgbPlayerList.SelectedItem as Spiller).Navn;
+                txtSpillerNavn.Text = (SpillerListe.SelectedItem as Spiller).Navn;
             }
             else
             {
@@ -83,7 +85,7 @@ namespace Yatzy
             {
                 if (FuncLayer.SpillerListe.Count < 1)
                 {
-                    throw new Exception("Der skal være mindst 1 spillere for at starte spillet.");
+                    throw new AccessViolationException("Der skal være mindst 1 spillere for at starte spillet.");
                 }
                 else
                 {

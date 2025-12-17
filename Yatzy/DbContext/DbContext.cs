@@ -25,6 +25,6 @@ namespace Yatzy.YatzyDbContext
 
         public int Id { get; set; }
         public string Navn { get; set; }
-        public int[] Score { get; set; } = new int[18];
+        public int[] Score { get; set; } = new int[FuncLayer.YatzyBlock.Count];
     }
 }

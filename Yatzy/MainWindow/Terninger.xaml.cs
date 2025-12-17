@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,26 +30,29 @@ namespace Yatzy
 
         public int DiceValue { get; set; }
         public Image Terningside { get; set; }
-        public Image TerningRamme { get; set; }
         public bool IsHeld { get; set; }
     }
 
     public partial class Terninger : UserControl
     {
         //Terninger TerningUserControl = new Terninger();
-        FuncLayer FuncLayer = new FuncLayer();
+        //FuncLayer FuncLayer = new FuncLayer();
 
         Terning[] AlleTerninger = new Terning[5];
         //Model Model { get; set; } = new Model();
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();
-        public string[] TerningSides = new string[] {
-            "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\1.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\2.jpg",
-            "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\3.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\4.jpg",
-            "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\5.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\6.jpg"
-        };
+
+        public string[] TerningSides = Directory.GetFiles("C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\6_Sides\\");
+        //public string[] TerningSides = new string[] {
+        //    "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\1.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\2.jpg",
+        //    "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\3.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\4.jpg",
+        //    "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\5.jpg", "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\6.jpg"
+        //};
+
         public string SelectetTerning = "C:\\Users\\66186\\source\\repos\\Yatzy\\Yatzy\\Terning\\00bfff.png";
+
         private int setRndTerningImage(Image imgTerning)
         {
             int diceValue = rnd.Next(0, TerningSides.Count()) + 1;
@@ -73,13 +77,11 @@ namespace Yatzy
             DataContext = FuncLayer;
             imgTerningSelected1.Visibility = Visibility.Hidden;
 
-
-
             for (int i = 0; i < 5; i++)
             {
                 Terning terning = new Terning();
                 terning.DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
-                terning.TerningRamme = (Image)FindName($"imgTerning{i + 1}");
+                terning.Terningside = (Image)FindName($"imgTerning{i + 1}");
                 VisTerningKast(terning);
                 terning.IsHeld = false;
 
