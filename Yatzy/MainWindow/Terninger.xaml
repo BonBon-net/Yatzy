@@ -8,24 +8,24 @@
              Height="450" Width="800"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Image x:Name="imgTerningSelected1" Source="{Binding terning.Terningside}" Visibility="Visible" HorizontalAlignment="Left" Height="120" Margin="0,0,0,0" VerticalAlignment="Top" Width="120"/>
-        <Image x:Name="imgTerning1" Source="{Binding terning.Terningside}" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning1Selected_MouseClick"/>
-        <Image x:Name="imgTerningSelected2" HorizontalAlignment="Left" Height="120" Margin="110,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <Image x:Name="imgTerningSelected1" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="0,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <Image x:Name="imgTerning1" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning1Selected_MouseClick"/>
+        <Image x:Name="imgTerningSelected2" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="110,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning2" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="120,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning2Selected_MouseClick"/>
-        <Image x:Name="imgTerningSelected3" HorizontalAlignment="Left" Height="120" Margin="220,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <Image x:Name="imgTerningSelected3" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="220,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning3" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="230,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning3Selected_MouseClick"/>
-        <Image x:Name="imgTerningSelected4" HorizontalAlignment="Left" Height="120" Margin="330,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <Image x:Name="imgTerningSelected4" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="330,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning4" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="340,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning4Selected_MouseClick"/>
-        <Image x:Name="imgTerningSelected5" HorizontalAlignment="Left" Height="120" Margin="440,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <Image x:Name="imgTerningSelected5" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="440,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning5" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning5Selected_MouseClick"/>
-        <Button Content="Kast" HorizontalAlignment="Left" Margin="230,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
-        <DataGrid ItemsSource="{Binding FuncLayer.SpillerListe}"
+        <Button Content="Kast" HorizontalAlignment="Left" Margin="265,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
+        <DataGrid ItemsSource="{Binding SpillerListe}"
                 FlowDirection="RightToLeft"
-                IsReadOnly="True" HorizontalAlignment="Right"
+                IsReadOnly="True" HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                AutoGenerateColumns="False" MinHeight="231"
-                Margin="0,8,-2,0"
-                MinWidth="532" Width="251">
+                AutoGenerateColumns="False" MinHeight="230"
+                Margin="565,8,0,0" 
+                MinWidth="430" Width="430">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="LayoutTransform">
@@ -75,28 +75,5 @@
                 <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
             </DataGrid.Columns>
         </DataGrid>
-        <!--<DataGrid Margin="22,0,29,10" ItemsSource="{Binding SpillerListe}" AutoGenerateColumns="False" Height="260" VerticalAlignment="Bottom" >
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
-                <DataGridTextColumn Header="1'ere" Binding="{Binding Score[0]}" />
-                <DataGridTextColumn Header="2'ere" Binding="{Binding Score[1]}" />
-                <DataGridTextColumn Header="3'ere" Binding="{Binding Score[2]}" />
-                <DataGridTextColumn Header="4'ere" Binding="{Binding Score[3]}" />
-                <DataGridTextColumn Header="5'ere" Binding="{Binding Score[4]}" />
-                <DataGridTextColumn Header="6'ere" Binding="{Binding Score[5]}" />
-                <DataGridTextColumn Header="sum" Binding="{Binding Score[6]}" />
-                <DataGridTextColumn Header="Bonus" Binding="{Binding Score[7]}" />
-                <DataGridTextColumn Header="Et Par" Binding="{Binding Score[8]}" />
-                <DataGridTextColumn Header="To Par" Binding="{Binding Score[9]}" />
-                <DataGridTextColumn Header="tre Par" Binding="{Binding Score[10]}" />
-                <DataGridTextColumn Header="Fire Par" Binding="{Binding Score[11]}" />
-                <DataGridTextColumn Header="Lille straight" Binding="{Binding Score[12]}" />
-                <DataGridTextColumn Header="Stor straight" Binding="{Binding Score[13]}" />
-                <DataGridTextColumn Header="Hus" Binding="{Binding Score[14]}" />
-                <DataGridTextColumn Header="Chance" Binding="{Binding Score[15]}" />
-                <DataGridTextColumn Header="Yatzy" Binding="{Binding Score[16]}" />
-                <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
-            </DataGrid.Columns>
-        </DataGrid>-->
     </Grid>
 </UserControl>
