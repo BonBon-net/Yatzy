@@ -24,19 +24,11 @@ namespace Yatzy
             }
         }
 
-        public void RaisePropertyChanged_test(string propName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
-
         private Model model { get; set; } = new Model();
         public FuncLayer()
         {
             model.SpillerTabel.Load();
-            //RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpillerListe));
         }
         public ObservableCollection<Spiller> SpillerListe
         {

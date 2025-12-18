@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Terning\6_Sides\1.jpg" />
+    <Resource Include="Terning\6_Sides\1.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <EmbeddedResource Include="Terning\6_Sides\2.jpg" />
     <EmbeddedResource Include="Terning\6_Sides\3.jpg" />
     <EmbeddedResource Include="Terning\6_Sides\4.jpg" />

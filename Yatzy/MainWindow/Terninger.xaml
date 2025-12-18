@@ -18,7 +18,7 @@
         <Image x:Name="imgTerning4" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="340,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning4Selected_MouseClick"/>
         <Image x:Name="imgTerningSelected5" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="440,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning5" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning5Selected_MouseClick"/>
-        <Button Content="Kast" HorizontalAlignment="Left" Margin="265,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
+        <Button x:Name="btnKast" Content="Kast" IsEnabled="True" HorizontalAlignment="Left" Margin="265,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
         <DataGrid ItemsSource="{Binding SpillerListe}"
                 FlowDirection="RightToLeft"
                 IsReadOnly="True" HorizontalAlignment="Left"
@@ -75,5 +75,7 @@
                 <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
             </DataGrid.Columns>
         </DataGrid>
+        <TextBlock x:Name="txbKastTilbage" Text="Kast: 3" HorizontalAlignment="Left" Margin="296,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock x:Name="txbSpillerTur" Text="Turn: " HorizontalAlignment="Right" Margin="0,132,540,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

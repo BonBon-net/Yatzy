@@ -32,9 +32,14 @@ namespace Yatzy
             this.FuncLayer = FuncLayer;
             DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
-            if (this.FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; } 
-            else { btnStartSpil.IsEnabled = false; }
-            btnFjernSpiller.IsEnabled = false;
+            if (this.FuncLayer.SpillerListe.Count > 0) 
+            {
+                btnStartSpil.IsEnabled = true; 
+            }
+            else 
+            {
+                btnStartSpil.IsEnabled = false; 
+            }
             //this.FuncLayer.RaisePropertyChanged(nameof(this.FuncLayer.SpillerListe));
         }
 
@@ -42,7 +47,6 @@ namespace Yatzy
         {
             try
             {
-                MessageBox.Show(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
                 FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
                 txtSpillerNavn.Clear();
                 if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }

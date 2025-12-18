@@ -50,6 +50,8 @@ namespace Yatzy
             new BitmapImage(new Uri(TerningSides[4])),
             new BitmapImage(new Uri(TerningSides[5]))
         };
+
+        private Image[] TerningImages { get; set; }
         public Terning terning { get; set; } = new Terning();
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
@@ -66,11 +68,20 @@ namespace Yatzy
                 AlleTerninger[i] = new Terning();
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
             }
+            TerningImages = new Image[]
+            {
+                imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5
+            };
             KastTertinger();
         }
 
         private async void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
+            txbKastTilbage.Text = $"Kast: " + (ReturnThrowNumber() - 1);
+            if (ReturnThrowNumber() <= 0)
+            {
+                btnKast.IsEnabled = false;
+            }
             int[] RulleTerninger = { 0, 0, 0, 0, 0 };
             int kastet = 0;
             for (int i = 0; i < RulleTerninger.Count(); i++)
@@ -113,27 +124,30 @@ namespace Yatzy
 
         private void KastTertinger()
         {
-            // Image.DpiChanged="{Binding AlleTerninger[0].Terningside}"
-            for (int i = 0; i < AlleTerninger.Length; i++)
+            if (ReturnThrowNumber() > 0)
             {
-                // Throw dice if not held
-                if (!AlleTerninger[i].IsHeld)
+                for (int i = 0; i < AlleTerninger.Length; i++)
                 {
-                    // Thorws dice 'i' for value
-                    AlleTerninger[i].DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
+                    // Throw dice if not held
+                    if (!AlleTerninger[i].IsHeld)
+                    {
+                        // Thorws dice 'i' for value
+                        AlleTerninger[i].DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
 
-                    // Sets the new dice image in array 'AlleTerninger' at value 'i'
-                    AlleTerninger[i].Terningside.SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                        // Sets the new dice image in array 'AlleTerninger' at value 'i'
+                        AlleTerninger[i].Terningside.SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
 
-                    // Sets the new dice image in UI 'Image'
-                    ((Image)FindName($"imgTerning{i + 1}")).SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                        // Sets the new dice image in UI 'Image'
+                        TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                        //((Image)FindName($"imgTerning{i + 1}")).SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                    }
                 }
             }
         }
 
         private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null)
+            if (sender as Image != null && ReturnThrowNumber() < 3)
             {
                 SelectedTerning(imgTerningSelected1, 1);
             }
@@ -141,7 +155,7 @@ namespace Yatzy
 
         private void Terning2Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null)
+            if (sender as Image != null && ReturnThrowNumber() < 3)
             {
                 SelectedTerning(imgTerningSelected2, 2);
             }
@@ -149,7 +163,7 @@ namespace Yatzy
 
         private void Terning3Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null)
+            if (sender as Image != null && ReturnThrowNumber() < 3)
             {
                 SelectedTerning(imgTerningSelected3, 3);
             }
@@ -157,7 +171,7 @@ namespace Yatzy
 
         private void Terning4Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null)
+            if (sender as Image != null && ReturnThrowNumber() < 3)
             {
                 SelectedTerning(imgTerningSelected4, 4);
             }
@@ -165,7 +179,7 @@ namespace Yatzy
 
         private void Terning5Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null)
+            if (sender as Image != null && ReturnThrowNumber() < 3)
             {
                 SelectedTerning(imgTerningSelected5, 5);
             }
@@ -183,6 +197,11 @@ namespace Yatzy
                 AlleTerninger[terning - 1].IsHeld = false;
                 imgTerning.Visibility = Visibility.Hidden;
             }
+        }
+
+        private int ReturnThrowNumber()
+        {
+            return int.Parse(txbKastTilbage.Text.Split(": ").Last());
         }
     }
 }
