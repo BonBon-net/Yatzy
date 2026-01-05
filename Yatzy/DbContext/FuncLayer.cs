@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
@@ -43,18 +44,29 @@ namespace Yatzy
             "Bonus", "Et Par", "To par", "Tre ens", "Fire ens", "Lille straight",
             "Stor straight", "hus", "Chance", "Yatzy", "Sum"
         };
+        public string CurrentPlayer { get; set; }
 
         public Spiller TilføjSpiller(string spillerNavn)
         {
             if (string.IsNullOrEmpty(spillerNavn))
             {
-                throw new ArgumentException("Spillernavn kan ikke være tomt"); 
+                throw new ArgumentException("Spillernavn kan ikke være tomt");
             }
+
+            // Create new player
             spillerNavn = spillerNavn.First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
+            // lambda
+            if (SpillerListe.FirstOrDefault(player => spillerNavn == player.Navn) != null)
+            {
+                throw new Exception("Brugernavnet er taget");
+            }
             Spiller spiller = new Spiller(0, spillerNavn);
+
+            // Add new player to List
             SpillerListe.Add(spiller);
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
+
             return spiller;
         }
 
@@ -64,10 +76,19 @@ namespace Yatzy
             {
                 throw new NullReferenceException($"spiller can't be null");
             }
+
+            // Remove Splayer from List
             SpillerListe.Remove(spiller);
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
             return spiller;
+        }
+
+        public void Registrer(DataGridCellInfo cell)
+        {
+            var a = cell.Column.Header;
+
+
         }
     }
 }

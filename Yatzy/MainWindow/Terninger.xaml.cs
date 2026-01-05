@@ -104,7 +104,7 @@ namespace Yatzy
                     }
                 }
             }
-            if (ManualDeveloper_CheckDataIsTrue)
+            if (false && ManualDeveloper_CheckDataIsTrue)
             {
                 string messageInput = string.Empty;
                 for (int i = 0; i < AlleTerninger.Length; i++)
@@ -183,6 +183,14 @@ namespace Yatzy
             {
                 SelectedTerning(imgTerningSelected5, 5);
             }
+        }
+
+        private void Register_Click(object sender, RoutedEventArgs e)
+        {
+            DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+
+            FuncLayer.Registrer(cell, txbSpillerTur.Text.Split(": ").Last());
+            //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
         }
 
         private void SelectedTerning(Image imgTerning, int terning)
