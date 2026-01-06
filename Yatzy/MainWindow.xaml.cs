@@ -34,7 +34,8 @@ namespace Yatzy
 
         public void StartGame()
         {
-            TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+            FuncLayer.StartGame();
+            //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
             ChangeUserControl(TerningUserControl);
         }
 

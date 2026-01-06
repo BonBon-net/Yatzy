@@ -25,6 +25,15 @@ namespace Yatzy
             }
         }
 
+        public int CurrentPlayerIndex;
+
+        public Spiller SpillerTur
+        {
+            get
+            {
+                return SpillerListe[CurrentPlayerIndex];
+            }
+        }
         private Model model { get; set; } = new Model();
         public FuncLayer()
         {
@@ -39,11 +48,6 @@ namespace Yatzy
             }
         }
 
-        public static List<string> YatzyBlock { get; set; } = new List<string>() {
-            "1'ere", "2'ere", "3'ere", "4'ere", "5'ere", "6'ere", "Sum",
-            "Bonus", "Et Par", "To par", "Tre ens", "Fire ens", "Lille straight",
-            "Stor straight", "hus", "Chance", "Yatzy", "Sum"
-        };
         public string CurrentPlayer { get; set; }
 
         public Spiller TilføjSpiller(string spillerNavn)
@@ -84,11 +88,27 @@ namespace Yatzy
             return spiller;
         }
 
+        public void StartGame()
+        {
+            CurrentPlayerIndex = 0;
+        }
+
         public void Registrer(DataGridCellInfo cell)
         {
-            var a = cell.Column.Header;
+            string header = cell.Column.Header.ToString();
+            int score;
 
-
+            if (header == "Enere")
+            {
+                // Beregn det rigtige antal points
+                score = 3;
+                // Indsæt antal points i Spiller.Enere
+                SpillerTur.Enere = score;
+            }
+            else
+            {
+                
+            }
         }
     }
 }

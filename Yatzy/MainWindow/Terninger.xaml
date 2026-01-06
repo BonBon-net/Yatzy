@@ -19,15 +19,15 @@
         <Image x:Name="imgTerning5" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning5Selected_MouseClick"/>
         <Button x:Name="btnKast" Content="Kast" IsEnabled="True" HorizontalAlignment="Left" Margin="265,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
         <TextBlock x:Name="txbKastTilbage" Text="Tilbage: 3" HorizontalAlignment="Left" Margin="296,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock x:Name="txbSpillerTur" Text="Turn: " HorizontalAlignment="Right" Margin="0,132,740,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <Button Content="Register" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
+        <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" Margin="0,132,740,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Button x:Name="btnRegister" Content="Register" IsEnabled="False" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
         <DataGrid ItemsSource="{Binding SpillerListe}"
                 FlowDirection="RightToLeft"
                 IsReadOnly="True" HorizontalAlignment="Left"
                 VerticalAlignment="Top" x:Name="dgSpillerScoreBoard"
                 AutoGenerateColumns="False" MinHeight="250"
                 Margin="560,8,0,0" 
-                MinWidth="485" Width="450" SelectionUnit="Cell">
+                MinWidth="485" Width="450" SelectionUnit="Cell" SelectionChanged="dgSpillerScoreBoard_SelectionChanged">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="LayoutTransform">
@@ -57,24 +57,24 @@
             </DataGrid.LayoutTransform>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
-                <DataGridTextColumn Header="enere" Binding="{Binding Score[0]}" />
-                <DataGridTextColumn Header="toere" Binding="{Binding Score[1]}" />
-                <DataGridTextColumn Header="3'ere" Binding="{Binding Score[2]}" />
-                <DataGridTextColumn Header="4'ere" Binding="{Binding Score[3]}" />
-                <DataGridTextColumn Header="5'ere" Binding="{Binding Score[4]}" />
-                <DataGridTextColumn Header="6'ere" Binding="{Binding Score[5]}" />
-                <DataGridTextColumn Header="sum" Binding="{Binding Score[6]}" />
-                <DataGridTextColumn Header="Bonus" Binding="{Binding Score[7]}" />
-                <DataGridTextColumn Header="Et Par" Binding="{Binding Score[8]}" />
-                <DataGridTextColumn Header="To Par" Binding="{Binding Score[9]}" />
-                <DataGridTextColumn Header="tre Par" Binding="{Binding Score[10]}" />
-                <DataGridTextColumn Header="Fire Par" Binding="{Binding Score[11]}" />
-                <DataGridTextColumn Header="Lille straight" Binding="{Binding Score[12]}" />
-                <DataGridTextColumn Header="Stor straight" Binding="{Binding Score[13]}" />
-                <DataGridTextColumn Header="Hus" Binding="{Binding Score[14]}" />
-                <DataGridTextColumn Header="Chance" Binding="{Binding Score[15]}" />
-                <DataGridTextColumn Header="Yatzy" Binding="{Binding Score[16]}" />
-                <DataGridTextColumn Header="Sum" Binding="{Binding Score[17]}" />
+                <DataGridTextColumn Header="Enere" Binding="{Binding Enere}" />
+                <DataGridTextColumn Header="Toere" Binding="{Binding Toere}" />
+                <DataGridTextColumn Header="Treere" Binding="{Binding Treere}" />
+                <DataGridTextColumn Header="Firere" Binding="{Binding Firere}" />
+                <DataGridTextColumn Header="Femmere" Binding="{Binding Femmere}" />
+                <DataGridTextColumn Header="Seksere" Binding="{Binding Seksere}" />
+                <DataGridTextColumn Header="SUM" Binding="{Binding SUM}" />
+                <DataGridTextColumn Header="Bonus" Binding="{Binding Bonus}" />
+                <DataGridTextColumn Header="Et Par" Binding="{Binding EtPar}" />
+                <DataGridTextColumn Header="To Par" Binding="{Binding ToPar}" />
+                <DataGridTextColumn Header="Tre Ens" Binding="{Binding TreEns}" />
+                <DataGridTextColumn Header="Fire Ens" Binding="{Binding FireEns}" />
+                <DataGridTextColumn Header="Lille Straight" Binding="{Binding LilleStraight}" />
+                <DataGridTextColumn Header="Stor Straight" Binding="{Binding StorStraight}" />
+                <DataGridTextColumn Header="Hus" Binding="{Binding Hus}" />
+                <DataGridTextColumn Header="Chance" Binding="{Binding Chance}" />
+                <DataGridTextColumn Header="Yatzy" Binding="{Binding Yatzy}" />
+                <DataGridTextColumn Header="Total" Binding="{Binding TotalSum}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

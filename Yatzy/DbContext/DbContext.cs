@@ -25,6 +25,35 @@ namespace Yatzy.YatzyDbContext
 
         public int Id { get; set; }
         public string Navn { get; set; }
-        public int[] Score { get; set; } = new int[FuncLayer.YatzyBlock.Count];
+        private int enere;
+        public int Enere 
+        { 
+            get
+            {
+                return enere;
+            }
+            set
+            {
+                enere = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enere)));
+            }
+        }
+        public int Toere { get; set; }
+        public int Treere { get; set; }
+        public int Firere { get; set; }
+        public int Femmere { get; set; }
+        public int Seksere { get; set; }
+        public int SUM { get; set; }
+        public int Bonus { get; set; }
+        public int EtPar { get; set; }
+        public int ToPar { get; set; }
+        public int TreEns { get; set; }
+        public int FireEns { get; set; }
+        public int LilleStraight { get; set; }
+        public int StorStraight { get; set; }
+        public int Hus { get; set; }
+        public int Chance { get; set; }
+        public int Yatzy { get; set; }
+        public int TotalSum { get; set; }
     }
 }

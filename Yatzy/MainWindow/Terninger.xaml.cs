@@ -187,10 +187,43 @@ namespace Yatzy
 
         private void Register_Click(object sender, RoutedEventArgs e)
         {
-            DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+            try
+            {
+                if (dgSpillerScoreBoard.SelectedItem != null)
+                {
+                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
 
-            FuncLayer.Registrer(cell, txbSpillerTur.Text.Split(": ").Last());
-            //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+                    FuncLayer.Registrer(cell);
+                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+                }
+                else
+                {
+                    MessageBox.Show("Datagrid not registered");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (dgSpillerScoreBoard.SelectedItem != null && ReturnThrowNumber() < 3)
+                {
+                    btnRegister.IsEnabled = true;
+                }
+                else
+                {
+                    btnRegister.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
         }
 
         private void SelectedTerning(Image imgTerning, int terning)
