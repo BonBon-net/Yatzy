@@ -27,7 +27,7 @@ namespace Yatzy.YatzyDbContext
         public string Navn { get; set; }
         private int enere;
         public int Enere 
-        { 
+        {
             get
             {
                 return enere;

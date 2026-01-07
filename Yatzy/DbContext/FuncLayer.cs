@@ -101,13 +101,98 @@ namespace Yatzy
             if (header == "Enere")
             {
                 // Beregn det rigtige antal points
-                score = 3;
+                score = 1;
                 // Indsæt antal points i Spiller.Enere
                 SpillerTur.Enere = score;
             }
+            else if (header == "Toere")
+            {
+                score = 2;
+                SpillerTur.Toere = score;
+            }
+            else if (header == "Treere")
+            {
+                score = 3;
+                SpillerTur.Treere = score;
+            }
+            else if (header == "Firere")
+            {
+                score = 4;
+                SpillerTur.Firere = score;
+            }
+            else if (header == "Femmere")
+            {
+                score = 5;
+                SpillerTur.Femmere = score;
+            }
+            else if (header == "Seksere")
+            {
+                score = 6;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "SUM")
+            {
+                score = 7;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "Bonus")
+            {
+                score = 8;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "EtPar")
+            {
+                score = 9;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "ToPar")
+            {
+                score = 10;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "TreEns")
+            {
+                score = 11;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "FireEns")
+            {
+                score = 12;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "LilleStraight")
+            {
+                score = 13;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "StorStraight")
+            {
+                score = 14;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "Hus")
+            {
+                score = 15;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "Chance")
+            {
+                score = 16;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "Yatzy")
+            {
+                score = 17;
+                SpillerTur.Seksere = score;
+            }
+            else if (header == "TotalSum")
+            {
+                score = 18;
+                SpillerTur.Seksere = score;
+            }
             else
             {
-                
+                throw new ApplicationException("Ugyldigt kolonne header");
             }
         }
     }
