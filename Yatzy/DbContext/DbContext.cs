@@ -25,8 +25,9 @@ namespace Yatzy.YatzyDbContext
 
         public int Id { get; set; }
         public string Navn { get; set; }
-        private int enere;
-        public int Enere 
+
+        private int? enere = null;
+        public int? Enere 
         {
             get
             {
@@ -38,22 +39,22 @@ namespace Yatzy.YatzyDbContext
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enere)));
             }
         }
-        public int Toere { get; set; }
-        public int Treere { get; set; }
-        public int Firere { get; set; }
-        public int Femmere { get; set; }
-        public int Seksere { get; set; }
+        public int? Toere { get; set; } = null;
+        public int? Treere { get; set; } = null;
+        public int? Firere { get; set; } = null;
+        public int? Femmere { get; set; } = null;
+        public int? Seksere { get; set; } = null;
         public int SUM { get; set; }
-        public int Bonus { get; set; }
-        public int EtPar { get; set; }
-        public int ToPar { get; set; }
-        public int TreEns { get; set; }
-        public int FireEns { get; set; }
-        public int LilleStraight { get; set; }
-        public int StorStraight { get; set; }
-        public int Hus { get; set; }
-        public int Chance { get; set; }
-        public int Yatzy { get; set; }
+        public int? Bonus { get; set; } = null;
+        public int? EtPar { get; set; } = null;
+        public int? ToPar { get; set; } = null;
+        public int? TreEns { get; set; } = null;
+        public int? FireEns { get; set; } = null;
+        public int? LilleStraight { get; set; } = null;
+        public int? StorStraight { get; set; } = null;
+        public int? Hus { get; set; } = null;
+        public int? Chance { get; set; } = null;
+        public int? Yatzy { get; set; } = null;
         public int TotalSum { get; set; }
     }
 }

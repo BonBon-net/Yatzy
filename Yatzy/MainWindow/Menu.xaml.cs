@@ -22,7 +22,7 @@ namespace Yatzy
     /// </summary>
     public partial class Menu : UserControl
     {
-        FuncLayer FuncLayer;
+        private FuncLayer FuncLayer;
         private IUserControlManager UserControlManager { get; set; }
 
         public Menu(FuncLayer FuncLayer, IUserControlManager userControlManager)

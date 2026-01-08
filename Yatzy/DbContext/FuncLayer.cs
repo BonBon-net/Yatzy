@@ -13,6 +13,15 @@ using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
+    public class Terning : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int DiceValue { get; set; } = -1;
+        public Image Terningside { get; set; } = new Image();
+        public bool IsHeld { get; set; } = false;
+    }
+
     public class FuncLayer : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -26,7 +35,6 @@ namespace Yatzy
         }
 
         public int CurrentPlayerIndex;
-
         public Spiller SpillerTur
         {
             get
@@ -93,10 +101,10 @@ namespace Yatzy
             CurrentPlayerIndex = 0;
         }
 
-        public void Registrer(DataGridCellInfo cell)
+        public int Registrer(DataGridCellInfo cell, Terning[] terninger)
         {
             string header = cell.Column.Header.ToString();
-            int score;
+            int score = 0;
 
             if (header == "Enere")
             {
@@ -130,11 +138,11 @@ namespace Yatzy
                 score = 6;
                 SpillerTur.Seksere = score;
             }
-            else if (header == "SUM")
-            {
-                score = 7;
-                SpillerTur.Seksere = score;
-            }
+            //else if (header == "SUM")
+            //{
+            //    score = 7;
+            //    SpillerTur.Seksere = score;
+            //}
             else if (header == "Bonus")
             {
                 score = 8;
@@ -185,15 +193,16 @@ namespace Yatzy
                 score = 17;
                 SpillerTur.Seksere = score;
             }
-            else if (header == "TotalSum")
-            {
-                score = 18;
-                SpillerTur.Seksere = score;
-            }
+            //else if (header == "TotalSum")
+            //{
+            //    score = 18;
+            //    SpillerTur.Seksere = score;
+            //}
             else
             {
                 throw new ApplicationException("Ugyldigt kolonne header");
             }
+            return score;
         }
     }
 }
