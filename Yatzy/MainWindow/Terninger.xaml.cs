@@ -1,11 +1,15 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
@@ -31,7 +35,6 @@ namespace Yatzy
         };
 
         private Terning[] AlleTerninger { get; set; }
-        private int[] DiceValues { get; set; }
         private Image[] TerningImages { get; set; }
         //public Terning terning { get; set; } = new Terning();
 
@@ -49,7 +52,6 @@ namespace Yatzy
                 imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5
             };
             AlleTerninger = new Terning[TerningImages.Length];
-            DiceValues = new int[AlleTerninger.Length];
             for (int i = 0; i < AlleTerninger.Length; i++)
             {
                 AlleTerninger[i] = new Terning();
@@ -76,23 +78,33 @@ namespace Yatzy
                 {
                     btnKast.IsEnabled = false;
                 }
-                FindRows();
+
+                if (false)
+                {
+                    // experiment
+                    FindRows();
+                }
             }
 
             void FindRows()
             {
-                for (int i = 0; i < DiceValues.Length; i++)
+                int spillerIndex = FuncLayer.SpillerListe.IndexOf(FuncLayer.SpillerListe.First(spiller => txbSpillerTur.Text == spiller.Navn));
+                Spiller spiller = FuncLayer.SpillerListe[spillerIndex];
+                int[] diceValues = new int[AlleTerninger.Length];
+
+                FillDiceValues();
+
+                if (spiller.Enere != null && diceValues[0] > 0)
                 {
-                    DiceValues[AlleTerninger[i].DiceValue] += 1;
+                    //dgSpillerScoreBoard.Columns.
+                    dgSpillerScoreBoard.Columns.First(Column => "Enere" == Column.Header.ToString());
                 }
 
-                Enere();
-
-                void Enere()
+                void FillDiceValues()
                 {
-                    if (DiceValues[0] == 2)
+                    for (int i = 0; i < diceValues.Length; i++)
                     {
-
+                        diceValues[AlleTerninger[i].DiceValue] += 1;
                     }
                 }
             }
@@ -113,10 +125,10 @@ namespace Yatzy
             }
             void ChanceImange(int index)
             {
-                // Thorws dice 'index' for value
+                // Thorws dice 'dummyIndex' for value
                 AlleTerninger[index].DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
 
-                // Sets the new dice image in array 'AlleTerninger' at value 'index'
+                // Sets the new dice image in array 'AlleTerninger' at value 'dummyIndex'
                 AlleTerninger[index].Terningside.SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[index].DiceValue - 1]);
 
                 // Sets the new dice image in UI 'Image'
@@ -202,7 +214,7 @@ namespace Yatzy
             {
                 if (dgSpillerScoreBoard.SelectedItem != null)
                 {
-                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[FuncLayer.CurrentPlayerIndex];
 
                     FuncLayer.Registrer(cell, AlleTerninger);
                     //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";

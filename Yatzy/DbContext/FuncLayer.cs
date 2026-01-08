@@ -103,97 +103,159 @@ namespace Yatzy
 
         public int Registrer(DataGridCellInfo cell, Terning[] terninger)
         {
+
             string header = cell.Column.Header.ToString();
             int score = 0;
+            int bonusValue = 0;
 
-            if (header == "Enere")
+            if (SpillerTur.Enere != null && header == "Enere")
             {
-                // Beregn det rigtige antal points
-                score = 1;
-                // Indsæt antal points i Spiller.Enere
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 1)
+                    {
+                        score += terninger[i].DiceValue;
+                        bonusValue++;
+                    }
+                }
+                if (bonusValue >= 2)
+                {
+                    SpillerTur.Bonus += bonusValue;
+                }
+
                 SpillerTur.Enere = score;
             }
-            else if (header == "Toere")
+            else if (SpillerTur.Toere != null && header == "Toere")
             {
-                score = 2;
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 2)
+                    {
+                        score += terninger[i].DiceValue * 2;
+                        bonusValue++;
+                    }
+                }
+                if (bonusValue >= 2)
+                {
+                    SpillerTur.Bonus += bonusValue * 2;
+                }
+
                 SpillerTur.Toere = score;
             }
-            else if (header == "Treere")
+            else if (SpillerTur.Treere != null && header == "Treere")
             {
-                score = 3;
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 3)
+                    {
+                        score += terninger[i].DiceValue * 3;
+                        bonusValue++;
+                    }
+                }
+                if (bonusValue >= 2)
+                {
+                    SpillerTur.Bonus += bonusValue * 3;
+                }
+
                 SpillerTur.Treere = score;
             }
-            else if (header == "Firere")
+            else if (SpillerTur.Firere != null && header == "Firere")
             {
-                score = 4;
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 4)
+                    {
+                        score += terninger[i].DiceValue * 4;
+                        bonusValue++;
+                    }
+                    if (bonusValue >= 2)
+                    {
+                        SpillerTur.Bonus += bonusValue * 4;
+                    }
+                }
+
                 SpillerTur.Firere = score;
             }
-            else if (header == "Femmere")
+            else if (SpillerTur.Femmere != null && header == "Femmere")
             {
-                score = 5;
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 5)
+                    {
+                        score += terninger[i].DiceValue * 5;
+                        bonusValue++;
+                    }
+                }
+                if (bonusValue >= 2)
+                {
+                    SpillerTur.Bonus += bonusValue * 5;
+                }
+
                 SpillerTur.Femmere = score;
             }
-            else if (header == "Seksere")
+            else if (SpillerTur.Seksere != null && header == "Seksere")
             {
-                score = 6;
+                for (int i = 0; i < terninger.Length; i++)
+                {
+                    if (terninger[i].DiceValue == 6)
+                    {
+                        score += terninger[i].DiceValue * 6;
+                        bonusValue++;
+                    }
+                }
+                if (bonusValue >= 2)
+                {
+                    SpillerTur.Bonus += bonusValue * 6;
+                }
+
                 SpillerTur.Seksere = score;
             }
-            //else if (header == "SUM")
-            //{
-            //    score = 7;
-            //    SpillerTur.Seksere = score;
-            //}
-            else if (header == "Bonus")
-            {
-                score = 8;
-                SpillerTur.Seksere = score;
-            }
-            else if (header == "EtPar")
+            else if (SpillerTur.EtPar != null && header == "EtPar")
             {
                 score = 9;
-                SpillerTur.Seksere = score;
+                SpillerTur.EtPar = score;
             }
-            else if (header == "ToPar")
+            else if (SpillerTur.ToPar != null && header == "ToPar")
             {
                 score = 10;
-                SpillerTur.Seksere = score;
+                SpillerTur.ToPar = score;
             }
-            else if (header == "TreEns")
+            else if (SpillerTur.TreEns != null && header == "TreEns")
             {
                 score = 11;
-                SpillerTur.Seksere = score;
+                SpillerTur.TreEns = score;
             }
-            else if (header == "FireEns")
+            else if (SpillerTur.FireEns != null && header == "FireEns")
             {
                 score = 12;
-                SpillerTur.Seksere = score;
+                SpillerTur.FireEns = score;
             }
-            else if (header == "LilleStraight")
+            else if (SpillerTur.LilleStraight != null && header == "LilleStraight")
             {
                 score = 13;
-                SpillerTur.Seksere = score;
+                SpillerTur.LilleStraight = score;
             }
-            else if (header == "StorStraight")
+            else if (SpillerTur.StorStraight != null && header == "StorStraight")
             {
                 score = 14;
-                SpillerTur.Seksere = score;
+                SpillerTur.StorStraight = score;
             }
-            else if (header == "Hus")
+            else if (SpillerTur.Hus != null && header == "Hus")
             {
                 score = 15;
-                SpillerTur.Seksere = score;
+                SpillerTur.Hus = score;
             }
-            else if (header == "Chance")
+            else if (SpillerTur.Chance != null && header == "Chance")
             {
                 score = 16;
-                SpillerTur.Seksere = score;
+                SpillerTur.Chance = score;
             }
-            else if (header == "Yatzy")
+            else if (SpillerTur.Yatzy != null && header == "Yatzy")
             {
                 score = 17;
-                SpillerTur.Seksere = score;
+                SpillerTur.Yatzy = score;
             }
-            //else if (header == "TotalSum")
+            //else if (SpillerTur.Enere != null && header == "TotalSum")
             //{
             //    score = 18;
             //    SpillerTur.Seksere = score;
