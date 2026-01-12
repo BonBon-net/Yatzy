@@ -34,6 +34,7 @@ namespace Yatzy
             }
         }
 
+        //public string CurrentPlayer { get; set; }
         public int CurrentPlayerIndex;
         public Spiller SpillerTur
         {
@@ -55,8 +56,6 @@ namespace Yatzy
                 return model.SpillerTabel.Local.ToObservableCollection();
             }
         }
-
-        public string CurrentPlayer { get; set; }
 
         public Spiller TilføjSpiller(string spillerNavn)
         {
@@ -101,170 +100,299 @@ namespace Yatzy
             CurrentPlayerIndex = 0;
         }
 
-        public int Registrer(DataGridCellInfo cell, Terning[] terninger)
+        public Spiller NæsteSpiller()
         {
-
-            string header = cell.Column.Header.ToString();
-            int score = 0;
-            int bonusValue = 0;
-
-            if (SpillerTur.Enere != null && header == "Enere")
+            if ((SpillerListe.Count - 1) == CurrentPlayerIndex)
             {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 1)
-                    {
-                        score += terninger[i].DiceValue;
-                        bonusValue++;
-                    }
-                }
-                if (bonusValue >= 2)
-                {
-                    SpillerTur.Bonus += bonusValue;
-                }
-
-                SpillerTur.Enere = score;
+                CurrentPlayerIndex = 0;
             }
-            else if (SpillerTur.Toere != null && header == "Toere")
-            {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 2)
-                    {
-                        score += terninger[i].DiceValue * 2;
-                        bonusValue++;
-                    }
-                }
-                if (bonusValue >= 2)
-                {
-                    SpillerTur.Bonus += bonusValue * 2;
-                }
-
-                SpillerTur.Toere = score;
-            }
-            else if (SpillerTur.Treere != null && header == "Treere")
-            {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 3)
-                    {
-                        score += terninger[i].DiceValue * 3;
-                        bonusValue++;
-                    }
-                }
-                if (bonusValue >= 2)
-                {
-                    SpillerTur.Bonus += bonusValue * 3;
-                }
-
-                SpillerTur.Treere = score;
-            }
-            else if (SpillerTur.Firere != null && header == "Firere")
-            {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 4)
-                    {
-                        score += terninger[i].DiceValue * 4;
-                        bonusValue++;
-                    }
-                    if (bonusValue >= 2)
-                    {
-                        SpillerTur.Bonus += bonusValue * 4;
-                    }
-                }
-
-                SpillerTur.Firere = score;
-            }
-            else if (SpillerTur.Femmere != null && header == "Femmere")
-            {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 5)
-                    {
-                        score += terninger[i].DiceValue * 5;
-                        bonusValue++;
-                    }
-                }
-                if (bonusValue >= 2)
-                {
-                    SpillerTur.Bonus += bonusValue * 5;
-                }
-
-                SpillerTur.Femmere = score;
-            }
-            else if (SpillerTur.Seksere != null && header == "Seksere")
-            {
-                for (int i = 0; i < terninger.Length; i++)
-                {
-                    if (terninger[i].DiceValue == 6)
-                    {
-                        score += terninger[i].DiceValue * 6;
-                        bonusValue++;
-                    }
-                }
-                if (bonusValue >= 2)
-                {
-                    SpillerTur.Bonus += bonusValue * 6;
-                }
-
-                SpillerTur.Seksere = score;
-            }
-            else if (SpillerTur.EtPar != null && header == "EtPar")
-            {
-                score = 9;
-                SpillerTur.EtPar = score;
-            }
-            else if (SpillerTur.ToPar != null && header == "ToPar")
-            {
-                score = 10;
-                SpillerTur.ToPar = score;
-            }
-            else if (SpillerTur.TreEns != null && header == "TreEns")
-            {
-                score = 11;
-                SpillerTur.TreEns = score;
-            }
-            else if (SpillerTur.FireEns != null && header == "FireEns")
-            {
-                score = 12;
-                SpillerTur.FireEns = score;
-            }
-            else if (SpillerTur.LilleStraight != null && header == "LilleStraight")
-            {
-                score = 13;
-                SpillerTur.LilleStraight = score;
-            }
-            else if (SpillerTur.StorStraight != null && header == "StorStraight")
-            {
-                score = 14;
-                SpillerTur.StorStraight = score;
-            }
-            else if (SpillerTur.Hus != null && header == "Hus")
-            {
-                score = 15;
-                SpillerTur.Hus = score;
-            }
-            else if (SpillerTur.Chance != null && header == "Chance")
-            {
-                score = 16;
-                SpillerTur.Chance = score;
-            }
-            else if (SpillerTur.Yatzy != null && header == "Yatzy")
-            {
-                score = 17;
-                SpillerTur.Yatzy = score;
-            }
-            //else if (SpillerTur.Enere != null && header == "TotalSum")
-            //{
-            //    score = 18;
-            //    SpillerTur.Seksere = score;
-            //}
             else
             {
-                throw new ApplicationException("Ugyldigt kolonne header");
+                CurrentPlayerIndex += 1;
             }
+            RaisePropertyChanged(nameof(SpillerTur));
+            return SpillerTur;
+        }
+
+        public int Registrer(DataGridCellInfo cell, Terning[] terninger)
+        {
+            string header = cell.Column.Header.ToString().Trim();
+            int score = 0;
+            string exceptionText = $"{header} er allerede brugt";
+
+            int[] values = new int[6];
+            for (int i = 0; i < terninger.Length; i++)
+            {
+                int diceValue = terninger[i].DiceValue;
+                values[diceValue - 1] += 1;
+            }
+
+            RegistrerHeader();
+
             return score;
+
+            void RegistrerHeader()
+            {
+                if (header == "Enere")
+                {
+                    if (SpillerTur.Enere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[0] * 1;
+
+                    SpillerTur.Enere = score;
+                }
+                else if (header == "Toere")
+                {
+                    if (SpillerTur.Toere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[1] * 2;
+
+                    SpillerTur.Toere = score;
+                }
+                else if (header == "Treere")
+                {
+                    if (SpillerTur.Treere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[2] * 3;
+
+                    SpillerTur.Treere = score;
+                }
+                else if (header == "Firere")
+                {
+                    if (SpillerTur.Firere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[3] * 4;
+
+                    SpillerTur.Firere = score;
+                }
+                else if (header == "Femmere")
+                {
+                    if (SpillerTur.Femmere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[4] * 5;
+
+                    SpillerTur.Femmere = score;
+                }
+                else if (header == "Seksere")
+                {
+                    if (SpillerTur.Seksere != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    score = values[5] * 6;
+
+                    SpillerTur.Seksere = score;
+                }
+                else if (header == "EtPar")
+                {
+                    if (SpillerTur.EtPar != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] >= 2)
+                        {
+                            score = 2 * (i + 1);
+                        }
+                    }
+
+                    SpillerTur.EtPar = score;
+                }
+                else if (header == "ToPar")
+                {
+                    if (SpillerTur.ToPar != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    int[] ints = { -1, -1 };
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] >= 2)
+                        {
+                            ints[0] = i;
+
+                            break;
+                        }
+                    }
+                    if (ints[0] != -1)
+                    {
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            if (values[i] >= 2 && ints[0] != i)
+                            {
+                                ints[1] = i;
+
+                                if (ints[1] != -1)
+                                {
+                                    score = (values[ints[0]] * ints[0]) + (values[ints[1]] * ints[1]);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    SpillerTur.ToPar = score;
+                }
+                else if (header == "TreEns")
+                {
+                    if (SpillerTur.TreEns != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] >= 2)
+                        {
+                            score = 3 * (i + 1);
+                        }
+                    }
+
+                    SpillerTur.TreEns = score;
+                }
+                else if (header == "FireEns")
+                {
+                    if (SpillerTur.FireEns != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] >= 2)
+                        {
+                            score = 4 * (i + 1);
+                        }
+                    }
+
+                    SpillerTur.FireEns = score;
+                }
+                else if (header == "LilleStraight")
+                {
+                    if (SpillerTur.LilleStraight != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    if (values[0] == 1 && values[1] == 1 &&
+                        values[2] == 1 && values[3] == 1 &&
+                        values[4] == 1)
+                    {
+                        score = 1 + 2 + 3 + 4 + 5;
+                    }
+
+                    SpillerTur.LilleStraight = score;
+                }
+                else if (header == "StorStraight")
+                {
+                    if (SpillerTur.StorStraight != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    if (values[1] == 1 && values[2] == 1 &&
+                        values[3] == 1 && values[4] == 1 &&
+                        values[5] == 1)
+                    {
+                        score = 2 + 3 + 4 + 5 + 6;
+                    }
+
+                    SpillerTur.StorStraight = score;
+                }
+                else if (header == "Hus")
+                {
+                    if (SpillerTur.Hus != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    // If in fact we have a house:
+                    int[] ints = { -1, -1 };
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] == 2)
+                        {
+                            ints[0] = i;
+
+                            break;
+                        }
+                    }
+                    if (ints[0] <= -1)
+                    {
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            if (values[i] == 3)
+                            {
+                                ints[1] = i;
+
+                                if (ints[1] <= -1)
+                                {
+                                    score = (values[ints[0]] * (ints[0] + 1)) + (values[ints[1]] * (ints[1] + 1));
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    SpillerTur.Hus = score;
+                }
+                else if (header == "Chance")
+                {
+                    if (SpillerTur.Chance != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    // calculate'ing horse + moo
+                    for (int i = 0; i < terninger.Length; i++)
+                    {
+                        score = terninger[i].DiceValue;
+                    }
+
+                    SpillerTur.Chance = score;
+                }
+                else if (header == "Yatzy")
+                {
+                    if (SpillerTur.Yatzy != null)
+                    {
+                        throw new Exception(exceptionText);
+                    }
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        if (values[i] == 5)
+                        {
+                            score = 50;
+                            break;
+                        }
+                    }
+
+                    SpillerTur.Yatzy = score;
+                }
+                else
+                {
+                    throw new ApplicationException("Ugyldigt kolonne header");
+                }
+            }
         }
     }
 }

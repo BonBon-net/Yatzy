@@ -21,13 +21,13 @@
         <TextBlock x:Name="txbKastTilbage" Text="Rulls: 0" HorizontalAlignment="Left" Margin="296,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" Margin="0,132,740,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="btnRegister" Content="Register" IsEnabled="False" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
-        <DataGrid ItemsSource="{Binding SpillerListe}"
-                FlowDirection="RightToLeft"
+        <DataGrid ItemsSource="{Binding SpillerListe}" x:Name="dgSpillerScoreBoard"
+                FlowDirection="RightToLeft" 
                 IsReadOnly="True" HorizontalAlignment="Left"
-                VerticalAlignment="Top" x:Name="dgSpillerScoreBoard"
+                VerticalAlignment="Top" 
                 AutoGenerateColumns="False" MinHeight="250"
                 Margin="560,8,0,0" 
-                MinWidth="485" Width="450" SelectionUnit="Cell" SelectionChanged="dgSpillerScoreBoard_SelectionChanged">
+                MinWidth="485" Width="450" SelectionUnit="Cell" SelectedCellsChanged="dgSpillerScoreBoard_SelectionChanged">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="LayoutTransform">

@@ -139,10 +139,13 @@ namespace Yatzy
                 int[] RulleTerninger = { 0, 0, 0, 0, 0 };
                 for (int i = 0; i < RulleTerninger.Count(); i++)
                 {
-                    RulleTerninger[i] = rnd.Next(0, 35);
-                    if (kastet < RulleTerninger[i])
+                    if (!AlleTerninger[i].IsHeld)
                     {
-                        kastet = RulleTerninger[i];
+                        RulleTerninger[i] = rnd.Next(0, 35);
+                        if (kastet < RulleTerninger[i])
+                        {
+                            kastet = RulleTerninger[i];
+                        }
                     }
                 }
                 return RulleTerninger;
@@ -212,17 +215,13 @@ namespace Yatzy
         {
             try
             {
-                if (dgSpillerScoreBoard.SelectedItem != null)
-                {
-                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[FuncLayer.CurrentPlayerIndex];
+                DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[FuncLayer.CurrentPlayerIndex];
 
-                    FuncLayer.Registrer(cell, AlleTerninger);
-                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
-                }
-                else
-                {
-                    MessageBox.Show("Datagrid not registered");
-                }
+                int Score = FuncLayer.Registrer(cell, AlleTerninger);
+                //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+
+                Spiller spiller = FuncLayer.NæsteSpiller();
+                txbKastTilbage.Text = "Rulls: 0";
             }
             catch (Exception ex)
             {
@@ -230,11 +229,12 @@ namespace Yatzy
             }
         }
 
-        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectedCellsChangedEventArgs e)
         {
             try
             {
-                if (dgSpillerScoreBoard.SelectedItem != null && ReturnThrowNumber() < 3)
+                int value = ReturnThrowNumber();
+                if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
                 {
                     btnRegister.IsEnabled = true;
                 }
