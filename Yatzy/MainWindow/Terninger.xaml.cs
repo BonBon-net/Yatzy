@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
@@ -38,6 +39,8 @@ namespace Yatzy
         private Image[] TerningImages { get; set; }
         //public Terning terning { get; set; } = new Terning();
 
+        private string _txbKastTilbage = "Rolled:";
+
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();
 
@@ -47,10 +50,7 @@ namespace Yatzy
             InitializeComponent();
             this.FuncLayer = FuncLayer;
             DataContext = this.FuncLayer;
-            TerningImages = new Image[]
-            {
-                imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5
-            };
+            TerningImages = new Image[] { imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5 };
             AlleTerninger = new Terning[TerningImages.Length];
             for (int i = 0; i < AlleTerninger.Length; i++)
             {
@@ -58,10 +58,12 @@ namespace Yatzy
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
                 TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[rnd.Next(0, TerningSides.Length)]);
             }
+            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
         }
 
-        private void KastTerninger_Click(object sender, RoutedEventArgs e)
+        private async void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
+            int awaitTime = 35;
             int kastet = 0;
             int ThrowedNumber = ReturnThrowNumber() + 1;
 
@@ -70,19 +72,19 @@ namespace Yatzy
                 // Throws dice's
                 int[] RulleTerninger = GetRulNumber();
                 KastTerningerne(RulleTerninger);
-
+                await Task.Delay(awaitTime * kastet);
+                if (true)
+                {
+                    // experiment
+                    CheckTerningValues();
+                    FindRows();
+                }
                 // Finishing 'KastTertinger'
-                txbKastTilbage.Text = $"Rulls: {ThrowedNumber}";
+                txbKastTilbage.Text = $"{_txbKastTilbage} {ThrowedNumber}";
                 DevMessage();
                 if (ThrowedNumber >= 3)
                 {
                     btnKast.IsEnabled = false;
-                }
-
-                if (false)
-                {
-                    // experiment
-                    FindRows();
                 }
             }
             else
@@ -93,23 +95,64 @@ namespace Yatzy
 
             void FindRows()
             {
-                int spillerIndex = FuncLayer.SpillerListe.IndexOf(FuncLayer.SpillerListe.First(spiller => txbSpillerTur.Text == spiller.Navn));
-                Spiller spiller = FuncLayer.SpillerListe[spillerIndex];
-                int[] diceValues = new int[AlleTerninger.Length];
+                bool cellFound = false;
+                DataGridCellInfo previousDataGridCellInfo;
+                string previousHeader;
 
-                FillDiceValues();
-
-                if (spiller.Enere != null && diceValues[0] > 0)
+                // Gets all needed data
+                try
                 {
-                    //dgSpillerScoreBoard.Columns.
-                    dgSpillerScoreBoard.Columns.First(Column => "Enere" == Column.Header.ToString());
+                    previousDataGridCellInfo = dgSpillerScoreBoard.SelectedCells[0];
+                    previousHeader = previousDataGridCellInfo.Column.Header.ToString();
+                    cellFound = true;
+                }
+                catch (Exception ex)
+                {
+                    cellFound = false;
                 }
 
-                void FillDiceValues()
+                dgSpillerScoreBoard.SelectAllCells();
+                List<DataGridCellInfo> cellList = dgSpillerScoreBoard.SelectedCells.ToList();
+                dgSpillerScoreBoard.UnselectAllCells();
+                for (int i = 0; i < cellList.Count; i++)
                 {
-                    for (int i = 0; i < diceValues.Length; i++)
+                    try
                     {
-                        diceValues[AlleTerninger[i].DiceValue] += 1;
+                        string header = cellList[i].Column.Header.ToString();
+                        int score = FuncLayer.RegistrerHeader(header, AlleTerninger);
+                        if (score > 0)
+                        {
+                            dgSpillerScoreBoard.CurrentCell = cellList[i];
+                            dgSpillerScoreBoard.SelectedCells.Add(cellList[i]);
+
+                            //dgSpillerScoreBoard.CurrentCell.
+
+                            //dgSpillerScoreBoard.CurrentCell = cellList[i];
+                            //dgSpillerScoreBoard.SelectedCells.Add(cellList[i]);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Do nothing
+                    }
+                }
+
+                // Undoing selection
+                dgSpillerScoreBoard.UnselectAllCells();
+                if (cellFound)
+                {
+                    dgSpillerScoreBoard.CurrentCell = previousDataGridCellInfo;
+                    dgSpillerScoreBoard.SelectedCells.Add(previousDataGridCellInfo);
+                }
+
+            }
+            void CheckTerningValues()
+            {
+                for (int i = 0; i < AlleTerninger.Length; i++)
+                {
+                    if (AlleTerninger[i].DiceValue <= -1)
+                    {
+                        throw new InvalidDataException("A dice had invalid data");
                     }
                 }
             }
@@ -119,7 +162,7 @@ namespace Yatzy
                 {
                     for (int j = 0; j < RulleTerninger.Length; j++)
                     {
-                        await Task.Delay(35);
+                        await Task.Delay(awaitTime);
                         if (RulleTerninger[j] > 0)
                         {
                             ChanceImange(j);
@@ -227,20 +270,16 @@ namespace Yatzy
                     int Score = FuncLayer.Registrer(cell, AlleTerninger);
                     //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
 
+                    dgSpillerScoreBoard.UnselectAllCells();
                     Spiller spiller = FuncLayer.NæsteSpiller();
-                    txbKastTilbage.Text = "Rulls: 0";
+                    txbKastTilbage.Text = $"{_txbKastTilbage} 0";
                     btnKast.IsEnabled = true;
                     btnRegister.IsEnabled = false;
-                    AlleTerninger[0].IsHeld = false;
-                    imgTerningSelected1.Visibility = Visibility.Hidden;
-                    AlleTerninger[1].IsHeld = false;
-                    imgTerningSelected2.Visibility = Visibility.Hidden;
-                    AlleTerninger[2].IsHeld = false;
-                    imgTerningSelected3.Visibility = Visibility.Hidden;
-                    AlleTerninger[3].IsHeld = false;
-                    imgTerningSelected4.Visibility = Visibility.Hidden;
-                    AlleTerninger[4].IsHeld = false;
-                    imgTerningSelected5.Visibility = Visibility.Hidden;
+                    for (int i = 0; i < AlleTerninger.Length; i++)
+                    {
+                        AlleTerninger[i].IsHeld = false;
+                        ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
+                    }
                 }
             }
             catch (Exception ex)
@@ -285,7 +324,7 @@ namespace Yatzy
 
         private int ReturnThrowNumber()
         {
-            return int.Parse(txbKastTilbage.Text.Split(": ").Last());
+            return int.Parse(txbKastTilbage.Text.Split(_txbKastTilbage).Last());
         }
     }
 }

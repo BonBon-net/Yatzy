@@ -26,8 +26,12 @@
                 IsReadOnly="True" HorizontalAlignment="Left"
                 VerticalAlignment="Top" 
                 AutoGenerateColumns="False" MinHeight="250"
-                Margin="560,8,0,0" 
+                Margin="560,8,0,0" SelectionMode="Single"
                 MinWidth="485" Width="450" SelectionUnit="Cell" SelectedCellsChanged="dgSpillerScoreBoard_SelectionChanged">
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Blue" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White" />
+            </DataGrid.Resources>
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="LayoutTransform">

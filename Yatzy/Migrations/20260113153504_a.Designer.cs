@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Yatzy.YatzyDbContext;
 
@@ -10,9 +11,11 @@ using Yatzy.YatzyDbContext;
 namespace Yatzy.Migrations
 {
     [DbContext(typeof(Model))]
-    partial class ModelModelSnapshot : ModelSnapshot
+    [Migration("20260113153504_a")]
+    partial class a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,60 +35,59 @@ namespace Yatzy.Migrations
                     b.Property<int>("Bonus")
                         .HasColumnType("int");
 
-                    b.Property<string>("BonusValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Chance")
+                    b.Property<int>("Chance")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Enere")
+                    b.Property<int>("Enere")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EtPar")
+                    b.Property<int>("EtPar")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Femmere")
+                    b.Property<int>("Femmere")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FireEns")
+                    b.Property<int>("FireEns")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Firere")
+                    b.Property<int>("Firere")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Hus")
+                    b.Property<int>("Hus")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LilleStraight")
+                    b.Property<int>("LilleStraight")
                         .HasColumnType("int");
 
                     b.Property<string>("Navn")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Seksere")
+                    b.Property<int>("SUM")
                         .HasColumnType("int");
 
-                    b.Property<int?>("StorStraight")
+                    b.Property<int>("Seksere")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToPar")
+                    b.Property<int>("StorStraight")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Toere")
+                    b.Property<int>("ToPar")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalSum")
+                    b.Property<int>("Toere")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TreEns")
+                    b.Property<int>("TotalSum")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Treere")
+                    b.Property<int>("TreEns")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Yatzy")
+                    b.Property<int>("Treere")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Yatzy")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
