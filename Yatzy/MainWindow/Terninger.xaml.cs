@@ -85,6 +85,11 @@ namespace Yatzy
                     FindRows();
                 }
             }
+            else
+            {
+                btnKast.IsEnabled = false;
+                throw new UnauthorizedAccessException("Denied - Invalid action");
+            }
 
             void FindRows()
             {
@@ -141,7 +146,7 @@ namespace Yatzy
                 {
                     if (!AlleTerninger[i].IsHeld)
                     {
-                        RulleTerninger[i] = rnd.Next(0, 35);
+                        RulleTerninger[i] = rnd.Next(5, 25);
                         if (kastet < RulleTerninger[i])
                         {
                             kastet = RulleTerninger[i];
@@ -215,13 +220,28 @@ namespace Yatzy
         {
             try
             {
-                DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[FuncLayer.CurrentPlayerIndex];
+                if (dgSpillerScoreBoard.SelectedCells.Count > 0)
+                {
+                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
 
-                int Score = FuncLayer.Registrer(cell, AlleTerninger);
-                //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+                    int Score = FuncLayer.Registrer(cell, AlleTerninger);
+                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
 
-                Spiller spiller = FuncLayer.NæsteSpiller();
-                txbKastTilbage.Text = "Rulls: 0";
+                    Spiller spiller = FuncLayer.NæsteSpiller();
+                    txbKastTilbage.Text = "Rulls: 0";
+                    btnKast.IsEnabled = true;
+                    btnRegister.IsEnabled = false;
+                    AlleTerninger[0].IsHeld = false;
+                    imgTerningSelected1.Visibility = Visibility.Hidden;
+                    AlleTerninger[1].IsHeld = false;
+                    imgTerningSelected2.Visibility = Visibility.Hidden;
+                    AlleTerninger[2].IsHeld = false;
+                    imgTerningSelected3.Visibility = Visibility.Hidden;
+                    AlleTerninger[3].IsHeld = false;
+                    imgTerningSelected4.Visibility = Visibility.Hidden;
+                    AlleTerninger[4].IsHeld = false;
+                    imgTerningSelected5.Visibility = Visibility.Hidden;
+                }
             }
             catch (Exception ex)
             {

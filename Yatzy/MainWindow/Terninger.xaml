@@ -63,7 +63,7 @@
                 <DataGridTextColumn Header="Firere" Binding="{Binding Firere}" />
                 <DataGridTextColumn Header="Femmere" Binding="{Binding Femmere}" />
                 <DataGridTextColumn Header="Seksere" Binding="{Binding Seksere}" />
-                <DataGridTextColumn Header="SUM" Binding="{Binding SUM}" />
+                <DataGridTextColumn Header="SUM" Binding="{Binding BonusValue}" />
                 <DataGridTextColumn Header="Bonus" Binding="{Binding Bonus}" />
                 <DataGridTextColumn Header="Et Par" Binding="{Binding EtPar}" />
                 <DataGridTextColumn Header="To Par" Binding="{Binding ToPar}" />

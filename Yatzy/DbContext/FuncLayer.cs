@@ -65,7 +65,16 @@ namespace Yatzy
             }
 
             // Create new player
-            spillerNavn = spillerNavn.First().ToString().ToUpper() + spillerNavn.Substring(1).ToLower();
+            string[] player = spillerNavn.Split(" ");
+            spillerNavn = string.Empty;
+            for (int i = 0; i < player.Length; i++)
+            {
+                if (spillerNavn != string.Empty)
+                {
+                    spillerNavn += " ";
+                }
+                spillerNavn += player[i].First().ToString().ToUpper() + player[i].Substring(1).ToLower();
+            }
             // lambda
             if (SpillerListe.FirstOrDefault(player => spillerNavn == player.Navn) != null)
             {
@@ -116,7 +125,7 @@ namespace Yatzy
 
         public int Registrer(DataGridCellInfo cell, Terning[] terninger)
         {
-            string header = cell.Column.Header.ToString().Trim();
+            string header = cell.Column.Header.ToString();
             int score = 0;
             string exceptionText = $"{header} er allerede brugt";
 
@@ -127,10 +136,21 @@ namespace Yatzy
                 values[diceValue - 1] += 1;
             }
 
+            header = TrimString(header);
             RegistrerHeader();
 
             return score;
 
+            string TrimString(string String)
+            {
+                string[] trimStrings = header.Split(" ");
+                String = string.Empty;
+                for (int i = 0; i < trimStrings.Length; i++)
+                {
+                    String += trimStrings[i];
+                }
+                return String;
+            }
             void RegistrerHeader()
             {
                 if (header == "Enere")
@@ -223,27 +243,27 @@ namespace Yatzy
                         throw new Exception(exceptionText);
                     }
 
-                    int[] ints = { -1, -1 };
+                    int[] valuesIndex = { -1, -1 };
                     for (int i = 0; i < values.Length; i++)
                     {
                         if (values[i] >= 2)
                         {
-                            ints[0] = i;
+                            valuesIndex[0] = i;
 
                             break;
                         }
                     }
-                    if (ints[0] != -1)
+                    if (valuesIndex[0] != -1)
                     {
                         for (int i = 0; i < values.Length; i++)
                         {
-                            if (values[i] >= 2 && ints[0] != i)
+                            if (values[i] >= 2 && valuesIndex[0] != i)
                             {
-                                ints[1] = i;
+                                valuesIndex[1] = i;
 
-                                if (ints[1] != -1)
+                                if (valuesIndex[1] != -1)
                                 {
-                                    score = (values[ints[0]] * ints[0]) + (values[ints[1]] * ints[1]);
+                                    score = (((valuesIndex[0] + 1) * 2) + ((valuesIndex[1] + 1) * 2));
                                 }
                                 break;
                             }
@@ -261,7 +281,7 @@ namespace Yatzy
 
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (values[i] >= 2)
+                        if (values[i] >= 3)
                         {
                             score = 3 * (i + 1);
                         }
@@ -278,7 +298,7 @@ namespace Yatzy
 
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (values[i] >= 2)
+                        if (values[i] >= 4)
                         {
                             score = 4 * (i + 1);
                         }
@@ -332,19 +352,18 @@ namespace Yatzy
                         if (values[i] == 2)
                         {
                             ints[0] = i;
-
                             break;
                         }
                     }
-                    if (ints[0] <= -1)
+                    if (-1 <= ints[0])
                     {
                         for (int i = 0; i < values.Length; i++)
                         {
-                            if (values[i] == 3)
+                            if (values[i] == 3 && ints[0] != i)
                             {
                                 ints[1] = i;
 
-                                if (ints[1] <= -1)
+                                if (-1 <= ints[1])
                                 {
                                     score = (values[ints[0]] * (ints[0] + 1)) + (values[ints[1]] * (ints[1] + 1));
                                 }
@@ -365,7 +384,7 @@ namespace Yatzy
                     // calculate'ing horse + moo
                     for (int i = 0; i < terninger.Length; i++)
                     {
-                        score = terninger[i].DiceValue;
+                        score += terninger[i].DiceValue;
                     }
 
                     SpillerTur.Chance = score;
