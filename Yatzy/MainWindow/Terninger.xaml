@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yatzy"
              mc:Ignorable="d" 
-             Height="700" Width="1000">
+             Height="700" 
+             Width="1050" MinWidth="1050" MaxWidth="1050">
     <Grid>
         <Image x:Name="imgTerningSelected1" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="0,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning1" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning1Selected_MouseClick"/>
@@ -19,9 +20,10 @@
         <Image x:Name="imgTerning5" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning5Selected_MouseClick"/>
         <Button x:Name="btnKast" Content="Kast" IsEnabled="True" HorizontalAlignment="Left" Margin="321,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
         <TextBlock x:Name="txbKastTilbage" Text="" HorizontalAlignment="Left" TextAlignment="Left" FontSize="25" MinWidth="100" Margin="440,120,0,0" MinHeight="50" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" TextAlignment="Right" FontSize="25" Margin="0,150,460,0" MinWidth="100" MinHeight="45" MaxHeight="45" TextWrapping="Wrap" VerticalAlignment="Top" Width="286"/>
+        <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" TextAlignment="Right" FontSize="25" Margin="0,170,510,0" MinWidth="100" MinHeight="45" MaxHeight="45" TextWrapping="Wrap" VerticalAlignment="Top" Width="420"/>
         <Button x:Name="btnRegister" Content="Register" IsEnabled="False" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
-        <Button x:Name="btnStopGame" Content="Stop Game" IsEnabled="True" HorizontalAlignment="Left" Margin="254,130,0,0" VerticalAlignment="Top" Click="btnStopGame_Click"/>
+        <Button x:Name="btnStopGame" Content="Stop Game" IsEnabled="True" HorizontalAlignment="Left" Margin="48,130,0,0" VerticalAlignment="Top" Click="btnStopGame_Click"/>
+        <Button x:Name="btnSaveGame" Content="Save Game" IsEnabled="True" HorizontalAlignment="Left" Margin="48,155,0,0" VerticalAlignment="Top" Click="btnSaveGame_Click"/>
         <DataGrid ItemsSource="{Binding SpillerListe}" x:Name="dgSpillerScoreBoard"
                 FlowDirection="RightToLeft" 
                 IsReadOnly="True" HorizontalAlignment="Left"

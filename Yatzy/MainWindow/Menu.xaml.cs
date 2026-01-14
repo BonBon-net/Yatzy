@@ -33,7 +33,30 @@ namespace Yatzy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error");
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void btnSaveSpiller_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
+                if (spiller != null)
+                {
+                    string nytNavn = txtSpillerNavn.Text;
+                    FuncLayer.GemSpiller(spiller, nytNavn);
+                    dgbSpillerListe.SelectedItem = null;
+                    txtSpillerNavn.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("Vælg en spiller fra listen for at gemme ændringer.", "Info");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
 
@@ -41,26 +64,48 @@ namespace Yatzy
         {
             try
             {
-                FuncLayer.FjernSpiller(SpillerListe.SelectedItem as Spiller);
+                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
+                if (spiller == null)
+                {
+                    MessageBox.Show("Vælg en spiller fra listen for at fjerne.", "Info");
+                    return;
+                }
+                FuncLayer.FjernSpiller(spiller);
                 txtSpillerNavn.Clear();
                 StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error");
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
 
         private void dgbPlayerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SpillerListe.SelectedItem != null)
+            try
             {
-                btnFjernSpiller.IsEnabled = true;
-                txtSpillerNavn.Text = (SpillerListe.SelectedItem as Spiller).Navn;
+                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
+                if (spiller != null && dgbSpillerListe.SelectedItem != null)
+                {
+                    btnFjernSpiller.IsEnabled = true;
+                    txtSpillerNavn.Text = spiller.Navn;
+                }
+                else
+                {
+                    btnFjernSpiller.IsEnabled = false;
+                }
+                if (spiller != null && !string.IsNullOrEmpty(txtSpillerNavn.Text) && txtSpillerNavn.Text == spiller.Navn)
+                {
+                    btnSaveSpiller.IsEnabled = true;
+                }
+                else
+                {
+                    btnSaveSpiller.IsEnabled = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                btnFjernSpiller.IsEnabled = false;
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
 
@@ -79,7 +124,7 @@ namespace Yatzy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error");
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
 
@@ -98,7 +143,7 @@ namespace Yatzy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error");
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
 

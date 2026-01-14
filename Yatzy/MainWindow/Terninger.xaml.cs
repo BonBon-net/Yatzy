@@ -77,6 +77,7 @@ namespace Yatzy
                 }
                 // Finishing 'KastTertinger'
                 txbKastTilbage.Text = $"{_txbKastTilbage} {ThrowedNumber}";
+                dgSpillerScoreBoard.SelectedItem = null;
                 DevMessage(false);
                 if (ThrowedNumber >= 3)
                 {
@@ -271,6 +272,7 @@ namespace Yatzy
                     txbKastTilbage.Text = $"{_txbKastTilbage} 0";
                     btnKast.IsEnabled = true;
                     btnRegister.IsEnabled = false;
+                    dgSpillerScoreBoard.SelectedItem = null;
                     for (int i = 0; i < AlleTerninger.Length; i++)
                     {
                         AlleTerninger[i].IsHeld = false;
@@ -281,8 +283,8 @@ namespace Yatzy
                     {
                         btnKast.IsEnabled = false;
                         btnRegister.IsEnabled = false;
-                        txbKastTilbage.Text = "Player has won";
-                        txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
+                        txbSpillerTur.Text = $"Player won: {FuncLayer.HighestScorePlayer.Navn}";
+                        //txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
                     }
                 }
             }
@@ -316,10 +318,25 @@ namespace Yatzy
         {
             try
             {
-                if (MessageBox.Show("", "", MessageBoxButton.YesNo))
+                MessageBoxResult result = MessageBox.Show("Do you want to stop game?\n- Is not saved", "Confirmation", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
                 {
+                    dgSpillerScoreBoard.SelectedItem = null;
                     UserControlManager.StopGame();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void btnSaveGame_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FuncLayer.SaveGame(AlleTerninger, ReturnThrowNumber());
+                MessageBox.Show("Game saved successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

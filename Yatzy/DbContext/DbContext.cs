@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,102 @@ namespace Yatzy.YatzyDbContext
     public class Model : DbContext
     {
         public DbSet<Spiller> SpillerTabel { get; set; }
+        public DbSet<Spil> SpilTabel { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
+    }
+
+    public class Spil : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // Helper method to keep the setters clean
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public Spil()
+        {
+            Spillere = new ObservableCollection<Spiller>();
+            NuværendeSpillerIndex = 0;
+            SavedDateTime = DateTime.Now;
+        }
+        public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, Terning[] terninger, int antalKast, DateTime savedDateTime)
+        {
+            SpilId = id;
+            Spillere = spillere;
+            NuværendeSpillerIndex = nuværendeSpillerIndex;
+            Terninger = terninger;
+            AntalKast = antalKast;
+            SavedDateTime = savedDateTime;
+        }
+
+        public int SpilId { get; set; }
+
+        private ObservableCollection<Spiller> spillere;
+        public ObservableCollection<Spiller> Spillere
+        {
+            get
+            {
+                return spillere;
+            }
+            set
+            {
+                spillere = value;
+                OnPropertyChanged(nameof(spillere));
+            }
+        }
+        private int nuværendeSpillerIndex;
+        public int NuværendeSpillerIndex
+        {
+            get
+            {
+                return nuværendeSpillerIndex;
+            }
+            set
+            {
+                nuværendeSpillerIndex = value;
+                OnPropertyChanged(nameof(nuværendeSpillerIndex));
+            }
+        }
+        private Terning[] terninger;
+        public Terning[] Terninger
+        {
+            get
+            {
+                return terninger;
+            }
+            set
+            {
+                terninger = value;
+                OnPropertyChanged(nameof(terninger));
+            }
+        }
+        private int antalKast;
+        public int AntalKast
+        {
+            get
+            {
+                return antalKast;
+            }
+            set
+            {
+                antalKast = value;
+                OnPropertyChanged(nameof(antalKast));
+            }
+        }
+        private DateTime savedDateTime;
+        public DateTime SavedDateTime
+        {
+            get
+            {
+                return savedDateTime;
+            }
+            set
+            {
+                savedDateTime = value;
+                OnPropertyChanged(nameof(savedDateTime));
+            }
+        }
     }
 
     public class Spiller : INotifyPropertyChanged
@@ -31,9 +127,33 @@ namespace Yatzy.YatzyDbContext
         }
 
         public int Id { get; set; }
-        public string Navn { get; set; }
+        private string navn;
+        public string Navn
+        {
+            get
+            {
+                return navn;
+            }
+            set
+            {
+                navn = value;
+                OnPropertyChanged(nameof(navn));
+            }
+        }
 
-        public ScoreBoard ScoreBoard { get; set; }
+        private ScoreBoard scoreBoard;
+        public ScoreBoard ScoreBoard
+        {
+            get
+            {
+                return scoreBoard;
+            }
+            set
+            {
+                scoreBoard = value;
+                OnPropertyChanged(nameof(scoreBoard));
+            }
+        }
 
         public void ResetScoreBoard()
         {

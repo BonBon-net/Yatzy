@@ -60,6 +60,13 @@ namespace Yatzy
                 return model.SpillerTabel.Local.ToObservableCollection();
             }
         }
+        public ObservableCollection<Spil> SpilListe
+        {
+            get
+            {
+                return model.SpilTabel.Local.ToObservableCollection();
+            }
+        }
 
         public Spiller TilføjSpiller(string spillerNavn)
         {
@@ -88,6 +95,39 @@ namespace Yatzy
 
             // Add new player to List
             SpillerListe.Add(spiller);
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(SpillerListe));
+
+            return spiller;
+        }
+
+        public Spiller GemSpiller(Spiller spiller, string spillerNavn)
+        {
+            if (spiller == null)
+            {
+                throw new NullReferenceException($"spiller can't be null");
+            }
+            if (string.IsNullOrEmpty(spillerNavn))
+            {
+                throw new ArgumentException("Spillernavn kan ikke være tomt");
+            }
+            // Update player name
+            string[] player = spillerNavn.Split(" ");
+            spillerNavn = string.Empty;
+            for (int i = 0; i < player.Length; i++)
+            {
+                if (spillerNavn != string.Empty)
+                {
+                    spillerNavn += " ";
+                }
+                spillerNavn += player[i].First().ToString().ToUpper() + player[i].Substring(1).ToLower();
+            }
+            // lambda
+            if (SpillerListe.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
+            {
+                throw new Exception("Brugernavnet er taget");
+            }
+            spiller.Navn = spillerNavn;
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
 
@@ -141,6 +181,14 @@ namespace Yatzy
             return SpillerTur;
         }
 
+        public void SaveGame(Terning[] terninger, int antalKasted)
+        {
+            Spil spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
+            model.SpilTabel.Add(spil);
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(SpilListe));
+        }
+
         public int Registrer(DataGridCellInfo cell, Terning[] terninger)
         {
             string header = cell.Column.Header.ToString();
@@ -148,8 +196,8 @@ namespace Yatzy
             int score = RegnHeaderValue(header, terninger);
 
             // Set property value by reflection
-            PropertyInfo? property = typeof(Spiller).GetProperty(TrimString(header));
-            property?.SetValue(SpillerTur, score);
+            PropertyInfo property = typeof(ScoreBoard).GetProperty(TrimString(header));
+            property.SetValue(SpillerTur.ScoreBoard, score);
 
             if (SpillerTur.ScoreBoard.TotalSum > HighestScorePlayer.ScoreBoard.TotalSum)
             {
@@ -158,8 +206,7 @@ namespace Yatzy
 
             if (SpillerListe.Count - 1 == CurrentPlayerIndex)
             {
-                string[] headers = { "Enere", "Toere", "Treere", "Firere", "Femmere", "Seksere",
-                    "EtPar","ToPar","TreEns","FireEns","LilleStraight","StorStraight","Hus","Chance","Yatzy"};
+                string[] headers = { "Enere", "Toere", "Treere", "Firere", "Femmere", "Seksere", "EtPar","ToPar", "TreEns", "FireEns", "LilleStraight", "StorStraight", "Hus", "Chance", "Yatzy" };
                 // check if Last player has a null header
                 // If last player has no null value then end game
                 int count = 0;
@@ -179,6 +226,9 @@ namespace Yatzy
                     PlayerHasWon = true;
                 }
             }
+
+            RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpillerTur));
 
             return score;
         }
@@ -201,7 +251,7 @@ namespace Yatzy
 
                 score = values[0] * 1;
 
-                //SpillerTur.Enere = score;
+                //SpillerTur.ScoreBoard.Enere = score;
             }
             else if (header == "Toere")
             {

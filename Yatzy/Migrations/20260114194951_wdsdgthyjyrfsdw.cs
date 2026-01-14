@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class joe : Migration
+    public partial class wdsdgthyjyrfsdw : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,13 +42,28 @@ namespace Yatzy.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SpilTabel",
+                columns: table => new
+                {
+                    SpilId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NuværendeSpillerIndex = table.Column<int>(type: "int", nullable: false),
+                    SavedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpilTabel", x => x.SpilId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SpillerTabel",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Navn = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ScoreBoardId = table.Column<int>(type: "int", nullable: false)
+                    ScoreBoardId = table.Column<int>(type: "int", nullable: false),
+                    SpilId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,12 +74,22 @@ namespace Yatzy.Migrations
                         principalTable: "ScoreBoard",
                         principalColumn: "ScoreBoardId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SpillerTabel_SpilTabel_SpilId",
+                        column: x => x.SpilId,
+                        principalTable: "SpilTabel",
+                        principalColumn: "SpilId");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SpillerTabel_ScoreBoardId",
                 table: "SpillerTabel",
                 column: "ScoreBoardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpillerTabel_SpilId",
+                table: "SpillerTabel",
+                column: "SpilId");
         }
 
         /// <inheritdoc />
@@ -74,6 +100,9 @@ namespace Yatzy.Migrations
 
             migrationBuilder.DropTable(
                 name: "ScoreBoard");
+
+            migrationBuilder.DropTable(
+                name: "SpilTabel");
         }
     }
 }
