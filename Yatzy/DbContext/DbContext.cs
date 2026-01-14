@@ -27,10 +27,35 @@ namespace Yatzy.YatzyDbContext
         {
             Id = id;
             Navn = navn;
+            ScoreBoard = new();
         }
 
         public int Id { get; set; }
         public string Navn { get; set; }
+
+        public ScoreBoard ScoreBoard { get; set; }
+
+        public void ResetScoreBoard()
+        {
+            ScoreBoard = new();
+        }
+    }
+
+    public class ScoreBoard : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // Helper method to keep the setters clean
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public ScoreBoard()
+        {
+            ScoreBoardId = 0;
+        }
+
+        public int ScoreBoardId { get; set; }
 
         private int? enere = null;
         public int? Enere
@@ -70,7 +95,7 @@ namespace Yatzy.YatzyDbContext
                 {
                     throw new NullReferenceException(nameof(toere));
                 }
-                BudgetValue += (toere / 2) - 3;
+                BudgetValue += toere - 6;
                 SumValue += toere;
                 OnPropertyChanged(nameof(BonusValue));
                 totalSum += toere;
@@ -93,7 +118,7 @@ namespace Yatzy.YatzyDbContext
                 {
                     throw new NullReferenceException(nameof(treere));
                 }
-                BudgetValue += (treere / 3) - 3;
+                BudgetValue += treere - 9;
                 SumValue += treere;
                 OnPropertyChanged(nameof(BonusValue));
                 totalSum += treere;
@@ -116,7 +141,7 @@ namespace Yatzy.YatzyDbContext
                 {
                     throw new NullReferenceException(nameof(firere));
                 }
-                BudgetValue += (firere / 4) - 3;
+                BudgetValue += firere - 12;
                 SumValue += firere;
                 OnPropertyChanged(nameof(BonusValue));
                 totalSum += firere;
@@ -139,7 +164,7 @@ namespace Yatzy.YatzyDbContext
                 {
                     throw new NullReferenceException(nameof(Femmere));
                 }
-                BudgetValue += (Femmere / 5) - 3;
+                BudgetValue += Femmere - 15;
                 SumValue += Femmere;
                 OnPropertyChanged(nameof(BonusValue));
                 totalSum += Femmere;
@@ -162,7 +187,7 @@ namespace Yatzy.YatzyDbContext
                 {
                     throw new NullReferenceException(nameof(Seksere));
                 }
-                BudgetValue += (seksere / 6) - 3;
+                BudgetValue += seksere - 18;
                 SumValue += seksere;
                 OnPropertyChanged(nameof(BonusValue));
                 totalSum += seksere;
@@ -177,7 +202,7 @@ namespace Yatzy.YatzyDbContext
         {
             get
             {
-                if (enere != null && toere != null && Treere != null && 
+                if (enere != null && toere != null && Treere != null &&
                     Firere != null && femmere != null && seksere != null
                     && BudgetValue >= 0)
                 {
@@ -372,5 +397,6 @@ namespace Yatzy.YatzyDbContext
                 OnPropertyChanged(nameof(TotalSum));
             }
         }
+
     }
 }

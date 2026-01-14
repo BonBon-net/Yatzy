@@ -1,18 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Yatzy
 {
@@ -37,6 +28,8 @@ namespace Yatzy
             }
         }
 
+        public bool PlayerHasWon = false;
+        public Spiller HighestScorePlayer;
         public int CurrentPlayerIndex;
         public Spiller SpillerTur
         {
@@ -49,24 +42,7 @@ namespace Yatzy
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    if (!(SpillerListe.Count() > 0))
-                    {
-                        // Temporary add and remove a player to avoid index issues
-                        Spiller = TilføjSpiller("Delete me");
-                        if (SpillerListe.FirstOrDefault(player => player.Navn == Spiller.Navn) != null)
-                        {
-                            Spiller = FjernSpiller(SpillerListe.First(player => player.Navn == Spiller.Navn));
-                        }
-                        if (SpillerListe.FirstOrDefault(player => player.Navn == Spiller.Navn) != null)
-                        {
-                            throw new InvalidDataException("Critical error: Could not remove temporary player");
-                        }
-                    }
-                    else
-                    {
-                        CurrentPlayerIndex = 0;
-                        Spiller = SpillerListe[CurrentPlayerIndex];
-                    }
+                    Spiller = null;
                 }
                 return Spiller;
             }
@@ -129,12 +105,26 @@ namespace Yatzy
             SpillerListe.Remove(spiller);
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpillerTur));
             return spiller;
         }
 
         public void StartGame()
         {
             CurrentPlayerIndex = 0;
+            RaisePropertyChanged(nameof(SpillerTur));
+            HighestScorePlayer = SpillerTur;
+        }
+        public void StopGame()
+        {
+            for (int i = 0; i < SpillerListe.Count; i++)
+            {
+                SpillerListe[i].ResetScoreBoard();
+            }
+
+            CurrentPlayerIndex = 0;
+            RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpillerTur));
         }
 
         public Spiller NæsteSpiller()
@@ -155,25 +145,56 @@ namespace Yatzy
         {
             string header = cell.Column.Header.ToString();
 
-            int score = RegistrerHeader(header, terninger);
+            int score = RegnHeaderValue(header, terninger);
 
             // Set property value by reflection
             PropertyInfo? property = typeof(Spiller).GetProperty(TrimString(header));
             property?.SetValue(SpillerTur, score);
 
+            if (SpillerTur.ScoreBoard.TotalSum > HighestScorePlayer.ScoreBoard.TotalSum)
+            {
+                HighestScorePlayer = SpillerTur;
+            }
+
+            if (SpillerListe.Count - 1 == CurrentPlayerIndex)
+            {
+                string[] headers = { "Enere", "Toere", "Treere", "Firere", "Femmere", "Seksere",
+                    "EtPar","ToPar","TreEns","FireEns","LilleStraight","StorStraight","Hus","Chance","Yatzy"};
+                // check if Last player has a null header
+                // If last player has no null value then end game
+                int count = 0;
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    try
+                    {
+                        RegnHeaderValue(headers[i], terninger);
+                    }
+                    catch
+                    {
+                        count++;
+                    }
+                }
+                if (count == headers.Length)
+                {
+                    PlayerHasWon = true;
+                }
+            }
+
             return score;
         }
 
-        public int RegistrerHeader(string header, Terning[] terninger)
+        public int RegnHeaderValue(string header, Terning[] terninger)
         {
             int[] values = CalculateValues();
             header = TrimString(header);
             int score = 0;
             string exceptionText = $"{header} er allerede brugt";
 
+            ScoreBoard scoreBoard = SpillerTur.ScoreBoard;
+
             if (header == "Enere")
             {
-                if (SpillerTur.Enere != null)
+                if (scoreBoard.Enere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -184,7 +205,7 @@ namespace Yatzy
             }
             else if (header == "Toere")
             {
-                if (SpillerTur.Toere != null)
+                if (scoreBoard.Toere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -195,7 +216,7 @@ namespace Yatzy
             }
             else if (header == "Treere")
             {
-                if (SpillerTur.Treere != null)
+                if (SpillerTur.ScoreBoard.Treere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -206,7 +227,7 @@ namespace Yatzy
             }
             else if (header == "Firere")
             {
-                if (SpillerTur.Firere != null)
+                if (scoreBoard.Firere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -217,7 +238,7 @@ namespace Yatzy
             }
             else if (header == "Femmere")
             {
-                if (SpillerTur.Femmere != null)
+                if (scoreBoard.Femmere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -228,7 +249,7 @@ namespace Yatzy
             }
             else if (header == "Seksere")
             {
-                if (SpillerTur.Seksere != null)
+                if (scoreBoard.Seksere != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -239,7 +260,7 @@ namespace Yatzy
             }
             else if (header == "EtPar")
             {
-                if (SpillerTur.EtPar != null)
+                if (scoreBoard.EtPar != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -256,7 +277,7 @@ namespace Yatzy
             }
             else if (header == "ToPar")
             {
-                if (SpillerTur.ToPar != null)
+                if (scoreBoard.ToPar != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -292,7 +313,7 @@ namespace Yatzy
             }
             else if (header == "TreEns")
             {
-                if (SpillerTur.TreEns != null)
+                if (scoreBoard.TreEns != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -309,7 +330,7 @@ namespace Yatzy
             }
             else if (header == "FireEns")
             {
-                if (SpillerTur.FireEns != null)
+                if (scoreBoard.FireEns != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -326,7 +347,7 @@ namespace Yatzy
             }
             else if (header == "LilleStraight")
             {
-                if (SpillerTur.LilleStraight != null)
+                if (scoreBoard.LilleStraight != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -342,7 +363,7 @@ namespace Yatzy
             }
             else if (header == "StorStraight")
             {
-                if (SpillerTur.StorStraight != null)
+                if (scoreBoard.StorStraight != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -358,7 +379,7 @@ namespace Yatzy
             }
             else if (header == "Hus")
             {
-                if (SpillerTur.Hus != null)
+                if (scoreBoard.Hus != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -394,7 +415,7 @@ namespace Yatzy
             }
             else if (header == "Chance")
             {
-                if (SpillerTur.Chance != null)
+                if (scoreBoard.Chance != null)
                 {
                     throw new Exception(exceptionText);
                 }
@@ -409,7 +430,7 @@ namespace Yatzy
             }
             else if (header == "Yatzy")
             {
-                if (SpillerTur.Yatzy != null)
+                if (SpillerTur.ScoreBoard.Yatzy != null)
                 {
                     throw new Exception(exceptionText);
                 }

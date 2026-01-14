@@ -19,29 +19,31 @@ namespace Yatzy
     /// </summary>
     public partial class MainWindow : Window, IUserControlManager
     {
-        FuncLayer FuncLayer = new FuncLayer();
+        FuncLayer funcLayer = new FuncLayer();
+        IUserControlManager userControlManager;
         Terninger TerningUserControl;
         Menu MenuUserControl;
 
         public MainWindow()
         {
             InitializeComponent();
-            MenuUserControl = new Menu(FuncLayer, this);
-            TerningUserControl = new Terninger(FuncLayer);
-            DataContext = FuncLayer;
+            userControlManager = this;
+            MenuUserControl = new Menu(funcLayer, this);
+            TerningUserControl = new Terninger(funcLayer, this);
+            DataContext = funcLayer;
             ChangeUserControl(MenuUserControl);
         }
 
         public void StartGame()
         {
-            FuncLayer.StartGame();
-            //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+            funcLayer.StartGame();
             ChangeUserControl(TerningUserControl);
         }
 
         public void StopGame()
         {
             ChangeUserControl(MenuUserControl);
+            funcLayer.StopGame();
         }
 
         public void ChangeUserControl(UserControl newControl)

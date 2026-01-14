@@ -17,10 +17,11 @@
         <Image x:Name="imgTerning4" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="340,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning4Selected_MouseClick"/>
         <Image x:Name="imgTerningSelected5" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="440,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning5" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="450,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning5Selected_MouseClick"/>
-        <Button x:Name="btnKast" Content="Kast" IsEnabled="True" HorizontalAlignment="Left" Margin="265,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
-        <TextBlock x:Name="txbKastTilbage" Text="Rulls: 0" HorizontalAlignment="Left" Margin="296,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" Margin="0,132,740,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Button x:Name="btnKast" Content="Kast" IsEnabled="True" HorizontalAlignment="Left" Margin="321,130,0,0" VerticalAlignment="Top" Click="KastTerninger_Click" RenderTransformOrigin="-1.395,0.555"/>
+        <TextBlock x:Name="txbKastTilbage" Text="" HorizontalAlignment="Left" TextAlignment="Left" FontSize="25" MinWidth="100" Margin="440,120,0,0" MinHeight="50" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" TextAlignment="Right" FontSize="25" Margin="0,150,460,0" MinWidth="100" MinHeight="45" MaxHeight="45" TextWrapping="Wrap" VerticalAlignment="Top" Width="286"/>
         <Button x:Name="btnRegister" Content="Register" IsEnabled="False" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
+        <Button x:Name="btnStopGame" Content="Stop Game" IsEnabled="True" HorizontalAlignment="Left" Margin="254,130,0,0" VerticalAlignment="Top" Click="btnStopGame_Click"/>
         <DataGrid ItemsSource="{Binding SpillerListe}" x:Name="dgSpillerScoreBoard"
                 FlowDirection="RightToLeft" 
                 IsReadOnly="True" HorizontalAlignment="Left"
@@ -61,24 +62,24 @@
             </DataGrid.LayoutTransform>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
-                <DataGridTextColumn Header="Enere" Binding="{Binding Enere}" />
-                <DataGridTextColumn Header="Toere" Binding="{Binding Toere}" />
-                <DataGridTextColumn Header="Treere" Binding="{Binding Treere}" />
-                <DataGridTextColumn Header="Firere" Binding="{Binding Firere}" />
-                <DataGridTextColumn Header="Femmere" Binding="{Binding Femmere}" />
-                <DataGridTextColumn Header="Seksere" Binding="{Binding Seksere}" />
-                <DataGridTextColumn Header="SUM" Binding="{Binding BonusValue}" />
-                <DataGridTextColumn Header="Bonus" Binding="{Binding Bonus}" />
-                <DataGridTextColumn Header="Et Par" Binding="{Binding EtPar}" />
-                <DataGridTextColumn Header="To Par" Binding="{Binding ToPar}" />
-                <DataGridTextColumn Header="Tre Ens" Binding="{Binding TreEns}" />
-                <DataGridTextColumn Header="Fire Ens" Binding="{Binding FireEns}" />
-                <DataGridTextColumn Header="Lille Straight" Binding="{Binding LilleStraight}" />
-                <DataGridTextColumn Header="Stor Straight" Binding="{Binding StorStraight}" />
-                <DataGridTextColumn Header="Hus" Binding="{Binding Hus}" />
-                <DataGridTextColumn Header="Chance" Binding="{Binding Chance}" />
-                <DataGridTextColumn Header="Yatzy" Binding="{Binding Yatzy}" />
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalSum}" />
+                <DataGridTextColumn Header="Enere" Binding="{Binding ScoreBoard.Enere}" />
+                <DataGridTextColumn Header="Toere" Binding="{Binding ScoreBoard.Toere}" />
+                <DataGridTextColumn Header="Treere" Binding="{Binding ScoreBoard.Treere}" />
+                <DataGridTextColumn Header="Firere" Binding="{Binding ScoreBoard.Firere}" />
+                <DataGridTextColumn Header="Femmere" Binding="{Binding ScoreBoard.Femmere}" />
+                <DataGridTextColumn Header="Seksere" Binding="{Binding ScoreBoard.Seksere}" />
+                <DataGridTextColumn Header="SUM" Binding="{Binding ScoreBoard.BonusValue}" />
+                <DataGridTextColumn Header="Bonus" Binding="{Binding ScoreBoard.Bonus}" />
+                <DataGridTextColumn Header="Et Par" Binding="{Binding ScoreBoard.EtPar}" />
+                <DataGridTextColumn Header="To Par" Binding="{Binding ScoreBoard.ToPar}" />
+                <DataGridTextColumn Header="Tre Ens" Binding="{Binding ScoreBoard.TreEns}" />
+                <DataGridTextColumn Header="Fire Ens" Binding="{Binding ScoreBoard.FireEns}" />
+                <DataGridTextColumn Header="Lille Straight" Binding="{Binding ScoreBoard.LilleStraight}" />
+                <DataGridTextColumn Header="Stor Straight" Binding="{Binding ScoreBoard.StorStraight}" />
+                <DataGridTextColumn Header="Hus" Binding="{Binding ScoreBoard.Hus}" />
+                <DataGridTextColumn Header="Chance" Binding="{Binding ScoreBoard.Chance}" />
+                <DataGridTextColumn Header="Yatzy" Binding="{Binding ScoreBoard.Yatzy}" />
+                <DataGridTextColumn Header="Total" Binding="{Binding ScoreBoard.TotalSum}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

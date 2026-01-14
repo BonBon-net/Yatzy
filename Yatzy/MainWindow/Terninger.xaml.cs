@@ -1,14 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
@@ -45,11 +39,13 @@ namespace Yatzy
         private readonly Random rnd = new Random();
 
         bool ManualDeveloper_CheckDataIsTrue = true;
-        public Terninger(FuncLayer FuncLayer)
+        private IUserControlManager UserControlManager { get; set; }
+        public Terninger(FuncLayer FuncLayer, IUserControlManager userControlManager)
         {
             InitializeComponent();
             this.FuncLayer = FuncLayer;
             DataContext = this.FuncLayer;
+            UserControlManager = userControlManager;
             TerningImages = new Image[] { imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5 };
             AlleTerninger = new Terning[TerningImages.Length];
             for (int i = 0; i < AlleTerninger.Length; i++)
@@ -72,16 +68,16 @@ namespace Yatzy
                 // Throws dice's
                 int[] RulleTerninger = GetRulNumber();
                 KastTerningerne(RulleTerninger);
-                await Task.Delay(awaitTime * kastet);
-                if (true)
+                if (false)
                 {
                     // experiment
+                    await Task.Delay(awaitTime * kastet);
                     CheckTerningValues();
                     FindRows();
                 }
                 // Finishing 'KastTertinger'
                 txbKastTilbage.Text = $"{_txbKastTilbage} {ThrowedNumber}";
-                DevMessage();
+                DevMessage(false);
                 if (ThrowedNumber >= 3)
                 {
                     btnKast.IsEnabled = false;
@@ -119,7 +115,7 @@ namespace Yatzy
                     try
                     {
                         string header = cellList[i].Column.Header.ToString();
-                        int score = FuncLayer.RegistrerHeader(header, AlleTerninger);
+                        int score = FuncLayer.RegnHeaderValue(header, AlleTerninger);
                         if (score > 0)
                         {
                             dgSpillerScoreBoard.CurrentCell = cellList[i];
@@ -198,9 +194,9 @@ namespace Yatzy
                 }
                 return RulleTerninger;
             }
-            void DevMessage()
+            void DevMessage(bool devMessage)
             {
-                if (false && ManualDeveloper_CheckDataIsTrue)
+                if (devMessage && ManualDeveloper_CheckDataIsTrue)
                 {
                     string messageInput = string.Empty;
                     for (int i = 0; i < AlleTerninger.Length; i++)
@@ -268,7 +264,7 @@ namespace Yatzy
                     DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
 
                     int Score = FuncLayer.Registrer(cell, AlleTerninger);
-                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {FuncLayer.SpillerListe.First().Navn}";
+                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {funcLayer.SpillerListe.First().Navn}";
 
                     dgSpillerScoreBoard.UnselectAllCells();
                     Spiller spiller = FuncLayer.NæsteSpiller();
@@ -279,6 +275,14 @@ namespace Yatzy
                     {
                         AlleTerninger[i].IsHeld = false;
                         ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
+                    }
+
+                    if (FuncLayer.PlayerHasWon)
+                    {
+                        btnKast.IsEnabled = false;
+                        btnRegister.IsEnabled = false;
+                        txbKastTilbage.Text = "Player has won";
+                        txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
                     }
                 }
             }
@@ -300,6 +304,21 @@ namespace Yatzy
                 else
                 {
                     btnRegister.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void btnStopGame_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (MessageBox.Show("", "", MessageBoxButton.YesNo))
+                {
+                    UserControlManager.StopGame();
                 }
             }
             catch (Exception ex)

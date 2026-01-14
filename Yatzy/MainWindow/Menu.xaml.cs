@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -32,15 +19,8 @@ namespace Yatzy
             this.FuncLayer = FuncLayer;
             DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
-            if (this.FuncLayer.SpillerListe.Count > 0) 
-            {
-                btnStartSpil.IsEnabled = true; 
-            }
-            else 
-            {
-                btnStartSpil.IsEnabled = false; 
-            }
-            //this.FuncLayer.RaisePropertyChanged(nameof(this.FuncLayer.SpillerListe));
+            StartSpil_IsEnabled();
+            //this.funcLayer.RaisePropertyChanged(nameof(this.funcLayer.SpillerListe));
         }
 
         private void TilføjSpiller_Click(object sender, RoutedEventArgs e)
@@ -49,12 +29,11 @@ namespace Yatzy
             {
                 FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
                 txtSpillerNavn.Clear();
-                if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }
-                else { btnStartSpil.IsEnabled = false; }
+                StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error");
             }
         }
 
@@ -64,12 +43,11 @@ namespace Yatzy
             {
                 FuncLayer.FjernSpiller(SpillerListe.SelectedItem as Spiller);
                 txtSpillerNavn.Clear();
-                if (FuncLayer.SpillerListe.Count > 0) { btnStartSpil.IsEnabled = true; }
-                else { btnStartSpil.IsEnabled = false; }
+                StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error");
             }
         }
 
@@ -101,7 +79,38 @@ namespace Yatzy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
+
+        private void txtSpillerNavn_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtSpillerNavn.Text))
+                {
+                    btnTilføjSpiller.IsEnabled = false;
+                }
+                else
+                {
+                    btnTilføjSpiller.IsEnabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
+
+        private void StartSpil_IsEnabled()
+        {
+            if (FuncLayer.SpillerListe.Count > 0)
+            {
+                btnStartSpil.IsEnabled = true;
+            }
+            else
+            {
+                btnStartSpil.IsEnabled = false;
             }
         }
     }

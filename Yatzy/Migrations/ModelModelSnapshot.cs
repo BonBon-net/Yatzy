@@ -21,13 +21,13 @@ namespace Yatzy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.Spiller", b =>
+            modelBuilder.Entity("Yatzy.YatzyDbContext.ScoreBoard", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ScoreBoardId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScoreBoardId"));
 
                     b.Property<int>("Bonus")
                         .HasColumnType("int");
@@ -60,10 +60,6 @@ namespace Yatzy.Migrations
                     b.Property<int?>("LilleStraight")
                         .HasColumnType("int");
 
-                    b.Property<string>("Navn")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("Seksere")
                         .HasColumnType("int");
 
@@ -88,9 +84,42 @@ namespace Yatzy.Migrations
                     b.Property<int?>("Yatzy")
                         .HasColumnType("int");
 
+                    b.HasKey("ScoreBoardId");
+
+                    b.ToTable("ScoreBoard");
+                });
+
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Spiller", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Navn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ScoreBoardId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ScoreBoardId");
+
                     b.ToTable("SpillerTabel");
+                });
+
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Spiller", b =>
+                {
+                    b.HasOne("Yatzy.YatzyDbContext.ScoreBoard", "ScoreBoard")
+                        .WithMany()
+                        .HasForeignKey("ScoreBoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ScoreBoard");
                 });
 #pragma warning restore 612, 618
         }
