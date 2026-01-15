@@ -12,8 +12,8 @@ using Yatzy.YatzyDbContext;
 namespace Yatzy.Migrations
 {
     [DbContext(typeof(Model))]
-    [Migration("20260114194951_wdsdgthyjyrfsdw")]
-    partial class wdsdgthyjyrfsdw
+    [Migration("20260115125114_clsc3")]
+    partial class clsc3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,7 +90,7 @@ namespace Yatzy.Migrations
 
                     b.HasKey("ScoreBoardId");
 
-                    b.ToTable("ScoreBoard");
+                    b.ToTable("AllScoreboards");
                 });
 
             modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>
@@ -100,6 +100,9 @@ namespace Yatzy.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SpilId"));
+
+                    b.Property<int>("AntalKast")
+                        .HasColumnType("int");
 
                     b.Property<int>("NuværendeSpillerIndex")
                         .HasColumnType("int");
@@ -139,6 +142,30 @@ namespace Yatzy.Migrations
                     b.ToTable("SpillerTabel");
                 });
 
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Terning", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DiceValue")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsHeld")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("SpilId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SpilId");
+
+                    b.ToTable("Terning");
+                });
+
             modelBuilder.Entity("Yatzy.YatzyDbContext.Spiller", b =>
                 {
                     b.HasOne("Yatzy.YatzyDbContext.ScoreBoard", "ScoreBoard")
@@ -154,9 +181,18 @@ namespace Yatzy.Migrations
                     b.Navigation("ScoreBoard");
                 });
 
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Terning", b =>
+                {
+                    b.HasOne("Yatzy.YatzyDbContext.Spil", null)
+                        .WithMany("Terninger")
+                        .HasForeignKey("SpilId");
+                });
+
             modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>
                 {
                     b.Navigation("Spillere");
+
+                    b.Navigation("Terninger");
                 });
 #pragma warning restore 612, 618
         }

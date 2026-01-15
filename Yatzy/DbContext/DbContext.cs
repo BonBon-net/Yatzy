@@ -13,7 +13,69 @@ namespace Yatzy.YatzyDbContext
     {
         public DbSet<Spiller> SpillerTabel { get; set; }
         public DbSet<Spil> SpilTabel { get; set; }
+        public DbSet<ScoreBoard> AllScoreboards { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
+    }
+
+    public class Terning : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public int Id { get; set; }
+
+        public int DiceValue { get; set; } = -1;
+        public bool IsHeld { get; set; } = false;
+    }
+
+    public class SpillerSpil : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // Helper method to keep the setters clean
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public SpillerSpil(Spiller spiller)
+        {
+            Spiller = spiller;
+            ScoreBoard = new ScoreBoard();
+        }
+
+        public SpillerSpil(Spiller spiller, ScoreBoard scoreBoard)
+        {
+            Spiller = spiller;
+            ScoreBoard = scoreBoard;
+        }
+
+        public int Id { get; set; }
+
+        private Spiller spiller;
+        public Spiller Spiller
+        {
+            get
+            {
+                return spiller;
+            }
+            set
+            {
+                spiller = value;
+                OnPropertyChanged(nameof(Spiller));
+            }
+        }
+        private ScoreBoard scoreBoard;
+        public ScoreBoard ScoreBoard
+        {
+            get
+            {
+                return scoreBoard;
+            }
+            set
+            {
+                scoreBoard = value;
+                OnPropertyChanged(nameof(scoreBoard));
+            }
+        }
     }
 
     public class Spil : INotifyPropertyChanged
@@ -27,14 +89,17 @@ namespace Yatzy.YatzyDbContext
 
         public Spil()
         {
-            Spillere = new ObservableCollection<Spiller>();
             NuværendeSpillerIndex = 0;
             SavedDateTime = DateTime.Now;
         }
-        public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, Terning[] terninger, int antalKast, DateTime savedDateTime)
+        public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, List<Terning> terninger, int antalKast, DateTime savedDateTime)
         {
             SpilId = id;
-            Spillere = spillere;
+            foreach (Spiller spiller in spillere)
+            {
+                SpillerSpil spil = new SpillerSpil(spiller);
+                AlleSpillerSpil.Add(spil);
+            }
             NuværendeSpillerIndex = nuværendeSpillerIndex;
             Terninger = terninger;
             AntalKast = antalKast;
@@ -43,17 +108,17 @@ namespace Yatzy.YatzyDbContext
 
         public int SpilId { get; set; }
 
-        private ObservableCollection<Spiller> spillere;
-        public ObservableCollection<Spiller> Spillere
+        private ObservableCollection<SpillerSpil> alleSpillerSpil = new();
+        public ObservableCollection<SpillerSpil> AlleSpillerSpil
         {
             get
             {
-                return spillere;
+                return alleSpillerSpil;
             }
             set
             {
-                spillere = value;
-                OnPropertyChanged(nameof(spillere));
+                alleSpillerSpil = value;
+                OnPropertyChanged(nameof(AlleSpillerSpil));
             }
         }
         private int nuværendeSpillerIndex;
@@ -69,8 +134,8 @@ namespace Yatzy.YatzyDbContext
                 OnPropertyChanged(nameof(nuværendeSpillerIndex));
             }
         }
-        private Terning[] terninger;
-        public Terning[] Terninger
+        private List<Terning> terninger;
+        public List<Terning> Terninger
         {
             get
             {
@@ -119,15 +184,15 @@ namespace Yatzy.YatzyDbContext
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public Spiller() { }
         public Spiller(int id, string navn)
         {
             Id = id;
             Navn = navn;
-            ScoreBoard = new();
         }
 
         public int Id { get; set; }
-        private string navn;
+        private string navn = string.Empty;
         public string Navn
         {
             get
@@ -141,7 +206,7 @@ namespace Yatzy.YatzyDbContext
             }
         }
 
-        private ScoreBoard scoreBoard;
+        private ScoreBoard scoreBoard = new();
         public ScoreBoard ScoreBoard
         {
             get
@@ -157,7 +222,7 @@ namespace Yatzy.YatzyDbContext
 
         public void ResetScoreBoard()
         {
-            ScoreBoard = new();
+            //ScoreBoard = new();
         }
     }
 

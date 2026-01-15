@@ -7,15 +7,6 @@ using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
-    public class Terning : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int DiceValue { get; set; } = -1;
-        public Image Terningside { get; set; } = new Image();
-        public bool IsHeld { get; set; } = false;
-    }
-
     public class FuncLayer : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -52,12 +43,28 @@ namespace Yatzy
         {
             model.SpillerTabel.Load();
             RaisePropertyChanged(nameof(SpillerListe));
+            model.SpilTabel.Load();
+            RaisePropertyChanged(nameof(SpilListe));
         }
         public ObservableCollection<Spiller> SpillerListe
         {
             get
             {
                 return model.SpillerTabel.Local.ToObservableCollection();
+            }
+        }
+        private bool isGameSaved = false;
+        public bool IsGameSaved 
+        {
+            get
+            {
+                return isGameSaved;
+            } 
+            set
+            {
+                isGameSaved = !value;
+                RaisePropertyChanged(nameof(IsGameSaved));
+                RaisePropertyChanged(nameof(isGameSaved));
             }
         }
         public ObservableCollection<Spil> SpilListe
@@ -130,6 +137,7 @@ namespace Yatzy
             spiller.Navn = spillerNavn;
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpilListe));
 
             return spiller;
         }
@@ -146,7 +154,17 @@ namespace Yatzy
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
             RaisePropertyChanged(nameof(SpillerTur));
+            RaisePropertyChanged(nameof(SpilListe));
+
             return spiller;
+        }
+
+        public void NewGame(List<Terning> terninger)
+        {
+            // Lave et nyt spil-objekt med alle spiller fra SpillerListe
+            Spil spil = new Spil(-1, SpillerListe, 0, terninger, 0, DateTime.Now);
+
+            StartGame();
         }
 
         public void StartGame()
@@ -154,6 +172,7 @@ namespace Yatzy
             CurrentPlayerIndex = 0;
             RaisePropertyChanged(nameof(SpillerTur));
             HighestScorePlayer = SpillerTur;
+            IsGameSaved = false;
         }
         public void StopGame()
         {
@@ -181,15 +200,15 @@ namespace Yatzy
             return SpillerTur;
         }
 
-        public void SaveGame(Terning[] terninger, int antalKasted)
+        public void SaveGame(List<Terning> terninger, int antalKasted)
         {
             Spil spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
-            model.SpilTabel.Add(spil);
+            SpilListe.Add(spil);
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpilListe));
         }
 
-        public int Registrer(DataGridCellInfo cell, Terning[] terninger)
+        public int Registrer(DataGridCellInfo cell, List<Terning> terninger)
         {
             string header = cell.Column.Header.ToString();
 
@@ -233,7 +252,7 @@ namespace Yatzy
             return score;
         }
 
-        public int RegnHeaderValue(string header, Terning[] terninger)
+        public int RegnHeaderValue(string header, List<Terning> terninger)
         {
             int[] values = CalculateValues();
             header = TrimString(header);
@@ -471,7 +490,7 @@ namespace Yatzy
                 }
 
                 // calculate'ing horse + moo
-                for (int i = 0; i < terninger.Length; i++)
+                for (int i = 0; i < terninger.Count; i++)
                 {
                     score += terninger[i].DiceValue;
                 }
@@ -505,7 +524,7 @@ namespace Yatzy
             int[] CalculateValues()
             {
                 int[] values = new int[6];
-                for (int i = 0; i < terninger.Length; i++)
+                for (int i = 0; i < terninger.Count; i++)
                 {
                     int diceValue = terninger[i].DiceValue;
                     values[diceValue - 1] += 1;

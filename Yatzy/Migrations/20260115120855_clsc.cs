@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class wdsdgthyjyrfsdw : Migration
+    public partial class clsc : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ScoreBoard",
+                name: "AllScoreboards",
                 columns: table => new
                 {
                     ScoreBoardId = table.Column<int>(type: "int", nullable: false)
@@ -38,7 +38,7 @@ namespace Yatzy.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScoreBoard", x => x.ScoreBoardId);
+                    table.PrimaryKey("PK_AllScoreboards", x => x.ScoreBoardId);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,6 +48,7 @@ namespace Yatzy.Migrations
                     SpilId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NuværendeSpillerIndex = table.Column<int>(type: "int", nullable: false),
+                    AntalKast = table.Column<int>(type: "int", nullable: false),
                     SavedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -69,13 +70,33 @@ namespace Yatzy.Migrations
                 {
                     table.PrimaryKey("PK_SpillerTabel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SpillerTabel_ScoreBoard_ScoreBoardId",
+                        name: "FK_SpillerTabel_AllScoreboards_ScoreBoardId",
                         column: x => x.ScoreBoardId,
-                        principalTable: "ScoreBoard",
+                        principalTable: "AllScoreboards",
                         principalColumn: "ScoreBoardId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SpillerTabel_SpilTabel_SpilId",
+                        column: x => x.SpilId,
+                        principalTable: "SpilTabel",
+                        principalColumn: "SpilId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Terning",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiceValue = table.Column<int>(type: "int", nullable: false),
+                    IsHeld = table.Column<bool>(type: "bit", nullable: false),
+                    SpilId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Terning", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Terning_SpilTabel_SpilId",
                         column: x => x.SpilId,
                         principalTable: "SpilTabel",
                         principalColumn: "SpilId");
@@ -90,6 +111,11 @@ namespace Yatzy.Migrations
                 name: "IX_SpillerTabel_SpilId",
                 table: "SpillerTabel",
                 column: "SpilId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Terning_SpilId",
+                table: "Terning",
+                column: "SpilId");
         }
 
         /// <inheritdoc />
@@ -99,7 +125,10 @@ namespace Yatzy.Migrations
                 name: "SpillerTabel");
 
             migrationBuilder.DropTable(
-                name: "ScoreBoard");
+                name: "Terning");
+
+            migrationBuilder.DropTable(
+                name: "AllScoreboards");
 
             migrationBuilder.DropTable(
                 name: "SpilTabel");
