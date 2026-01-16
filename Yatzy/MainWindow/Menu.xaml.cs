@@ -111,7 +111,7 @@ namespace Yatzy
 
         private void StartSpil_Click(object sender, RoutedEventArgs e)
         {
-            FuncLayer.NewGame();
+            //FuncLayer.NewGame();
 
             try
             {
@@ -165,15 +165,15 @@ namespace Yatzy
         {
             try
             {
-                Spil? spil = dgbSpilListe.SelectedItem as Spil;
-                if (spil != null)
-                {
-                    btnLoadGame.IsEnabled = true;
-                }
-                else
-                {
-                    btnLoadGame.IsEnabled = false;
-                }
+                //Spil? spil = dgbSpilListe.SelectedItem as Spil;
+                //if (spil != null)
+                //{
+                //    btnLoadGame.IsEnabled = true;
+                //}
+                //else
+                //{
+                //    btnLoadGame.IsEnabled = false;
+                //}
             }
             catch (Exception ex)
             {
@@ -185,17 +185,17 @@ namespace Yatzy
         {
             try
             {
-                Spil? spil = dgbSpilListe.SelectedItem as Spil;
-                if (spil != null)
-                {
-                    btnLoadGame.IsEnabled = false;
-                    dgbSpilListe.SelectedItem = null;
-                }
-                else
-                {
-                    btnLoadGame.IsEnabled = false;
-                    throw new NullReferenceException("No selected spil");
-                }
+                //Spil? spil = dgbSpilListe.SelectedItem as Spil;
+                //if (spil != null)
+                //{
+                //    btnLoadGame.IsEnabled = false;
+                //    dgbSpilListe.SelectedItem = null;
+                //}
+                //else
+                //{
+                //    btnLoadGame.IsEnabled = false;
+                //    throw new NullReferenceException("No selected spil");
+                //}
             }
             catch (Exception ex)
             {

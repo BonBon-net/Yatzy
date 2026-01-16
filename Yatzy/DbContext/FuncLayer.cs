@@ -43,8 +43,8 @@ namespace Yatzy
         {
             model.SpillerTabel.Load();
             RaisePropertyChanged(nameof(SpillerListe));
-            model.SpilTabel.Load();
-            RaisePropertyChanged(nameof(SpilListe));
+            //model.SpilTabel.Load();
+            //RaisePropertyChanged(nameof(SpilListe));
         }
         public ObservableCollection<Spiller> SpillerListe
         {
@@ -67,13 +67,13 @@ namespace Yatzy
                 RaisePropertyChanged(nameof(isGameSaved));
             }
         }
-        public ObservableCollection<Spil> SpilListe
-        {
-            get
-            {
-                return model.SpilTabel.Local.ToObservableCollection();
-            }
-        }
+        //public ObservableCollection<Spil> SpilListe
+        //{
+        //    get
+        //    {
+        //        return model.SpilTabel.Local.ToObservableCollection();
+        //    }
+        //}
 
         public Spiller TilføjSpiller(string spillerNavn)
         {
@@ -83,16 +83,7 @@ namespace Yatzy
             }
 
             // Create new player
-            string[] player = spillerNavn.Split(" ");
-            spillerNavn = string.Empty;
-            for (int i = 0; i < player.Length; i++)
-            {
-                if (spillerNavn != string.Empty)
-                {
-                    spillerNavn += " ";
-                }
-                spillerNavn += player[i].First().ToString().ToUpper() + player[i].Substring(1).ToLower();
-            }
+            spillerNavn = SpillerNavn(spillerNavn);
             // lambda
             if (SpillerListe.FirstOrDefault(player => spillerNavn == player.Navn) != null)
             {
@@ -119,16 +110,7 @@ namespace Yatzy
                 throw new ArgumentException("Spillernavn kan ikke være tomt");
             }
             // Update player name
-            string[] player = spillerNavn.Split(" ");
-            spillerNavn = string.Empty;
-            for (int i = 0; i < player.Length; i++)
-            {
-                if (spillerNavn != string.Empty)
-                {
-                    spillerNavn += " ";
-                }
-                spillerNavn += player[i].First().ToString().ToUpper() + player[i].Substring(1).ToLower();
-            }
+            spillerNavn = SpillerNavn(spillerNavn);
             // lambda
             if (SpillerListe.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {
@@ -137,9 +119,24 @@ namespace Yatzy
             spiller.Navn = spillerNavn;
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
-            RaisePropertyChanged(nameof(SpilListe));
+            //RaisePropertyChanged(nameof(SpilListe));
 
             return spiller;
+        }
+
+        private string SpillerNavn(string inputSpillerNavn)
+        {
+            string[] player = inputSpillerNavn.Split(" ");
+            string nytSpillerNavn = string.Empty;
+            for (int i = 0; i < player.Length; i++)
+            {
+                if (nytSpillerNavn != string.Empty)
+                {
+                    nytSpillerNavn += " ";
+                }
+                nytSpillerNavn += player[i].First().ToString().ToUpper() + player[i].Substring(1).ToLower();
+            }
+            return nytSpillerNavn;
         }
 
         public Spiller FjernSpiller(Spiller spiller)
@@ -154,18 +151,18 @@ namespace Yatzy
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
             RaisePropertyChanged(nameof(SpillerTur));
-            RaisePropertyChanged(nameof(SpilListe));
+            //RaisePropertyChanged(nameof(SpilListe));
 
             return spiller;
         }
 
-        public void NewGame(List<Terning> terninger)
-        {
-            // Lave et nyt spil-objekt med alle spiller fra SpillerListe
-            Spil spil = new Spil(-1, SpillerListe, 0, terninger, 0, DateTime.Now);
+        //public void NewGame(List<Terning> terninger)
+        //{
+        //    // Lave et nyt spil-objekt med alle spiller fra SpillerListe
+        //    Spil spil = new Spil(-1, SpillerListe, 0, terninger, 0, DateTime.Now);
 
-            StartGame();
-        }
+        //    StartGame();
+        //}
 
         public void StartGame()
         {
@@ -200,13 +197,13 @@ namespace Yatzy
             return SpillerTur;
         }
 
-        public void SaveGame(List<Terning> terninger, int antalKasted)
-        {
-            Spil spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
-            SpilListe.Add(spil);
-            model.SaveChanges();
-            RaisePropertyChanged(nameof(SpilListe));
-        }
+        //public void SaveGame(List<Terning> terninger, int antalKasted)
+        //{
+        //    Spil spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
+        //    SpilListe.Add(spil);
+        //    model.SaveChanges();
+        //    RaisePropertyChanged(nameof(SpilListe));
+        //}
 
         public int Registrer(DataGridCellInfo cell, List<Terning> terninger)
         {
@@ -421,9 +418,9 @@ namespace Yatzy
                     throw new Exception(exceptionText);
                 }
 
-                if (values[0] == 1 && values[1] == 1 &&
-                    values[2] == 1 && values[3] == 1 &&
-                    values[4] == 1)
+                if (values[0] >= 1 && values[1] >= 1 &&
+                    values[2] >= 1 && values[3] >= 1 &&
+                    values[4] >= 1)
                 {
                     score = 1 + 2 + 3 + 4 + 5;
                 }
@@ -437,9 +434,9 @@ namespace Yatzy
                     throw new Exception(exceptionText);
                 }
 
-                if (values[1] == 1 && values[2] == 1 &&
-                    values[3] == 1 && values[4] == 1 &&
-                    values[5] == 1)
+                if (values[1] >= 1 && values[2] >= 1 &&
+                    values[3] >= 1 && values[4] >= 1 &&
+                    values[5] >= 1)
                 {
                     score = 2 + 3 + 4 + 5 + 6;
                 }
@@ -463,7 +460,7 @@ namespace Yatzy
                         break;
                     }
                 }
-                if (-1 <= ints[0])
+                if (ints[0] > -1)
                 {
                     for (int i = 0; i < values.Length; i++)
                     {
@@ -471,7 +468,7 @@ namespace Yatzy
                         {
                             ints[1] = i;
 
-                            if (-1 <= ints[1])
+                            if (ints[1] > -1)
                             {
                                 score = (values[ints[0]] * (ints[0] + 1)) + (values[ints[1]] * (ints[1] + 1));
                             }

@@ -12,7 +12,7 @@ namespace Yatzy.YatzyDbContext
     public class Model : DbContext
     {
         public DbSet<Spiller> SpillerTabel { get; set; }
-        public DbSet<Spil> SpilTabel { get; set; }
+        //public DbSet<Spil> SpilTabel { get; set; }
         public DbSet<ScoreBoard> AllScoreboards { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
     }
@@ -27,153 +27,153 @@ namespace Yatzy.YatzyDbContext
         public bool IsHeld { get; set; } = false;
     }
 
-    public class SpillerSpil : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
-        // Helper method to keep the setters clean
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+    //public class SpillerSpil : INotifyPropertyChanged
+    //{
+    //    public event PropertyChangedEventHandler? PropertyChanged;
+    //    // Helper method to keep the setters clean
+    //    protected void OnPropertyChanged(string name)
+    //    {
+    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    //    }
 
-        public SpillerSpil(Spiller spiller)
-        {
-            Spiller = spiller;
-            ScoreBoard = new ScoreBoard();
-        }
+    //    public SpillerSpil(Spiller spiller)
+    //    {
+    //        Spiller = spiller;
+    //        ScoreBoard = new ScoreBoard();
+    //    }
 
-        public SpillerSpil(Spiller spiller, ScoreBoard scoreBoard)
-        {
-            Spiller = spiller;
-            ScoreBoard = scoreBoard;
-        }
+    //    public SpillerSpil(Spiller spiller, ScoreBoard scoreBoard)
+    //    {
+    //        Spiller = spiller;
+    //        ScoreBoard = scoreBoard;
+    //    }
 
-        public int Id { get; set; }
+    //    public int Id { get; set; }
 
-        private Spiller spiller;
-        public Spiller Spiller
-        {
-            get
-            {
-                return spiller;
-            }
-            set
-            {
-                spiller = value;
-                OnPropertyChanged(nameof(Spiller));
-            }
-        }
-        private ScoreBoard scoreBoard;
-        public ScoreBoard ScoreBoard
-        {
-            get
-            {
-                return scoreBoard;
-            }
-            set
-            {
-                scoreBoard = value;
-                OnPropertyChanged(nameof(scoreBoard));
-            }
-        }
-    }
+    //    private Spiller spiller;
+    //    public Spiller Spiller
+    //    {
+    //        get
+    //        {
+    //            return spiller;
+    //        }
+    //        set
+    //        {
+    //            spiller = value;
+    //            OnPropertyChanged(nameof(Spiller));
+    //        }
+    //    }
+    //    private ScoreBoard scoreBoard;
+    //    public ScoreBoard ScoreBoard
+    //    {
+    //        get
+    //        {
+    //            return scoreBoard;
+    //        }
+    //        set
+    //        {
+    //            scoreBoard = value;
+    //            OnPropertyChanged(nameof(scoreBoard));
+    //        }
+    //    }
+    //}
 
-    public class Spil : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
-        // Helper method to keep the setters clean
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+    //public class Spil : INotifyPropertyChanged
+    //{
+    //    public event PropertyChangedEventHandler? PropertyChanged;
+    //    // Helper method to keep the setters clean
+    //    protected void OnPropertyChanged(string name)
+    //    {
+    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    //    }
 
-        public Spil()
-        {
-            NuværendeSpillerIndex = 0;
-            SavedDateTime = DateTime.Now;
-        }
-        public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, List<Terning> terninger, int antalKast, DateTime savedDateTime)
-        {
-            SpilId = id;
-            foreach (Spiller spiller in spillere)
-            {
-                SpillerSpil spil = new SpillerSpil(spiller);
-                AlleSpillerSpil.Add(spil);
-            }
-            NuværendeSpillerIndex = nuværendeSpillerIndex;
-            Terninger = terninger;
-            AntalKast = antalKast;
-            SavedDateTime = savedDateTime;
-        }
+    //    public Spil()
+    //    {
+    //        NuværendeSpillerIndex = 0;
+    //        SavedDateTime = DateTime.Now;
+    //    }
+    //    public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, List<Terning> terninger, int antalKast, DateTime savedDateTime)
+    //    {
+    //        SpilId = id;
+    //        foreach (Spiller spiller in spillere)
+    //        {
+    //            SpillerSpil spil = new SpillerSpil(spiller);
+    //            AlleSpillerSpil.Add(spil);
+    //        }
+    //        NuværendeSpillerIndex = nuværendeSpillerIndex;
+    //        Terninger = terninger;
+    //        AntalKast = antalKast;
+    //        SavedDateTime = savedDateTime;
+    //    }
 
-        public int SpilId { get; set; }
+    //    public int SpilId { get; set; }
 
-        private ObservableCollection<SpillerSpil> alleSpillerSpil = new();
-        public ObservableCollection<SpillerSpil> AlleSpillerSpil
-        {
-            get
-            {
-                return alleSpillerSpil;
-            }
-            set
-            {
-                alleSpillerSpil = value;
-                OnPropertyChanged(nameof(AlleSpillerSpil));
-            }
-        }
-        private int nuværendeSpillerIndex;
-        public int NuværendeSpillerIndex
-        {
-            get
-            {
-                return nuværendeSpillerIndex;
-            }
-            set
-            {
-                nuværendeSpillerIndex = value;
-                OnPropertyChanged(nameof(nuværendeSpillerIndex));
-            }
-        }
-        private List<Terning> terninger;
-        public List<Terning> Terninger
-        {
-            get
-            {
-                return terninger;
-            }
-            set
-            {
-                terninger = value;
-                OnPropertyChanged(nameof(terninger));
-            }
-        }
-        private int antalKast;
-        public int AntalKast
-        {
-            get
-            {
-                return antalKast;
-            }
-            set
-            {
-                antalKast = value;
-                OnPropertyChanged(nameof(antalKast));
-            }
-        }
-        private DateTime savedDateTime;
-        public DateTime SavedDateTime
-        {
-            get
-            {
-                return savedDateTime;
-            }
-            set
-            {
-                savedDateTime = value;
-                OnPropertyChanged(nameof(savedDateTime));
-            }
-        }
-    }
+    //    private ObservableCollection<SpillerSpil> alleSpillerSpil = new();
+    //    public ObservableCollection<SpillerSpil> AlleSpillerSpil
+    //    {
+    //        get
+    //        {
+    //            return alleSpillerSpil;
+    //        }
+    //        set
+    //        {
+    //            alleSpillerSpil = value;
+    //            OnPropertyChanged(nameof(AlleSpillerSpil));
+    //        }
+    //    }
+    //    private int nuværendeSpillerIndex;
+    //    public int NuværendeSpillerIndex
+    //    {
+    //        get
+    //        {
+    //            return nuværendeSpillerIndex;
+    //        }
+    //        set
+    //        {
+    //            nuværendeSpillerIndex = value;
+    //            OnPropertyChanged(nameof(nuværendeSpillerIndex));
+    //        }
+    //    }
+    //    private List<Terning> terninger;
+    //    public List<Terning> Terninger
+    //    {
+    //        get
+    //        {
+    //            return terninger;
+    //        }
+    //        set
+    //        {
+    //            terninger = value;
+    //            OnPropertyChanged(nameof(terninger));
+    //        }
+    //    }
+    //    private int antalKast;
+    //    public int AntalKast
+    //    {
+    //        get
+    //        {
+    //            return antalKast;
+    //        }
+    //        set
+    //        {
+    //            antalKast = value;
+    //            OnPropertyChanged(nameof(antalKast));
+    //        }
+    //    }
+    //    private DateTime savedDateTime;
+    //    public DateTime SavedDateTime
+    //    {
+    //        get
+    //        {
+    //            return savedDateTime;
+    //        }
+    //        set
+    //        {
+    //            savedDateTime = value;
+    //            OnPropertyChanged(nameof(savedDateTime));
+    //        }
+    //    }
+    //}
 
     public class Spiller : INotifyPropertyChanged
     {
@@ -222,7 +222,7 @@ namespace Yatzy.YatzyDbContext
 
         public void ResetScoreBoard()
         {
-            //ScoreBoard = new();
+            ScoreBoard = new();
         }
     }
 
@@ -387,11 +387,10 @@ namespace Yatzy.YatzyDbContext
         {
             get
             {
-                if (enere != null && toere != null && Treere != null &&
-                    Firere != null && femmere != null && seksere != null
-                    && BudgetValue >= 0)
+                if (SumValue >= 63 && bonus == 0)
                 {
                     bonus = 50;
+                    totalSum += bonus;
                     OnPropertyChanged(nameof(Bonus));
                 }
                 if (BudgetValue >= 0)

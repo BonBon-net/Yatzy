@@ -18,14 +18,15 @@
         <Button x:Name="btnStartSpil" Content="Start Spill" HorizontalAlignment="Left" Margin="593,109,0,0" VerticalAlignment="Top" Click="StartSpil_Click" RenderTransformOrigin="1.345,0.522"/>
         <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Save" HorizontalAlignment="Left" Margin="663,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="593,152,0,0" TextWrapping="Wrap" Text="Spiller Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>
-        <DataGrid x:Name="dgbSpilListe" ItemsSource="{Binding SpilListe}" Margin="361,184,242,10" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="dgbSpilListe_SelectionChanged">
+        <TextBlock HorizontalAlignment="Left" Margin="647,36,0,0" TextWrapping="Wrap" Text="Spiller Navn" VerticalAlignment="Top" TextAlignment="Center" FontSize="15" Width="120"/>
+        <!--<DataGrid x:Name="dgbSpilListe" ItemsSource="{Binding SpilListe}" Margin="363,184,240,10" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="dgbSpilListe_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Spillere" Binding="{Binding Spillere.Count}" />
                 <DataGridTextColumn Header="Tur" Binding="{Binding NuværendeSpillerIndex}" />
                 <DataGridTextColumn Header="Date" Binding="{Binding SavedDateTime}" />
             </DataGrid.Columns>
-        </DataGrid>
-        <Button Content="Load game" x:Name="btnLoadGame" IsEnabled="False" HorizontalAlignment="Left" Margin="361,109,0,0" VerticalAlignment="Top" Click="btnLoadGame_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="361,152,0,0" TextWrapping="Wrap" Text="Spil Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>
+        </DataGrid>-->
+        <!--<Button Content="Load game" x:Name="btnLoadGame" IsEnabled="False" HorizontalAlignment="Left" Margin="361,109,0,0" VerticalAlignment="Top" Click="btnLoadGame_Click"/>-->
+        <!--<TextBlock HorizontalAlignment="Left" Margin="361,152,0,0" TextWrapping="Wrap" Text="Spil Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>-->
     </Grid>
 </UserControl>

@@ -260,6 +260,11 @@ namespace Yatzy
             {
                 if (dgSpillerScoreBoard.SelectedCells.Count > 0)
                 {
+                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+
+                    int Score = FuncLayer.Registrer(cell, AlleTerninger);
+                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {funcLayer.SpillerListe.First().Navn}";
+
                     if (FuncLayer.PlayerHasWon)
                     {
                         btnKast.IsEnabled = false;
@@ -269,22 +274,10 @@ namespace Yatzy
                     }
                     else
                     {
-                        DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
-
-                        int Score = FuncLayer.Registrer(cell, AlleTerninger);
-                        //TerningUserControl.txbSpillerTur.Text = $"Turn: {funcLayer.SpillerListe.First().Navn}";
-
                         dgSpillerScoreBoard.UnselectAllCells();
                         Spiller spiller = FuncLayer.NæsteSpiller();
-                        txbKastTilbage.Text = $"{_txbKastTilbage} 0";
-                        btnRegister.IsEnabled = false;
-                        btnKast.IsEnabled = true;
                         dgSpillerScoreBoard.SelectedItem = null;
-                        for (int i = 0; i < AlleTerninger.Count; i++)
-                        {
-                            AlleTerninger[i].IsHeld = false;
-                            ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
-                        }
+                        ResetUi();
                     }
                     FuncLayer.IsGameSaved = false;
                 }
@@ -319,11 +312,12 @@ namespace Yatzy
         {
             try
             {
-                MessageBoxResult result = MessageBox.Show($"Do you want to stop game?\n{IsSaved()}", "Confirmation", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show($"Do you want to stop game?\n- Game not saved", "Confirmation", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    dgSpillerScoreBoard.SelectedItem = null;
                     UserControlManager.StopGame();
+                    dgSpillerScoreBoard.SelectedItem = null;
+                    ResetUi();
                 }
             }
             catch (Exception ex)
@@ -334,12 +328,24 @@ namespace Yatzy
             {
                 if (FuncLayer.IsGameSaved)
                 {
-                    return "- Is saved";
+                    return "- Game is saved";
                 }
                 else
                 {
-                    return "- Is not saved";
+                    return "- Game is not saved";
                 }
+            }
+        }
+
+        private void ResetUi()
+        {
+            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
+            btnRegister.IsEnabled = false;
+            btnKast.IsEnabled = true;
+            for (int i = 0; i < AlleTerninger.Count; i++)
+            {
+                AlleTerninger[i].IsHeld = false;
+                ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
             }
         }
 
@@ -350,7 +356,7 @@ namespace Yatzy
                 MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    FuncLayer.SaveGame(AlleTerninger, ReturnThrowNumber());
+                    //FuncLayer.SaveGame(AlleTerninger, ReturnThrowNumber());
                     MessageBox.Show("Game saved successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
