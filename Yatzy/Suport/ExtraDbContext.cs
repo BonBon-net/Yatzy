@@ -1,14 +1,92 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Yatzy.YatzyDbContext;
 
-namespace Yatzy.YatzyDbContext
+namespace Yatzy.Suport
 {
     public class Model : DbContext
     {
-        public DbSet<Spiller> SpillerTabel { get; set; }
-        //public DbSet<Spil> SpilTabel { get; set; }
-        public DbSet<ScoreBoard> AllScoreboards { get; set; }
+        public DbSet<Spil> SpilTabel { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
+    }
+
+    public class Spil : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // Helper method to keep the setters clean
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public Spil() { }
+        public Spil(List<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex)
+        {
+            Id = 0;
+            Spillere = spillere;
+            Terninger = terninger;
+            DateTime = DateTime.Now;
+            Kasted = kasted;
+            SpillerTurIndex = spillerTurIndex;
+        }
+
+        public int Id { get; set; }
+
+        public List<SpillerSpil> Spillere { get; set; } = new List<SpillerSpil>();
+        public List<Terning> Terninger { get; set; } = new List<Terning>();
+
+        public DateTime DateTime { get; set; }
+        public int Kasted { get; set; }
+        public int SpillerTurIndex { get; set; }
+    }
+
+    public class SpillerSpil : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // Helper method to keep the setters clean
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public int Id { get; set; }
+
+        private Spiller spiller;
+        public Spiller Spiller
+        {
+            get
+            {
+                return spiller;
+            }
+            set
+            {
+                spiller = value;
+                OnPropertyChanged(nameof(Spiller));
+            }
+        }
+        private ScoreBoard scoreBoard = new();
+        public ScoreBoard ScoreBoard
+        {
+            get
+            {
+                return scoreBoard;
+            }
+            set
+            {
+                scoreBoard = value;
+                OnPropertyChanged(nameof(scoreBoard));
+            }
+        }
+
+        public void ResetScoreBoard()
+        {
+            ScoreBoard = new();
+        }
     }
 
     public class Terning : INotifyPropertyChanged
@@ -20,154 +98,6 @@ namespace Yatzy.YatzyDbContext
         public int DiceValue { get; set; } = -1;
         public bool IsHeld { get; set; } = false;
     }
-
-    //public class SpillerSpil : INotifyPropertyChanged
-    //{
-    //    public event PropertyChangedEventHandler? PropertyChanged;
-    //    // Helper method to keep the setters clean
-    //    protected void OnPropertyChanged(string name)
-    //    {
-    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    //    }
-
-    //    public SpillerSpil(Spiller spiller)
-    //    {
-    //        Spiller = spiller;
-    //        ScoreBoard = new ScoreBoard();
-    //    }
-
-    //    public SpillerSpil(Spiller spiller, ScoreBoard scoreBoard)
-    //    {
-    //        Spiller = spiller;
-    //        ScoreBoard = scoreBoard;
-    //    }
-
-    //    public int Id { get; set; }
-
-    //    private Spiller spiller;
-    //    public Spiller Spiller
-    //    {
-    //        get
-    //        {
-    //            return spiller;
-    //        }
-    //        set
-    //        {
-    //            spiller = value;
-    //            OnPropertyChanged(nameof(Spiller));
-    //        }
-    //    }
-    //    private ScoreBoard scoreBoard;
-    //    public ScoreBoard ScoreBoard
-    //    {
-    //        get
-    //        {
-    //            return scoreBoard;
-    //        }
-    //        set
-    //        {
-    //            scoreBoard = value;
-    //            OnPropertyChanged(nameof(scoreBoard));
-    //        }
-    //    }
-    //}
-
-    //public class Spil : INotifyPropertyChanged
-    //{
-    //    public event PropertyChangedEventHandler? PropertyChanged;
-    //    // Helper method to keep the setters clean
-    //    protected void OnPropertyChanged(string name)
-    //    {
-    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    //    }
-
-    //    public Spil()
-    //    {
-    //        NuværendeSpillerIndex = 0;
-    //        SavedDateTime = DateTime.Now;
-    //    }
-    //    public Spil(int id, ObservableCollection<Spiller> spillere, int nuværendeSpillerIndex, List<Terning> terninger, int antalKast, DateTime savedDateTime)
-    //    {
-    //        SpilId = id;
-    //        foreach (Spiller spiller in spillere)
-    //        {
-    //            SpillerSpil spil = new SpillerSpil(spiller);
-    //            AlleSpillerSpil.Add(spil);
-    //        }
-    //        NuværendeSpillerIndex = nuværendeSpillerIndex;
-    //        Terninger = terninger;
-    //        AntalKast = antalKast;
-    //        SavedDateTime = savedDateTime;
-    //    }
-
-    //    public int SpilId { get; set; }
-
-    //    private ObservableCollection<SpillerSpil> alleSpillerSpil = new();
-    //    public ObservableCollection<SpillerSpil> AlleSpillerSpil
-    //    {
-    //        get
-    //        {
-    //            return alleSpillerSpil;
-    //        }
-    //        set
-    //        {
-    //            alleSpillerSpil = value;
-    //            OnPropertyChanged(nameof(AlleSpillerSpil));
-    //        }
-    //    }
-    //    private int nuværendeSpillerIndex;
-    //    public int NuværendeSpillerIndex
-    //    {
-    //        get
-    //        {
-    //            return nuværendeSpillerIndex;
-    //        }
-    //        set
-    //        {
-    //            nuværendeSpillerIndex = value;
-    //            OnPropertyChanged(nameof(nuværendeSpillerIndex));
-    //        }
-    //    }
-    //    private List<Terning> terninger;
-    //    public List<Terning> Terninger
-    //    {
-    //        get
-    //        {
-    //            return terninger;
-    //        }
-    //        set
-    //        {
-    //            terninger = value;
-    //            OnPropertyChanged(nameof(terninger));
-    //        }
-    //    }
-    //    private int antalKast;
-    //    public int AntalKast
-    //    {
-    //        get
-    //        {
-    //            return antalKast;
-    //        }
-    //        set
-    //        {
-    //            antalKast = value;
-    //            OnPropertyChanged(nameof(antalKast));
-    //        }
-    //    }
-    //    private DateTime savedDateTime;
-    //    public DateTime SavedDateTime
-    //    {
-    //        get
-    //        {
-    //            return savedDateTime;
-    //        }
-    //        set
-    //        {
-    //            savedDateTime = value;
-    //            OnPropertyChanged(nameof(savedDateTime));
-    //        }
-    //    }
-    //}
 
     public class Spiller : INotifyPropertyChanged
     {
@@ -186,6 +116,7 @@ namespace Yatzy.YatzyDbContext
         }
 
         public int Id { get; set; }
+
         private string navn = string.Empty;
         public string Navn
         {
@@ -198,25 +129,6 @@ namespace Yatzy.YatzyDbContext
                 navn = value;
                 OnPropertyChanged(nameof(navn));
             }
-        }
-
-        private ScoreBoard scoreBoard = new();
-        public ScoreBoard ScoreBoard
-        {
-            get
-            {
-                return scoreBoard;
-            }
-            set
-            {
-                scoreBoard = value;
-                OnPropertyChanged(nameof(scoreBoard));
-            }
-        }
-
-        public void ResetScoreBoard()
-        {
-            ScoreBoard = new();
         }
     }
 
@@ -575,6 +487,5 @@ namespace Yatzy.YatzyDbContext
                 OnPropertyChanged(nameof(TotalSum));
             }
         }
-
     }
 }
