@@ -1,17 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Yatzy.YatzyDbContext;
 
-namespace Yatzy.Suport
+namespace Yatzy.YatzyDbContext
 {
     public class Model : DbContext
     {
+        //public DbSet<Spiller> SpillerTabel { get; set; }
         public DbSet<Spil> SpilTabel { get; set; }
+
+        public DbSet<SpillerSpil> SpillerSpil {get;set;}
+        public DbSet<Spiller> Spillere { get; set; }
+        public DbSet<ScoreBoard> ScoreBoards { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
     }
 
@@ -25,7 +31,7 @@ namespace Yatzy.Suport
         }
 
         public Spil() { }
-        public Spil(List<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex)
+        public Spil(ObservableCollection<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex)
         {
             Id = 0;
             Spillere = spillere;
@@ -37,12 +43,13 @@ namespace Yatzy.Suport
 
         public int Id { get; set; }
 
-        public List<SpillerSpil> Spillere { get; set; } = new List<SpillerSpil>();
+        public ObservableCollection<SpillerSpil> Spillere { get; set; } = new ObservableCollection<SpillerSpil>();
         public List<Terning> Terninger { get; set; } = new List<Terning>();
 
         public DateTime DateTime { get; set; }
         public int Kasted { get; set; }
         public int SpillerTurIndex { get; set; }
+        public int HighestScorePlayerIndex;
     }
 
     public class SpillerSpil : INotifyPropertyChanged
@@ -54,7 +61,29 @@ namespace Yatzy.Suport
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public SpillerSpil(Spiller spiller)
+        {
+            Id = 0;
+            Spiller = spiller;
+            scoreBoard = new ScoreBoard();
+        }
+
+        public SpillerSpil(int id, string spillerNavn)
+        {
+            Id = id;
+            Spiller = new Spiller(0, spillerNavn);
+            scoreBoard = new ScoreBoard();
+        }
+
         public int Id { get; set; }
+
+        public string Navn
+        {
+            get
+            {
+                return Spiller.Navn;
+            }
+        }
 
         private Spiller spiller;
         public Spiller Spiller

@@ -275,7 +275,7 @@ namespace Yatzy
                     else
                     {
                         dgSpillerScoreBoard.UnselectAllCells();
-                        Spiller spiller = FuncLayer.NæsteSpiller();
+                        SpillerSpil spiller = FuncLayer.NæsteSpiller();
                         dgSpillerScoreBoard.SelectedItem = null;
                         ResetUi();
                     }

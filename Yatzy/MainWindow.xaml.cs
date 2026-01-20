@@ -25,14 +25,14 @@ namespace Yatzy
 
         public void StartGame()
         {
-            funcLayer.StartGame();
+            funcLayer.StartSpil();
             ChangeUserControl(TerningUserControl);
         }
 
         public void StopGame()
         {
             ChangeUserControl(MenuUserControl);
-            funcLayer.StopGame();
+            funcLayer.StopSpil();
         }
 
         public void ChangeUserControl(UserControl newControl)

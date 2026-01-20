@@ -60,11 +60,12 @@ namespace Yatzy
             }
         }
 
+        // Fjern spiller fra aktive spil
         private void FjernSpiller_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
+                SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
                 if (spiller == null)
                 {
                     MessageBox.Show("Vælg en spiller fra listen for at fjerne.", "Info");
@@ -165,8 +166,8 @@ namespace Yatzy
         {
             try
             {
-                //Spil? spil = dgbSpilListe.SelectedItem as Spil;
-                //if (spil != null)
+                //Spil? Spil = dgbSpilListe.SelectedItem as Spil;
+                //if (Spil != null)
                 //{
                 //    btnLoadGame.IsEnabled = true;
                 //}
@@ -185,8 +186,8 @@ namespace Yatzy
         {
             try
             {
-                //Spil? spil = dgbSpilListe.SelectedItem as Spil;
-                //if (spil != null)
+                //Spil? Spil = dgbSpilListe.SelectedItem as Spil;
+                //if (Spil != null)
                 //{
                 //    btnLoadGame.IsEnabled = false;
                 //    dgbSpilListe.SelectedItem = null;
@@ -194,13 +195,19 @@ namespace Yatzy
                 //else
                 //{
                 //    btnLoadGame.IsEnabled = false;
-                //    throw new NullReferenceException("No selected spil");
+                //    throw new NullReferenceException("No selected Spil");
                 //}
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error message");
             }
+        }
+
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Spiller spiller = dgbSpillerListe.SelectedItem as Spiller;
+            FuncLayer.TilføjSpillerTilSpil(spiller);
         }
     }
 }

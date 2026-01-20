@@ -19,6 +19,8 @@
         <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Save" HorizontalAlignment="Left" Margin="663,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="593,152,0,0" TextWrapping="Wrap" Text="Spiller Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>
         <TextBlock HorizontalAlignment="Left" Margin="647,36,0,0" TextWrapping="Wrap" Text="Spiller Navn" VerticalAlignment="Top" TextAlignment="Center" FontSize="15" Width="120"/>
+        <ListBox x:Name="lbSpillerSpil" HorizontalAlignment="Left" Height="256" Margin="348,194,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding Spil.Spillere}" DisplayMemberPath="{Binding Spiller.Navn}"/>
+        <Button x:Name="btnAdd" Content="&lt;- Tilføj" HorizontalAlignment="Left" Margin="540,246,0,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
         <!--<DataGrid x:Name="dgbSpilListe" ItemsSource="{Binding SpilListe}" Margin="363,184,240,10" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="dgbSpilListe_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Spillere" Binding="{Binding Spillere.Count}" />

@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+//using Yatzy.Suport;
 
-namespace Yatzy.YatzyDbContext
+namespace Yatzy.OldYatzyDbContext
 {
     public class Model : DbContext
     {
@@ -91,8 +92,8 @@ namespace Yatzy.YatzyDbContext
     //        SpilId = id;
     //        foreach (Spiller spiller in spillere)
     //        {
-    //            SpillerSpil spil = new SpillerSpil(spiller);
-    //            AlleSpillerSpil.Add(spil);
+    //            SpillerSpil Spil = new SpillerSpil(spiller);
+    //            AlleSpillerSpil.Add(Spil);
     //        }
     //        NuværendeSpillerIndex = nuværendeSpillerIndex;
     //        Terninger = terninger;

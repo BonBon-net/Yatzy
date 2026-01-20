@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Controls;
-using Yatzy.YatzyDbContext;
+using Yatzy.OldYatzyDbContext;
 
-namespace Yatzy
+namespace OldYatzy
 {
     public class FuncLayer : INotifyPropertyChanged
     {
@@ -116,6 +116,7 @@ namespace Yatzy
             {
                 throw new Exception("Brugernavnet er taget");
             }
+
             spiller.Navn = spillerNavn;
             model.SaveChanges();
             RaisePropertyChanged(nameof(SpillerListe));
@@ -158,8 +159,8 @@ namespace Yatzy
 
         //public void NewGame(List<Terning> terninger)
         //{
-        //    // Lave et nyt spil-objekt med alle spiller fra SpillerListe
-        //    Spil spil = new Spil(-1, SpillerListe, 0, terninger, 0, DateTime.Now);
+        //    // Lave et nyt Spil-objekt med alle spiller fra SpillerListe
+        //    Spil Spil = new Spil(-1, SpillerListe, 0, terninger, 0, DateTime.Now);
 
         //    StartGame();
         //}
@@ -199,8 +200,8 @@ namespace Yatzy
 
         //public void SaveGame(List<Terning> terninger, int antalKasted)
         //{
-        //    Spil spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
-        //    SpilListe.Add(spil);
+        //    Spil Spil = new Spil(0, SpillerListe, CurrentPlayerIndex, terninger, antalKasted, DateTime.Now);
+        //    SpilListe.Add(Spil);
         //    model.SaveChanges();
         //    RaisePropertyChanged(nameof(SpilListe));
         //}
