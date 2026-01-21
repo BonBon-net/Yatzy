@@ -29,9 +29,11 @@ namespace Yatzy
         public FuncLayer()
         {
             model.SpilTabel.Load();
+            model.SpillerSpil.Load();
+            model.Spillere.Load();
+            model.ScoreBoards.Load();
+            //model.Terninger.Load();
             RaisePropertyChanged(nameof(SpilListe));
-
-            Spil = new();
         }
 
         public ObservableCollection<Spil> SpilListe
@@ -45,7 +47,14 @@ namespace Yatzy
         {
             get
             {
-                return Spil.Spillere;
+                if (Spil != null)
+                {
+                    return Spil.Spillere;
+                }
+                else
+                {
+                    return new ObservableCollection<SpillerSpil>();
+                }
             }
         }
 
@@ -59,9 +68,9 @@ namespace Yatzy
 
         public Spil Spil { get; set; }
         public bool PlayerHasWon = false;
-        public SpillerSpil HighestScorePlayer;
+        public SpillerSpil? HighestScorePlayer;
         public int CurrentPlayerIndex;
-        public SpillerSpil SpillerTur
+        public SpillerSpil? SpillerTur
         {
             get
             {
@@ -70,7 +79,7 @@ namespace Yatzy
                 {
                     Spiller = Spil.Spillere[CurrentPlayerIndex];
                 }
-                catch (ArgumentOutOfRangeException)
+                catch (Exception)
                 {
                     Spiller = null;
                 }
@@ -96,7 +105,7 @@ namespace Yatzy
 
         public void StartSpil()
         {
-            if (SpillerListe.Count <= 0)
+            if (Spil == null || Spil.Spillere.Count <= 0)
             {
                 throw new InvalidOperationException("Der er igen spillere");
             }
@@ -109,8 +118,24 @@ namespace Yatzy
             RaisePropertyChanged(nameof(HighestScorePlayer));
         }
 
-        public void LoadSpil()
+        public void NytSpil()
         {
+            Spil = new();
+            model.SpilTabel.Add(Spil);
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(Spil));
+            RaisePropertyChanged(nameof(SpilListe));
+        }
+
+        public void LoadSpil(Spil spil)
+        {
+            if (spil == null)
+            {
+                throw new ArgumentNullException(nameof(spil));
+            }
+
+            Spil = spil;
+            RaisePropertyChanged(nameof(Spil));
 
         }
 
@@ -136,6 +161,9 @@ namespace Yatzy
             }
 
             SpillerSpil spillerSpil = new(spiller);
+            Spil.Spillere.Add(spillerSpil);
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(Spil));
         }
 
         public SpillerSpil TilføjSpiller(string spillerNavn)
@@ -188,19 +216,49 @@ namespace Yatzy
             return spiller;
         }
 
-        public SpillerSpil FjernSpiller(SpillerSpil spiller)
+        // Fjern spiller HELT
+        public Spiller FjernSpiller(Spiller spiller)
         {
             if (spiller != null)
             {
                 throw new InvalidOperationException("Spiller er ikke vælgt");
             }
 
-            // Remove Splayer from List
-            SpillerListe.Remove(spiller);
+            // Remove player from List
+            Spillere.Remove(spiller);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(Spillere));
 
             return spiller;
+        }
+
+        public Spil FjernActivSpil(Spil spil)
+        {
+            if (spil == null)
+            {
+                throw new InvalidOperationException("Der blev ikke vælgt et spil");
+            }
+
+            model.SpilTabel.Remove(spil);
+            model.SaveChanges();
+            this.Spil = null;
+            RaisePropertyChanged(nameof(Spil));
+            RaisePropertyChanged(nameof(Spillere));
+
+            return spil;
+        }
+
+        public void FjernSpillerFraSpil(SpillerSpil spiller)
+        {
+            if (spiller == null)
+            {
+                throw new Exception("Spiller er ikke vælgt");
+            }
+
+            // Remove player from Game
+            Spil.Spillere.Remove(spiller);
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(Spillere));
         }
 
         public SpillerSpil NæsteSpiller()

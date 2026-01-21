@@ -8,27 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <TextBox x:Name="txtSpillerNavn" HorizontalAlignment="Left" Margin="647,61,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="txtSpillerNavn_TextChanged"/>
-        <DataGrid x:Name="dgbSpillerListe" ItemsSource="{Binding SpillerListe}" Margin="593,184,10,10" SelectionChanged="dgbPlayerList_SelectionChanged" IsReadOnly="True" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Navn" Binding="{Binding Navn}" />
-            </DataGrid.Columns>
-        </DataGrid>
         <Button x:Name="btnTilføjSpiller" Content="Tilføj Spiller" IsEnabled="False" HorizontalAlignment="Left" Margin="697,84,0,0" VerticalAlignment="Top" Click="TilføjSpiller_Click"/>
         <Button x:Name="btnFjernSpiller" IsEnabled="False" Content="Fjern Spiller" HorizontalAlignment="Left" Margin="674,109,0,0" VerticalAlignment="Top" Click="FjernSpiller_Click"/>
-        <Button x:Name="btnStartSpil" Content="Start Spill" HorizontalAlignment="Left" Margin="593,109,0,0" VerticalAlignment="Top" Click="StartSpil_Click" RenderTransformOrigin="1.345,0.522"/>
-        <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Save" HorizontalAlignment="Left" Margin="663,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click"/>
-        <TextBlock HorizontalAlignment="Left" Margin="593,152,0,0" TextWrapping="Wrap" Text="Spiller Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>
+        <Button x:Name="btnStartSpil" IsEnabled="False" Content="Start Spill" HorizontalAlignment="Left" Margin="582,109,0,0" VerticalAlignment="Top" Click="StartSpil_Click" RenderTransformOrigin="1.345,0.522"/>
+        <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Gem" HorizontalAlignment="Left" Margin="663,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click"/>
         <TextBlock HorizontalAlignment="Left" Margin="647,36,0,0" TextWrapping="Wrap" Text="Spiller Navn" VerticalAlignment="Top" TextAlignment="Center" FontSize="15" Width="120"/>
-        <ListBox x:Name="lbSpillerSpil" HorizontalAlignment="Left" Height="256" Margin="348,194,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding Spil.Spillere}" DisplayMemberPath="{Binding Spiller.Navn}"/>
-        <Button x:Name="btnAdd" Content="&lt;- Tilføj" HorizontalAlignment="Left" Margin="540,246,0,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
-        <!--<DataGrid x:Name="dgbSpilListe" ItemsSource="{Binding SpilListe}" Margin="363,184,240,10" IsReadOnly="True" AutoGenerateColumns="False" SelectionChanged="dgbSpilListe_SelectionChanged">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Spillere" Binding="{Binding Spillere.Count}" />
-                <DataGridTextColumn Header="Tur" Binding="{Binding NuværendeSpillerIndex}" />
-                <DataGridTextColumn Header="Date" Binding="{Binding SavedDateTime}" />
-            </DataGrid.Columns>
-        </DataGrid>-->
-        <!--<Button Content="Load game" x:Name="btnLoadGame" IsEnabled="False" HorizontalAlignment="Left" Margin="361,109,0,0" VerticalAlignment="Top" Click="btnLoadGame_Click"/>-->
-        <!--<TextBlock HorizontalAlignment="Left" Margin="361,152,0,0" TextWrapping="Wrap" Text="Spil Liste" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" MaxWidth="197" MinWidth="197" Width="197"/>-->
+        <ListBox x:Name="lbSpillerSpil" HorizontalAlignment="Left" Height="256" Margin="427,184,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding Spil.Spillere}" DisplayMemberPath="Spiller.Navn" SelectionMode="Single" SelectionChanged="lbSpillerSpil_SelectionChanged" />
+        <TextBlock HorizontalAlignment="Left" Margin="427,152,0,0" TextWrapping="Wrap" Text="Deltagere" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="179"/>
+        <ListBox x:Name="lbSpillerList" HorizontalAlignment="Left" Height="256" Margin="611,184,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding Spillere}" DisplayMemberPath="Navn" SelectionMode="Single" SelectionChanged="lbSpillerList_SelectionChanged" />
+        <TextBlock HorizontalAlignment="Left" Margin="611,152,0,0" TextWrapping="Wrap" Text="Alle spiller" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="179"/>
+        <Button x:Name="btnTilføjSpillerTilSpil" IsEnabled="False" Content="Tilføj" HorizontalAlignment="Left" Margin="594,134,0,0" VerticalAlignment="Top" Click="btnTilføjSpillerTilSpil_Click"/>
+        <Button x:Name="btnFjernSpillerFraSpil" IsEnabled="False" Content="Fjern" HorizontalAlignment="Left" Margin="548,134,0,0" VerticalAlignment="Top" Click="btnFjernSpillerFraSpil_Click"/>
+        <ListBox x:Name="lbActiveSpil" HorizontalAlignment="Left" Height="256" Margin="243,184,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding SpilListe}" DisplayMemberPath="DateTime" SelectionMode="Single" SelectionChanged="lbActiveSpil_SelectionChanged" />
+        <TextBlock HorizontalAlignment="Left" Margin="243,152,0,0" TextWrapping="Wrap" Text="Active spil" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="179"/>
+        <Button x:Name="btnFjernActivSpil" IsEnabled="False" Content="Fjern" HorizontalAlignment="Left" Margin="336,127,0,0" VerticalAlignment="Top" Click="btnFjernActivSpil_Click"/>
+        <Button x:Name="btnNytSpil" IsEnabled="True" Content="Nyt spil" HorizontalAlignment="Left" Margin="276,127,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.151,0.251" Click="btnNytSpil_Click"/>
+
     </Grid>
 </UserControl>

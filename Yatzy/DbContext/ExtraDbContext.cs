@@ -18,6 +18,7 @@ namespace Yatzy.YatzyDbContext
         public DbSet<SpillerSpil> SpillerSpil {get;set;}
         public DbSet<Spiller> Spillere { get; set; }
         public DbSet<ScoreBoard> ScoreBoards { get; set; }
+        public DbSet<Terning> Terninger { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
     }
 
@@ -30,7 +31,11 @@ namespace Yatzy.YatzyDbContext
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public Spil() { }
+        public Spil()
+        {
+            Id = 0;
+            DateTime = DateTime.Now;
+        }
         public Spil(ObservableCollection<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex)
         {
             Id = 0;
@@ -59,6 +64,15 @@ namespace Yatzy.YatzyDbContext
         protected void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public SpillerSpil() { }
+
+        public SpillerSpil(int id, Spiller spiller)
+        {
+            Id =id;
+            Spiller = spiller;
+            scoreBoard = new ScoreBoard();
         }
 
         public SpillerSpil(Spiller spiller)

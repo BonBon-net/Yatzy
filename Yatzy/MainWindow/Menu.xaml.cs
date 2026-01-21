@@ -20,6 +20,7 @@ namespace Yatzy
             DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
             StartSpil_IsEnabled();
+            txtSpillerNavn.Text = string.Empty;
             //this.funcLayer.RaisePropertyChanged(nameof(this.funcLayer.SpillerListe));
         }
 
@@ -41,12 +42,12 @@ namespace Yatzy
         {
             try
             {
-                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
+                Spiller? spiller = lbSpillerList.SelectedItem as Spiller;
                 if (spiller != null)
                 {
                     string nytNavn = txtSpillerNavn.Text;
                     FuncLayer.GemSpiller(spiller, nytNavn);
-                    dgbSpillerListe.SelectedItem = null;
+                    lbSpillerList.SelectedItem = null;
                     txtSpillerNavn.Clear();
                 }
                 else
@@ -60,12 +61,12 @@ namespace Yatzy
             }
         }
 
-        // Fjern spiller fra aktive spil
+        // Fjern spiller HELT
         private void FjernSpiller_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
+                Spiller? spiller = lbSpillerList.SelectedItem as Spiller;
                 if (spiller == null)
                 {
                     MessageBox.Show("Vælg en spiller fra listen for at fjerne.", "Info");
@@ -81,39 +82,8 @@ namespace Yatzy
             }
         }
 
-        private void dgbPlayerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                Spiller? spiller = dgbSpillerListe.SelectedItem as Spiller;
-                if (spiller != null && dgbSpillerListe.SelectedItem != null)
-                {
-                    btnFjernSpiller.IsEnabled = true;
-                    txtSpillerNavn.Text = spiller.Navn;
-                }
-                else
-                {
-                    btnFjernSpiller.IsEnabled = false;
-                }
-                if (spiller != null && !string.IsNullOrEmpty(txtSpillerNavn.Text) && txtSpillerNavn.Text == spiller.Navn)
-                {
-                    btnSaveSpiller.IsEnabled = true;
-                }
-                else
-                {
-                    btnSaveSpiller.IsEnabled = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error message");
-            }
-        }
-
         private void StartSpil_Click(object sender, RoutedEventArgs e)
         {
-            //FuncLayer.NewGame();
-
             try
             {
                 if (FuncLayer.SpillerListe.Count < 1)
@@ -152,7 +122,7 @@ namespace Yatzy
 
         private void StartSpil_IsEnabled()
         {
-            if (FuncLayer.SpillerListe.Count > 0)
+            if (FuncLayer.Spil != null && FuncLayer.Spil.Spillere.Count > 0)
             {
                 btnStartSpil.IsEnabled = true;
             }
@@ -162,19 +132,17 @@ namespace Yatzy
             }
         }
 
-        private void dgbSpilListe_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void btnFjernSpillerFraSpil_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //Spil? Spil = dgbSpilListe.SelectedItem as Spil;
-                //if (Spil != null)
-                //{
-                //    btnLoadGame.IsEnabled = true;
-                //}
-                //else
-                //{
-                //    btnLoadGame.IsEnabled = false;
-                //}
+                SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
+                if (spiller == null)
+                {
+                    throw new InvalidOperationException("Player was empty");
+                }
+                FuncLayer.FjernSpillerFraSpil(spiller);
+                StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {
@@ -182,21 +150,27 @@ namespace Yatzy
             }
         }
 
-        private void btnLoadGame_Click(object sender, RoutedEventArgs e)
+        private void btnTilføjSpillerTilSpil_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //Spil? Spil = dgbSpilListe.SelectedItem as Spil;
-                //if (Spil != null)
-                //{
-                //    btnLoadGame.IsEnabled = false;
-                //    dgbSpilListe.SelectedItem = null;
-                //}
-                //else
-                //{
-                //    btnLoadGame.IsEnabled = false;
-                //    throw new NullReferenceException("No selected Spil");
-                //}
+                Spiller? spiller = lbSpillerList.SelectedItem as Spiller;
+
+                if (FuncLayer.Spil == null)
+                {
+                    throw new Exception("Spil er ikke valgt");
+                }
+                if (spiller == null)
+                {
+                    throw new NullReferenceException("Spiller er ikke valgt");
+                }
+                if (FuncLayer.Spil.Spillere.FirstOrDefault(spilSpiller => spilSpiller.Spiller == spiller) != null)
+                {
+                    throw new InvalidOperationException("Spiller har blevet valgt");
+                }
+
+                FuncLayer.TilføjSpillerTilSpil(spiller);
+                StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {
@@ -204,10 +178,115 @@ namespace Yatzy
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        // Fjern spiller fra aktive spil
+        private void btnFjernActivSpil_Click(object sender, RoutedEventArgs e)
         {
-            Spiller spiller = dgbSpillerListe.SelectedItem as Spiller;
-            FuncLayer.TilføjSpillerTilSpil(spiller);
+            try
+            {
+                Spil? spil = lbActiveSpil.SelectedItem as Spil;
+                if (spil == null)
+                {
+                    throw new InvalidOperationException("Der blev ikke vælgt et spil");
+                }
+                FuncLayer.FjernActivSpil(spil);
+                StartSpil_IsEnabled();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void lbSpillerList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Spiller? spiller = lbSpillerList.SelectedItem as Spiller;
+                if (spiller != null)
+                {
+                    txtSpillerNavn.Text = spiller.Navn;
+                    btnFjernSpiller.IsEnabled = true;
+                    btnSaveSpiller.IsEnabled = true;
+                    btnTilføjSpillerTilSpil.IsEnabled = true;
+                }
+                else
+                {
+                    btnFjernSpiller.IsEnabled = false;
+                    btnSaveSpiller.IsEnabled = false;
+                    btnTilføjSpillerTilSpil.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void lbSpillerSpil_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                SpillerSpil? spillerSpil = lbSpillerSpil.SelectedItem as SpillerSpil;
+                if (spillerSpil != null)
+                {
+                    lbSpillerList.SelectedIndex = FuncLayer.Spillere.IndexOf(FuncLayer.Spillere.First(spiller => spiller.Navn == spillerSpil.Navn));
+                    btnFjernSpillerFraSpil.IsEnabled = true;
+                }
+                else
+                {
+                    btnFjernSpillerFraSpil.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void lbActiveSpil_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Spil? spil = lbActiveSpil.SelectedItem as Spil;
+                if (spil != null)
+                {
+                    btnFjernActivSpil.IsEnabled = true;
+                    FuncLayer.LoadSpil(spil);
+                    StartSpil_IsEnabled();
+                }
+                else
+                {
+                    btnFjernActivSpil.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void lbSpillerList_Selected(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void btnNytSpil_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FuncLayer.NytSpil();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
         }
     }
 }

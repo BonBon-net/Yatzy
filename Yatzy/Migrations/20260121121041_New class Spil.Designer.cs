@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Yatzy.YatzyDbContext;
 
@@ -11,9 +12,11 @@ using Yatzy.YatzyDbContext;
 namespace Yatzy.Migrations
 {
     [DbContext(typeof(Model))]
-    partial class ModelModelSnapshot : ModelSnapshot
+    [Migration("20260121121041_New class Spil")]
+    partial class NewclassSpil
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +181,7 @@ namespace Yatzy.Migrations
 
                     b.HasIndex("SpilId");
 
-                    b.ToTable("Terninger");
+                    b.ToTable("Terning");
                 });
 
             modelBuilder.Entity("Yatzy.YatzyDbContext.SpillerSpil", b =>
