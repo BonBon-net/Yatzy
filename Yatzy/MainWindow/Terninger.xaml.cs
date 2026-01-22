@@ -29,8 +29,15 @@ namespace Yatzy
             new BitmapImage(new Uri(TerningSides[5]))
         };
 
-        private List<Terning> AlleTerninger { get; set; }
+        private List<Terning> AlleTerninger
+        {
+            get
+            {
+                return FuncLayer.Spil.Terninger;
+            }
+        }
         private Image[] TerningImages { get; set; }
+        private Image[] TerningSelection { get; }
         //public Terning terning { get; set; } = new Terning();
 
         private string _txbKastTilbage = "Rolled:";
@@ -47,23 +54,27 @@ namespace Yatzy
             DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
             TerningImages = new Image[] { imgTerning1, imgTerning2, imgTerning3, imgTerning4, imgTerning5 };
-            AlleTerninger = new();
-            for (int i = 0; i < TerningImages.Length; i++)
+            TerningSelection = new Image[] { imgTerningSelected1, imgTerningSelected2, imgTerningSelected3, imgTerningSelected4, imgTerningSelected5 };
+        }
+
+        // Vis alle terningerne
+        public void Init()
+        {
+            for (int i = 0; i < AlleTerninger.Count; i++)
             {
-                AlleTerninger.Add(new Terning());
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
-                TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[rnd.Next(0, TerningSides.Length)]);
+                TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                SelectedTerning(TerningSelection[i], i + 1);
             }
-            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
+            txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
         }
 
         private async void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
             int awaitTime = 35;
-            int kastet = 0;
-            int ThrowedNumber = ReturnThrowNumber() + 1;
+            int mellemKast = 0;
 
-            if (ThrowedNumber < 4)
+            if (FuncLayer.Spil.Kasted < 3)
             {
                 // Throws dice's
                 int[] RulleTerninger = GetRulNumber();
@@ -71,19 +82,20 @@ namespace Yatzy
                 if (false)
                 {
                     // experiment
-                    await Task.Delay(awaitTime * kastet);
+                    await Task.Delay(awaitTime * mellemKast);
                     CheckTerningValues();
                     FindRows();
                 }
                 // Finishing 'KastTertinger'
-                txbKastTilbage.Text = $"{_txbKastTilbage} {ThrowedNumber}";
+                FuncLayer.Spil.Kasted++;
+                txbKastTilbage.Text = $"{_txbKastTilbage} {FuncLayer.Spil.Kasted}";
                 dgSpillerScoreBoard.SelectedItem = null;
                 DevMessage(false);
-                if (ThrowedNumber >= 3)
+                if (FuncLayer.Spil.Kasted >= 3)
                 {
                     btnKast.IsEnabled = false;
                 }
-                FuncLayer.IsGameSaved = false;
+                btnSaveGame.IsEnabled = true;
             }
             else
             {
@@ -117,7 +129,7 @@ namespace Yatzy
                     try
                     {
                         string header = cellList[i].Column.Header.ToString();
-                        int score = FuncLayer.RegnHeaderValue(header, AlleTerninger);
+                        int score = FuncLayer.RegnHeaderValue(header);
                         if (score > 0)
                         {
                             dgSpillerScoreBoard.CurrentCell = cellList[i];
@@ -156,7 +168,7 @@ namespace Yatzy
             }
             async void KastTerningerne(int[] RulleTerninger)
             {
-                for (int i = 0; i < kastet; i++)
+                for (int i = 0; i < mellemKast; i++)
                 {
                     for (int j = 0; j < RulleTerninger.Length; j++)
                     {
@@ -169,6 +181,7 @@ namespace Yatzy
                     }
                 }
             }
+
             void ChanceImange(int index)
             {
                 // Thorws dice 'dummyIndex' for value
@@ -185,9 +198,9 @@ namespace Yatzy
                     if (!AlleTerninger[i].IsHeld)
                     {
                         RulleTerninger[i] = rnd.Next(5, 25);
-                        if (kastet < RulleTerninger[i])
+                        if (mellemKast < RulleTerninger[i])
                         {
-                            kastet = RulleTerninger[i];
+                            mellemKast = RulleTerninger[i];
                         }
                     }
                 }
@@ -216,7 +229,7 @@ namespace Yatzy
 
         private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && ReturnThrowNumber() > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
             {
                 SelectedTerning(imgTerningSelected1, 1);
             }
@@ -224,7 +237,7 @@ namespace Yatzy
 
         private void Terning2Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && ReturnThrowNumber() > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
             {
                 SelectedTerning(imgTerningSelected2, 2);
             }
@@ -232,7 +245,7 @@ namespace Yatzy
 
         private void Terning3Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && ReturnThrowNumber() > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
             {
                 SelectedTerning(imgTerningSelected3, 3);
             }
@@ -240,7 +253,7 @@ namespace Yatzy
 
         private void Terning4Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && ReturnThrowNumber() > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
             {
                 SelectedTerning(imgTerningSelected4, 4);
             }
@@ -248,7 +261,7 @@ namespace Yatzy
 
         private void Terning5Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && ReturnThrowNumber() > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
             {
                 SelectedTerning(imgTerningSelected5, 5);
             }
@@ -269,7 +282,7 @@ namespace Yatzy
                     {
                         btnKast.IsEnabled = false;
                         btnRegister.IsEnabled = false;
-                        txbSpillerTur.Text = $"Player won: {FuncLayer.HighestScorePlayer.Navn}";
+                        txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer.Navn}";
                         //txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
                     }
                     else
@@ -279,7 +292,7 @@ namespace Yatzy
                         dgSpillerScoreBoard.SelectedItem = null;
                         ResetUi();
                     }
-                    FuncLayer.IsGameSaved = false;
+                    btnSaveGame.IsEnabled = true;
                 }
             }
             catch (Exception ex)
@@ -292,7 +305,7 @@ namespace Yatzy
         {
             try
             {
-                int value = ReturnThrowNumber();
+                int value = Kastet;
                 if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
                 {
                     btnRegister.IsEnabled = true;
@@ -312,11 +325,12 @@ namespace Yatzy
         {
             try
             {
-                MessageBoxResult result = MessageBox.Show($"Do you want to stop game?\n- Game not saved", "Confirmation", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show($"Do you want to stop game?\n{IsSaved()}", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     UserControlManager.StopGame();
                     dgSpillerScoreBoard.SelectedItem = null;
+                    btnSaveGame.IsEnabled = false;
                     ResetUi();
                 }
             }
@@ -326,7 +340,7 @@ namespace Yatzy
             }
             string IsSaved()
             {
-                if (FuncLayer.IsGameSaved)
+                if (!btnSaveGame.IsEnabled)
                 {
                     return "- Game is saved";
                 }
@@ -344,8 +358,9 @@ namespace Yatzy
             btnKast.IsEnabled = true;
             for (int i = 0; i < AlleTerninger.Count; i++)
             {
-                AlleTerninger[i].IsHeld = false;
-                ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
+                SelectedTerning(((Image)FindName($"imgTerningSelected{i + 1}")), i + 1);
+                //AlleTerninger[i].IsHeld = false;
+                //((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
             }
         }
 
@@ -353,10 +368,11 @@ namespace Yatzy
         {
             try
             {
-                MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    //FuncLayer.SaveGame(AlleTerninger, ReturnThrowNumber());
+                    FuncLayer.GemSpil();
+                    btnSaveGame.IsEnabled = false;
                     MessageBox.Show("Game saved successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -366,23 +382,34 @@ namespace Yatzy
             }
         }
 
+        private void ShowTerningSelection(int terning)
+        {
+            if (AlleTerninger[terning - 1].IsHeld)
+            {
+                TerningSelection[terning - 1].Visibility = Visibility.Visible;
+            }
+        }
+
         private void SelectedTerning(Image imgTerning, int terning)
         {
-            if (imgTerning.Visibility == Visibility.Hidden)
+            if (!AlleTerninger[terning - 1].IsHeld)
             {
                 AlleTerninger[terning - 1].IsHeld = true;
                 imgTerning.Visibility = Visibility.Visible;
             }
-            else if (imgTerning.Visibility == Visibility.Visible)
+            else if (AlleTerninger[terning - 1].IsHeld)
             {
                 AlleTerninger[terning - 1].IsHeld = false;
                 imgTerning.Visibility = Visibility.Hidden;
             }
         }
 
-        private int ReturnThrowNumber()
+        private int Kastet
         {
-            return int.Parse(txbKastTilbage.Text.Split(_txbKastTilbage).Last());
+            get
+            {
+                return FuncLayer.Spil.Kasted;
+            }
         }
     }
 }

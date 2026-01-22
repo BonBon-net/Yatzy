@@ -281,7 +281,8 @@ namespace Yatzy
         {
             try
             {
-                FuncLayer.NytSpil();
+                Spil spil = FuncLayer.NytSpil();
+                lbActiveSpil.SelectedIndex = FuncLayer.SpilListe.IndexOf(spil);
             }
             catch (Exception ex)
             {

@@ -23,7 +23,7 @@
         <TextBlock x:Name="txbSpillerTur" Text="{Binding SpillerTur.Navn}" HorizontalAlignment="Right" TextAlignment="Right" FontSize="25" Margin="0,170,510,0" MinWidth="100" MinHeight="45" MaxHeight="45" TextWrapping="Wrap" VerticalAlignment="Top" Width="420"/>
         <Button x:Name="btnRegister" Content="Register" IsEnabled="False" HorizontalAlignment="Left" Margin="352,130,0,0" VerticalAlignment="Top" Click="Register_Click"/>
         <Button x:Name="btnStopGame" Content="Stop Game" IsEnabled="True" HorizontalAlignment="Left" Margin="48,130,0,0" VerticalAlignment="Top" Click="btnStopGame_Click"/>
-        <!--<Button x:Name="btnSaveGame" Content="Save Game" IsEnabled="{Binding IsGameSaved}" Visibility="Collapsed" HorizontalAlignment="Left" Margin="48,155,0,0" VerticalAlignment="Top" Click="btnSaveGame_Click"/>-->
+        <Button x:Name="btnSaveGame" Content="Save Game" IsEnabled="False" HorizontalAlignment="Left" Margin="48,155,0,0" VerticalAlignment="Top" Click="btnSaveGame_Click"/>
         <DataGrid ItemsSource="{Binding Spil.Spillere}" x:Name="dgSpillerScoreBoard"
                 FlowDirection="RightToLeft" 
                 IsReadOnly="True" HorizontalAlignment="Left"

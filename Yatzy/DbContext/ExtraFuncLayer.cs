@@ -32,7 +32,7 @@ namespace Yatzy
             model.SpillerSpil.Load();
             model.Spillere.Load();
             model.ScoreBoards.Load();
-            //model.Terninger.Load();
+            model.Terninger.Load();
             RaisePropertyChanged(nameof(SpilListe));
         }
 
@@ -68,9 +68,8 @@ namespace Yatzy
 
         public Spil Spil { get; set; }
         public bool PlayerHasWon = false;
-        public SpillerSpil? HighestScorePlayer;
         public int CurrentPlayerIndex;
-        public SpillerSpil? SpillerTur
+        public SpillerSpil SpillerTur
         {
             get
             {
@@ -87,20 +86,6 @@ namespace Yatzy
             }
         }
 
-        private bool isGameSaved = false;
-        public bool IsGameSaved
-        {
-            get
-            {
-                return isGameSaved;
-            }
-            set
-            {
-                isGameSaved = value;
-                RaisePropertyChanged(nameof(IsGameSaved));
-            }
-        }
-
         // Public methods
 
         public void StartSpil()
@@ -110,21 +95,19 @@ namespace Yatzy
                 throw new InvalidOperationException("Der er igen spillere");
             }
 
-            IsGameSaved = false;
-            CurrentPlayerIndex = 0;
-            HighestScorePlayer = SpillerTur;
+            CurrentPlayerIndex = Spil.SpillerTurIndex;
 
             RaisePropertyChanged(nameof(SpillerTur));
-            RaisePropertyChanged(nameof(HighestScorePlayer));
         }
 
-        public void NytSpil()
+        public Spil NytSpil()
         {
-            Spil = new();
+            Spil = Spil.CreateSpil();
             model.SpilTabel.Add(Spil);
             model.SaveChanges();
             RaisePropertyChanged(nameof(Spil));
             RaisePropertyChanged(nameof(SpilListe));
+            return Spil;
         }
 
         public void LoadSpil(Spil spil)
@@ -135,8 +118,10 @@ namespace Yatzy
             }
 
             Spil = spil;
-            RaisePropertyChanged(nameof(Spil));
+            CurrentPlayerIndex = Spil.SpillerTurIndex;
 
+            RaisePropertyChanged(nameof(SpillerTur));
+            RaisePropertyChanged(nameof(Spil));
         }
 
         public void StopSpil()
@@ -147,10 +132,17 @@ namespace Yatzy
             }
 
             CurrentPlayerIndex = 0;
-            HighestScorePlayer = SpillerTur;
 
             RaisePropertyChanged(nameof(SpillerListe));
             RaisePropertyChanged(nameof(SpillerTur));
+        }
+
+        public Spil GemSpil()
+        {
+            model.SaveChanges();
+            RaisePropertyChanged(nameof(SpilListe));
+
+            return Spil;
         }
 
         public void TilføjSpillerTilSpil(Spiller spiller)
@@ -279,15 +271,19 @@ namespace Yatzy
         {
             string header = cell.Column.Header.ToString();
 
-            int score = RegnHeaderValue(header, terninger);
+            int score = RegnHeaderValue(header);
 
             // Set property value by reflection
             PropertyInfo property = typeof(ScoreBoard).GetProperty(TrimString(header));
             property.SetValue(SpillerTur.ScoreBoard, score);
 
-            if (SpillerTur.ScoreBoard.TotalSum > HighestScorePlayer.ScoreBoard.TotalSum)
+            if (Spil.HighestScorePlayer == null)
             {
-                HighestScorePlayer = SpillerTur;
+                Spil.HighestScorePlayer = SpillerTur;
+            }
+            else if (SpillerTur.ScoreBoard.TotalSum > Spil.HighestScorePlayer.ScoreBoard.TotalSum)
+            {
+                Spil.HighestScorePlayer = SpillerTur;
             }
 
             if (SpillerListe.Count - 1 == CurrentPlayerIndex)
@@ -300,7 +296,7 @@ namespace Yatzy
                 {
                     try
                     {
-                        RegnHeaderValue(headers[i], terninger);
+                        RegnHeaderValue(headers[i]);
                     }
                     catch
                     {
@@ -319,7 +315,7 @@ namespace Yatzy
             return score;
         }
 
-        public int RegnHeaderValue(string header, List<Terning> terninger)
+        public int RegnHeaderValue(string header)
         {
             int[] values = CalculateValues();
             header = TrimString(header);
@@ -557,9 +553,9 @@ namespace Yatzy
                 }
 
                 // calculate'ing horse + moo
-                for (int i = 0; i < terninger.Count; i++)
+                for (int i = 0; i < Spil.Terninger.Count; i++)
                 {
-                    score += terninger[i].DiceValue;
+                    score += Spil.Terninger[i].DiceValue;
                 }
 
                 //SpillerTur.Chance = score;
@@ -591,9 +587,9 @@ namespace Yatzy
             int[] CalculateValues()
             {
                 int[] values = new int[6];
-                for (int i = 0; i < terninger.Count; i++)
+                for (int i = 0; i < Spil.Terninger.Count; i++)
                 {
-                    int diceValue = terninger[i].DiceValue;
+                    int diceValue = Spil.Terninger[i].DiceValue;
                     values[diceValue - 1] += 1;
                 }
                 return values;

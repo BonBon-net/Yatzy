@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy.YatzyDbContext
@@ -31,12 +32,40 @@ namespace Yatzy.YatzyDbContext
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public Spil()
+        public Spil(DateTime dateTime)
         {
-            Id = 0;
-            DateTime = DateTime.Now;
+            DateTime = dateTime;
         }
-        public Spil(ObservableCollection<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex)
+        public Spil(int id, DateTime dateTime)
+        {
+            Id = id;
+            DateTime = dateTime;
+        }
+
+        static public Spil CreateSpil() 
+        {
+            Spil spil = new(DateTime.Now);
+
+            spil.Terninger.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                spil.Terninger.Add(new Terning());
+            }
+
+            return spil;
+        }
+
+        //public Spil(Spil spil)
+        //{
+        //    id = 0;
+        //    Spillere = spil.Spillere;
+        //    Terninger = spil.Terninger;
+        //    DateTime = DateTime.Now;
+        //    Kasted = spil.Kasted;
+        //    SpillerTurIndex = spil.SpillerTurIndex;
+        //    HighestScorePlayer = spil.HighestScorePlayer;
+        //}
+        public Spil(ObservableCollection<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex, SpillerSpil highestScorePlayer)
         {
             Id = 0;
             Spillere = spillere;
@@ -44,6 +73,7 @@ namespace Yatzy.YatzyDbContext
             DateTime = DateTime.Now;
             Kasted = kasted;
             SpillerTurIndex = spillerTurIndex;
+            HighestScorePlayer = highestScorePlayer;
         }
 
         public int Id { get; set; }
@@ -54,7 +84,7 @@ namespace Yatzy.YatzyDbContext
         public DateTime DateTime { get; set; }
         public int Kasted { get; set; }
         public int SpillerTurIndex { get; set; }
-        public int HighestScorePlayerIndex;
+        public SpillerSpil HighestScorePlayer;
     }
 
     public class SpillerSpil : INotifyPropertyChanged
@@ -135,10 +165,11 @@ namespace Yatzy.YatzyDbContext
     public class Terning : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+        public static Random rnd = new();
 
         public int Id { get; set; }
 
-        public int DiceValue { get; set; } = -1;
+        public int DiceValue { get; set; } = rnd.Next(1, 7);
         public bool IsHeld { get; set; } = false;
     }
 

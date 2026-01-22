@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Yatzy.YatzyDbContext;
 
 namespace Yatzy
 {
@@ -26,6 +27,7 @@ namespace Yatzy
         public void StartGame()
         {
             funcLayer.StartSpil();
+            TerningUserControl.Init();
             ChangeUserControl(TerningUserControl);
         }
 
