@@ -16,7 +16,7 @@ namespace Yatzy.YatzyDbContext
         //public DbSet<Spiller> SpillerTabel { get; set; }
         public DbSet<Spil> SpilTabel { get; set; }
 
-        public DbSet<SpillerSpil> SpillerSpil {get;set;}
+        public DbSet<SpillerSpil> SpillerSpil { get; set; }
         public DbSet<Spiller> Spillere { get; set; }
         public DbSet<ScoreBoard> ScoreBoards { get; set; }
         public DbSet<Terning> Terninger { get; set; }
@@ -42,7 +42,7 @@ namespace Yatzy.YatzyDbContext
             DateTime = dateTime;
         }
 
-        static public Spil CreateSpil() 
+        static public Spil CreateSpil()
         {
             Spil spil = new(DateTime.Now);
 
@@ -55,27 +55,6 @@ namespace Yatzy.YatzyDbContext
             return spil;
         }
 
-        //public Spil(Spil spil)
-        //{
-        //    id = 0;
-        //    Spillere = spil.Spillere;
-        //    Terninger = spil.Terninger;
-        //    DateTime = DateTime.Now;
-        //    Kasted = spil.Kasted;
-        //    SpillerTurIndex = spil.SpillerTurIndex;
-        //    HighestScorePlayer = spil.HighestScorePlayer;
-        //}
-        public Spil(ObservableCollection<SpillerSpil> spillere, List<Terning> terninger, int kasted, int spillerTurIndex, SpillerSpil highestScorePlayer)
-        {
-            Id = 0;
-            Spillere = spillere;
-            Terninger = terninger;
-            DateTime = DateTime.Now;
-            Kasted = kasted;
-            SpillerTurIndex = spillerTurIndex;
-            HighestScorePlayer = highestScorePlayer;
-        }
-
         public int Id { get; set; }
 
         public ObservableCollection<SpillerSpil> Spillere { get; set; } = new ObservableCollection<SpillerSpil>();
@@ -85,6 +64,7 @@ namespace Yatzy.YatzyDbContext
         public int Kasted { get; set; }
         public int SpillerTurIndex { get; set; }
         public SpillerSpil HighestScorePlayer;
+        public bool IsStarted = false;
     }
 
     public class SpillerSpil : INotifyPropertyChanged
@@ -100,7 +80,7 @@ namespace Yatzy.YatzyDbContext
 
         public SpillerSpil(int id, Spiller spiller)
         {
-            Id =id;
+            Id = id;
             Spiller = spiller;
             scoreBoard = new ScoreBoard();
         }

@@ -88,11 +88,22 @@ namespace Yatzy
             {
                 if (FuncLayer.SpillerListe.Count < 1)
                 {
+                    btnStartSpil.IsEnabled = false;
                     throw new AccessViolationException("Der skal være mindst 1 spillere for at starte spillet.");
                 }
                 else
                 {
-                    UserControlManager.StartGame();
+                    Spil? spil = lbActiveSpil.SelectedItem as Spil;
+                    if (spil != null)
+                    {
+                        FuncLayer.LoadSpil(spil);
+                        StartSpil_IsEnabled();
+                        UserControlManager.StartGame();
+                    }
+                    else
+                    {
+                        throw new NullReferenceException();
+                    }
                 }
             }
             catch (Exception ex)
@@ -158,11 +169,15 @@ namespace Yatzy
 
                 if (FuncLayer.Spil == null)
                 {
-                    throw new Exception("Spil er ikke valgt");
+                    throw new NullReferenceException("Spil er ikke valgt");
                 }
                 if (spiller == null)
                 {
                     throw new NullReferenceException("Spiller er ikke valgt");
+                }
+                if (FuncLayer.Spil.IsStarted)
+                {
+                    throw new InvalidOperationException("Spillet er gået igang");
                 }
                 if (FuncLayer.Spil.Spillere.FirstOrDefault(spilSpiller => spilSpiller.Spiller == spiller) != null)
                 {
@@ -250,14 +265,14 @@ namespace Yatzy
                 Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spil != null)
                 {
-                    btnFjernActivSpil.IsEnabled = true;
                     FuncLayer.LoadSpil(spil);
-                    StartSpil_IsEnabled();
+                    btnFjernActivSpil.IsEnabled = true;
                 }
                 else
                 {
                     btnFjernActivSpil.IsEnabled = false;
                 }
+                StartSpil_IsEnabled();
             }
             catch (Exception ex)
             {

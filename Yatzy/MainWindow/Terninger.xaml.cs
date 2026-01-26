@@ -64,7 +64,12 @@ namespace Yatzy
             {
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
                 TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
-                SelectedTerning(TerningSelection[i], i + 1);
+                if (FuncLayer.Spil.Kasted > 0 && AlleTerninger[i].IsHeld)
+                {
+                    //SelectedTerning(TerningSelection[i], i + 1);
+                    AlleTerninger[i].IsHeld = true;
+                    ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Visible;
+                }
             }
             txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
         }
@@ -287,9 +292,11 @@ namespace Yatzy
                     }
                     else
                     {
-                        dgSpillerScoreBoard.UnselectAllCells();
                         SpillerSpil spiller = FuncLayer.NæsteSpiller();
+                        dgSpillerScoreBoard.UnselectAllCells();
                         dgSpillerScoreBoard.SelectedItem = null;
+                        FuncLayer.Spil.Kasted = 0;
+                        FuncLayer.Spil.IsStarted = true;
                         ResetUi();
                     }
                     btnSaveGame.IsEnabled = true;
@@ -353,14 +360,14 @@ namespace Yatzy
 
         private void ResetUi()
         {
-            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
             btnRegister.IsEnabled = false;
             btnKast.IsEnabled = true;
+            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
             for (int i = 0; i < AlleTerninger.Count; i++)
             {
-                SelectedTerning(((Image)FindName($"imgTerningSelected{i + 1}")), i + 1);
-                //AlleTerninger[i].IsHeld = false;
-                //((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
+                //SelectedTerning(((Image)FindName($"imgTerningSelected{i + 1}")), i + 1);
+                AlleTerninger[i].IsHeld = false;
+                ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Hidden;
             }
         }
 
