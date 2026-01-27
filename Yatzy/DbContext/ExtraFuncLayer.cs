@@ -25,15 +25,21 @@ namespace Yatzy
             }
         }
 
-        private Model model { get; set; } = new Model();
+        private Model model { get; set; }
         public FuncLayer()
         {
+            LoadModel();
+            RaisePropertyChanged(nameof(SpilListe));
+        }
+
+        private void LoadModel()
+        {
+            model = new Model();
             model.SpilTabel.Load();
             model.SpillerSpil.Load();
             model.Spillere.Load();
             model.ScoreBoards.Load();
             model.Terninger.Load();
-            RaisePropertyChanged(nameof(SpilListe));
         }
 
         public ObservableCollection<Spil> SpilListe
@@ -117,16 +123,10 @@ namespace Yatzy
                 throw new ArgumentNullException(nameof(spil));
             }
 
-            //0 = new();
-            //SpilListe.Clear();
-            //model.Entry(model.SpilTabel).Reload();
-            //model.SpilTabel.Local.Reset();
-            //model.SpilTabel.Load();
+            model.Dispose();
+            LoadModel();
 
-            Spil = Spil.CreateSpil();
             Spil = spil;
-            SpilListe.Remove(SpilListe.Last());
-            CurrentPlayerIndex = Spil.SpillerTurIndex;
 
             RaisePropertyChanged(nameof(SpillerTur));
             RaisePropertyChanged(nameof(SpilListe));

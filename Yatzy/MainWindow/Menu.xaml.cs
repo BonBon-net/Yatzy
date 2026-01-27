@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Yatzy.YatzyDbContext;
 
@@ -267,6 +268,7 @@ namespace Yatzy
                 {
                     FuncLayer.LoadSpil(spil);
                     btnFjernActivSpil.IsEnabled = true;
+                    lbActiveSpil.SelectedItem = FuncLayer.SpilListe.First(spilA => spilA == FuncLayer.Spil);
                 }
                 else
                 {
