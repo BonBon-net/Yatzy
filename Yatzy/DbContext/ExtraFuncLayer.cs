@@ -117,10 +117,19 @@ namespace Yatzy
                 throw new ArgumentNullException(nameof(spil));
             }
 
+            //0 = new();
+            //SpilListe.Clear();
+            //model.Entry(model.SpilTabel).Reload();
+            //model.SpilTabel.Local.Reset();
+            //model.SpilTabel.Load();
+
+            Spil = Spil.CreateSpil();
             Spil = spil;
+            SpilListe.Remove(SpilListe.Last());
             CurrentPlayerIndex = Spil.SpillerTurIndex;
 
             RaisePropertyChanged(nameof(SpillerTur));
+            RaisePropertyChanged(nameof(SpilListe));
             RaisePropertyChanged(nameof(Spil));
         }
 

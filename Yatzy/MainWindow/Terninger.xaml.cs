@@ -63,7 +63,8 @@ namespace Yatzy
             for (int i = 0; i < AlleTerninger.Count; i++)
             {
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
-                TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                //TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
+                ((Image)FindName($"imgTerning{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(TerningSides[FuncLayer.Spil.Terninger[i].DiceValue - 1])));
                 if (FuncLayer.Spil.Kasted > 0 && AlleTerninger[i].IsHeld)
                 {
                     //SelectedTerning(TerningSelection[i], i + 1);
@@ -71,6 +72,7 @@ namespace Yatzy
                     ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Visible;
                 }
             }
+
             txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
         }
 

@@ -32,6 +32,7 @@ namespace Yatzy.YatzyDbContext
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public Spil() { }
         public Spil(DateTime dateTime)
         {
             DateTime = dateTime;
