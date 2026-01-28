@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -116,15 +117,18 @@ namespace Yatzy
             return Spil;
         }
 
-        public void LoadSpil(Spil spil)
+        public void LoadSpil(Spil spil, bool preventLoadModel)
         {
             if (spil == null)
             {
                 throw new ArgumentNullException(nameof(spil));
             }
 
-            model.Dispose();
-            LoadModel();
+            if (!preventLoadModel)
+            {
+                model.Dispose();
+                LoadModel();
+            }
 
             Spil = spil;
 
@@ -137,7 +141,8 @@ namespace Yatzy
         {
             for (int i = 0; i < SpillerListe.Count; i++)
             {
-                SpillerListe[i].ResetScoreBoard();
+                ScoreBoard oldScoreBoard = SpillerListe[i].ResetScoreBoard();
+                model.ScoreBoards.Remove(oldScoreBoard);
             }
 
             CurrentPlayerIndex = 0;
@@ -238,6 +243,16 @@ namespace Yatzy
             if (spil == null)
             {
                 throw new InvalidOperationException("Der blev ikke vælgt et spil");
+            }
+
+            for (int i = spil.Spillere.Count; i > 0; i--)
+            {
+                model.ScoreBoards.Remove(spil.Spillere[i - 1].ScoreBoard);
+                model.SpillerSpil.Remove(spil.Spillere[i - 1]);
+            }
+            for (int i = spil.Terninger.Count; i > 0; i--)
+            {
+                model.Terninger.Remove(spil.Terninger[i - 1]);
             }
 
             model.SpilTabel.Remove(spil);

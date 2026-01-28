@@ -411,6 +411,7 @@ namespace Yatzy
                 AlleTerninger[terning - 1].IsHeld = false;
                 imgTerning.Visibility = Visibility.Hidden;
             }
+            btnSaveGame.IsEnabled = true;
         }
 
         private int Kastet

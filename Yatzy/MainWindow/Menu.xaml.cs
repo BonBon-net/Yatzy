@@ -97,8 +97,13 @@ namespace Yatzy
                     Spil? spil = lbActiveSpil.SelectedItem as Spil;
                     if (spil != null)
                     {
-                        FuncLayer.LoadSpil(spil);
+                        int spilId = spil.Id;
+                        FuncLayer.LoadSpil(spil, false);
                         StartSpil_IsEnabled();
+                        if (lbActiveSpil.SelectedItem == null)
+                        {
+                            lbActiveSpil.SelectedItem = FuncLayer.SpilListe.First(spil => spil.Id == spilId);
+                        }
                         UserControlManager.StartGame();
                     }
                     else
@@ -149,10 +154,20 @@ namespace Yatzy
             try
             {
                 SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
+                Spil? spil = lbSpillerSpil.SelectedItem as Spil;
                 if (spiller == null)
                 {
-                    throw new InvalidOperationException("Player was empty");
+                    throw new NullReferenceException("No player is selected");
                 }
+                if (spil == null)
+                {
+                    throw new NullReferenceException("No game is selected");
+                }
+                if (spil.IsStarted)
+                {
+                    throw new InvalidOperationException("Spillet er starter");
+                }
+
                 FuncLayer.FjernSpillerFraSpil(spiller);
                 StartSpil_IsEnabled();
             }
@@ -186,6 +201,11 @@ namespace Yatzy
                 }
 
                 FuncLayer.TilføjSpillerTilSpil(spiller);
+                SpillerSpil? spillerSpil = FuncLayer.Spil.Spillere.FirstOrDefault(spillere => spillere.Navn == spiller.Navn);
+                if (spillerSpil != null && lbSpillerList.SelectedItem != spillerSpil)
+                {
+                    lbSpillerSpil.SelectedItem = spillerSpil;
+                }
                 StartSpil_IsEnabled();
             }
             catch (Exception ex)
@@ -204,6 +224,7 @@ namespace Yatzy
                 {
                     throw new InvalidOperationException("Der blev ikke vælgt et spil");
                 }
+
                 FuncLayer.FjernActivSpil(spil);
                 StartSpil_IsEnabled();
             }
@@ -224,6 +245,11 @@ namespace Yatzy
                     btnFjernSpiller.IsEnabled = true;
                     btnSaveSpiller.IsEnabled = true;
                     btnTilføjSpillerTilSpil.IsEnabled = true;
+                    SpillerSpil? spillerSpil = FuncLayer.Spil.Spillere.FirstOrDefault(spillere => spillere.Navn == spiller.Navn);
+                    if (spillerSpil != null && lbSpillerList.SelectedItem != spillerSpil)
+                    {
+                        lbSpillerSpil.SelectedItem = spillerSpil;
+                    }
                 }
                 else
                 {
@@ -245,8 +271,12 @@ namespace Yatzy
                 SpillerSpil? spillerSpil = lbSpillerSpil.SelectedItem as SpillerSpil;
                 if (spillerSpil != null)
                 {
-                    lbSpillerList.SelectedIndex = FuncLayer.Spillere.IndexOf(FuncLayer.Spillere.First(spiller => spiller.Navn == spillerSpil.Navn));
                     btnFjernSpillerFraSpil.IsEnabled = true;
+                    Spiller? spiller = FuncLayer.Spillere.FirstOrDefault(spiller => spiller.Navn == spillerSpil.Navn);
+                    if (spiller != null && lbSpillerList.SelectedItem != spiller)
+                    {
+                        lbSpillerList.SelectedItem = spiller;
+                    }
                 }
                 else
                 {
@@ -266,9 +296,13 @@ namespace Yatzy
                 Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spil != null)
                 {
-                    FuncLayer.LoadSpil(spil);
+                    int spilId = spil.Id;
+                    FuncLayer.LoadSpil(spil, true);
                     btnFjernActivSpil.IsEnabled = true;
-                    lbActiveSpil.SelectedItem = FuncLayer.SpilListe.First(spilA => spilA == FuncLayer.Spil);
+                    if (lbActiveSpil.SelectedItem == null)
+                    {
+                        lbActiveSpil.SelectedItem = FuncLayer.SpilListe.First(spil => spil.Id == spilId);
+                    }
                 }
                 else
                 {
