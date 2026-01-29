@@ -138,12 +138,6 @@ namespace Yatzy
 
         public void StopSpil()
         {
-            for (int i = 0; i < SpillerListe.Count; i++)
-            {
-                ScoreBoard oldScoreBoard = SpillerListe[i].ResetScoreBoard();
-                model.ScoreBoards.Remove(oldScoreBoard);
-            }
-
             CurrentPlayerIndex = 0;
 
             OnPropertyChanged();
@@ -243,6 +237,8 @@ namespace Yatzy
                 throw new InvalidOperationException("Der blev ikke vælgt et spil");
             }
 
+            spil.HighestScorePlayer = null;
+            model.SaveChanges();
             for (int i = spil.Spillere.Count; i > 0; i--)
             {
                 model.ScoreBoards.Remove(spil.Spillere[i - 1].ScoreBoard);
@@ -261,15 +257,51 @@ namespace Yatzy
             return spil;
         }
 
-        public void FjernSpillerFraSpil(SpillerSpil spiller)
+        public void FjernSpillerFraSpil(SpillerSpil spiller, Spil spil)
         {
             if (spiller == null)
             {
                 throw new Exception("Spiller er ikke vælgt");
             }
+            if (spil == null)
+            {
+                throw new NullReferenceException("No game is selected");
+            }
 
             // Remove player from Game
-            Spil.Spillere.Remove(spiller);
+            spil.HighestScorePlayer = null;
+            model.ScoreBoards.Remove(spiller.ScoreBoard);
+            model.SpillerSpil.Remove(spiller);
+
+            //spil.Spillere.Remove(spiller);
+            model.SaveChanges();
+
+            // setting new HighestScorePlayer
+            if (spil.Spillere.Count > 0)
+            {
+                SpillerSpil spillerA = spil.Spillere.First();
+                for (int i = 1; i < spil.Spillere.Count; i++)
+                {
+                    if (spil.Spillere[i].ScoreBoard.TotalSum > spillerA.ScoreBoard.TotalSum)
+                    {
+                        spillerA = spil.Spillere[i];
+                    }
+                    // spil.Spillere.FirstOrDefault(player => player.ScoreBoard.TotalSum > 0);
+                }
+                if (spillerA != null)
+                {
+                    spil.HighestScorePlayer = spillerA;
+                }
+                else
+                {
+                    spil.HighestScorePlayer = spil.Spillere.First();
+                }
+            }
+            else
+            {
+                spil.HighestScorePlayer = null;
+            }
+
             model.SaveChanges();
             OnPropertyChanged();
         }

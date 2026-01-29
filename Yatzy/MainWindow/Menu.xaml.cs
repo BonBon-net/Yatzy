@@ -163,12 +163,9 @@ namespace Yatzy
                 {
                     throw new NullReferenceException("No game is selected");
                 }
-                if (spil.IsStarted)
-                {
-                    throw new InvalidOperationException("Spillet er startet");
-                }
 
-                FuncLayer.FjernSpillerFraSpil(spiller);
+                FuncLayer.FjernSpillerFraSpil(spiller, spil);
+
                 StartSpil_IsEnabled();
             }
             catch (Exception ex)
@@ -245,10 +242,11 @@ namespace Yatzy
                     btnFjernSpiller.IsEnabled = true;
                     btnSaveSpiller.IsEnabled = true;
                     btnTilføjSpillerTilSpil.IsEnabled = true;
-                    Spiller? spiller_2 = FuncLayer.Spillere.FirstOrDefault(spillere => spillere == spiller_1);
-                    if (spiller_2 != null && lbSpillerList.SelectedItem == spiller_2)
+                    //Spiller? spiller_2 = FuncLayer.Spillere.FirstOrDefault(spillere => spillere == spiller_1);
+                    SpillerSpil? spillerSpil = FuncLayer.SpillerListe.FirstOrDefault(spillerSpil => spillerSpil.Spiller == spiller_1);
+                    if (spillerSpil != null && lbSpillerList.SelectedItem != spillerSpil)
                     {
-                        lbSpillerSpil.SelectedItem = FuncLayer.SpillerListe.First(spillerSpil => spillerSpil.Spiller == spiller_2);
+                        lbSpillerSpil.SelectedItem = spillerSpil;
                     }
                 }
                 else
