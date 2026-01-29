@@ -377,7 +377,7 @@ namespace Yatzy
         {
             try
             {
-                MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     FuncLayer.GemSpil();

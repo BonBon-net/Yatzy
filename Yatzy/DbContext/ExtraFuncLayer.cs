@@ -1,15 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -25,12 +19,20 @@ namespace Yatzy
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
+        private void OnPropertyChanged()
+        {
+            RaisePropertyChanged(nameof(Spillere));
+            RaisePropertyChanged(nameof(SpillerListe));
+            RaisePropertyChanged(nameof(SpillerTur));
+            RaisePropertyChanged(nameof(Spil));
+            RaisePropertyChanged(nameof(SpilListe));
+        }
 
         private Model model { get; set; }
         public FuncLayer()
         {
             LoadModel();
-            RaisePropertyChanged(nameof(SpilListe));
+            OnPropertyChanged();
         }
 
         private void LoadModel()
@@ -109,12 +111,11 @@ namespace Yatzy
 
         public Spil NytSpil()
         {
-            Spil = Spil.CreateSpil();
-            model.SpilTabel.Add(Spil);
+            Spil spil = Spil.CreateSpil();
+            model.SpilTabel.Add(spil);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(Spil));
-            RaisePropertyChanged(nameof(SpilListe));
-            return Spil;
+            OnPropertyChanged();
+            return spil;
         }
 
         public void LoadSpil(Spil spil, bool preventLoadModel)
@@ -132,9 +133,7 @@ namespace Yatzy
 
             Spil = spil;
 
-            RaisePropertyChanged(nameof(SpillerTur));
-            RaisePropertyChanged(nameof(SpilListe));
-            RaisePropertyChanged(nameof(Spil));
+            OnPropertyChanged();
         }
 
         public void StopSpil()
@@ -147,14 +146,13 @@ namespace Yatzy
 
             CurrentPlayerIndex = 0;
 
-            RaisePropertyChanged(nameof(SpillerListe));
-            RaisePropertyChanged(nameof(SpillerTur));
+            OnPropertyChanged();
         }
 
         public Spil GemSpil()
         {
             model.SaveChanges();
-            RaisePropertyChanged(nameof(SpilListe));
+            OnPropertyChanged();
 
             return Spil;
         }
@@ -169,10 +167,10 @@ namespace Yatzy
             SpillerSpil spillerSpil = new(spiller);
             Spil.Spillere.Add(spillerSpil);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(Spil));
+            OnPropertyChanged();
         }
 
-        public SpillerSpil TilføjSpiller(string spillerNavn)
+        public Spiller TilføjSpiller(string spillerNavn)
         {
             if (string.IsNullOrEmpty(spillerNavn))
             {
@@ -182,23 +180,23 @@ namespace Yatzy
             // Update player name
             spillerNavn = FormaterSpillerNavn(spillerNavn);
             // lambda
-            if (SpillerListe.FirstOrDefault(spiller => spiller.Spiller.Navn == spillerNavn) != null)
+            if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {
                 throw new InvalidOperationException("Spiller navnet er allerede i brug");
             }
-            SpillerSpil spiller = new SpillerSpil(0, spillerNavn);
+            Spiller spiller = new(0, spillerNavn);
 
             // Add new player to List
-            SpillerListe.Add(spiller);
+            Spillere.Add(spiller);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(SpillerListe));
+            OnPropertyChanged();
 
             return spiller;
         }
 
         public Spiller GemSpiller(Spiller spiller, string spillerNavn)
         {
-            if (spiller != null)
+            if (spiller == null)
             {
                 throw new InvalidOperationException("Spiller er ikke vælgt");
             }
@@ -210,14 +208,14 @@ namespace Yatzy
             // Update player name
             spillerNavn = FormaterSpillerNavn(spillerNavn);
             // lambda
-            if (SpillerListe.FirstOrDefault(spiller => spiller.Spiller.Navn == spillerNavn) != null)
+            if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {
                 throw new InvalidOperationException("Spiller navnet er allerede i brug");
             }
 
             spiller.Navn = spillerNavn;
             model.SaveChanges();
-            RaisePropertyChanged(nameof(Spillere));
+            OnPropertyChanged();
 
             return spiller;
         }
@@ -225,7 +223,7 @@ namespace Yatzy
         // Fjern spiller HELT
         public Spiller FjernSpiller(Spiller spiller)
         {
-            if (spiller != null)
+            if (spiller == null)
             {
                 throw new InvalidOperationException("Spiller er ikke vælgt");
             }
@@ -233,7 +231,7 @@ namespace Yatzy
             // Remove player from List
             Spillere.Remove(spiller);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(Spillere));
+            OnPropertyChanged();
 
             return spiller;
         }
@@ -258,8 +256,7 @@ namespace Yatzy
             model.SpilTabel.Remove(spil);
             model.SaveChanges();
             this.Spil = null;
-            RaisePropertyChanged(nameof(Spil));
-            RaisePropertyChanged(nameof(Spillere));
+            OnPropertyChanged();
 
             return spil;
         }
@@ -274,7 +271,7 @@ namespace Yatzy
             // Remove player from Game
             Spil.Spillere.Remove(spiller);
             model.SaveChanges();
-            RaisePropertyChanged(nameof(Spillere));
+            OnPropertyChanged();
         }
 
         public SpillerSpil NæsteSpiller()
@@ -287,7 +284,7 @@ namespace Yatzy
             {
                 CurrentPlayerIndex += 1;
             }
-            RaisePropertyChanged(nameof(SpillerTur));
+            OnPropertyChanged();
             return SpillerTur;
         }
 
@@ -333,8 +330,7 @@ namespace Yatzy
                 }
             }
 
-            RaisePropertyChanged(nameof(SpillerListe));
-            RaisePropertyChanged(nameof(SpillerTur));
+            OnPropertyChanged();
 
             return score;
         }

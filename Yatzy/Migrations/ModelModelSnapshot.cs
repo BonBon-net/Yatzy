@@ -22,7 +22,7 @@ namespace Yatzy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.ScoreBoard", b =>
+            modelBuilder.Entity("ScoreBoard", b =>
                 {
                     b.Property<int>("ScoreBoardId")
                         .ValueGeneratedOnAdd()
@@ -90,29 +90,7 @@ namespace Yatzy.Migrations
                     b.ToTable("ScoreBoards");
                 });
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Kasted")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpillerTurIndex")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SpilTabel");
-                });
-
-            modelBuilder.Entity("Yatzy.YatzyDbContext.Spiller", b =>
+            modelBuilder.Entity("Spiller", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,7 +107,7 @@ namespace Yatzy.Migrations
                     b.ToTable("Spillere");
                 });
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.SpillerSpil", b =>
+            modelBuilder.Entity("SpillerSpil", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,7 +135,7 @@ namespace Yatzy.Migrations
                     b.ToTable("SpillerSpil");
                 });
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.Terning", b =>
+            modelBuilder.Entity("Terning", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -181,9 +159,39 @@ namespace Yatzy.Migrations
                     b.ToTable("Terninger");
                 });
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.SpillerSpil", b =>
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>
                 {
-                    b.HasOne("Yatzy.YatzyDbContext.ScoreBoard", "ScoreBoard")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("HighestScorePlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsStarted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kasted")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpillerTurIndex")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HighestScorePlayerId");
+
+                    b.ToTable("SpilTabel");
+                });
+
+            modelBuilder.Entity("SpillerSpil", b =>
+                {
+                    b.HasOne("ScoreBoard", "ScoreBoard")
                         .WithMany()
                         .HasForeignKey("ScoreBoardId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -193,7 +201,7 @@ namespace Yatzy.Migrations
                         .WithMany("Spillere")
                         .HasForeignKey("SpilId");
 
-                    b.HasOne("Yatzy.YatzyDbContext.Spiller", "Spiller")
+                    b.HasOne("Spiller", "Spiller")
                         .WithMany()
                         .HasForeignKey("SpillerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -204,11 +212,20 @@ namespace Yatzy.Migrations
                     b.Navigation("Spiller");
                 });
 
-            modelBuilder.Entity("Yatzy.YatzyDbContext.Terning", b =>
+            modelBuilder.Entity("Terning", b =>
                 {
                     b.HasOne("Yatzy.YatzyDbContext.Spil", null)
                         .WithMany("Terninger")
                         .HasForeignKey("SpilId");
+                });
+
+            modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>
+                {
+                    b.HasOne("SpillerSpil", "HighestScorePlayer")
+                        .WithMany()
+                        .HasForeignKey("HighestScorePlayerId");
+
+                    b.Navigation("HighestScorePlayer");
                 });
 
             modelBuilder.Entity("Yatzy.YatzyDbContext.Spil", b =>

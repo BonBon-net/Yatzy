@@ -29,9 +29,10 @@ namespace Yatzy
         {
             try
             {
-                FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
+                Spiller spiller = FuncLayer.TilføjSpiller(txtSpillerNavn.Text);
                 txtSpillerNavn.Clear();
                 StartSpil_IsEnabled();
+                lbSpillerList.SelectedItem = spiller;
             }
             catch (Exception ex)
             {
@@ -47,9 +48,8 @@ namespace Yatzy
                 if (spiller != null)
                 {
                     string nytNavn = txtSpillerNavn.Text;
-                    FuncLayer.GemSpiller(spiller, nytNavn);
-                    lbSpillerList.SelectedItem = null;
-                    txtSpillerNavn.Clear();
+                    spiller = FuncLayer.GemSpiller(spiller, nytNavn);
+                    lbSpillerList.SelectedItem = spiller;
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace Yatzy
             try
             {
                 SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
-                Spil? spil = lbSpillerSpil.SelectedItem as Spil;
+                Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spiller == null)
                 {
                     throw new NullReferenceException("No player is selected");
@@ -165,7 +165,7 @@ namespace Yatzy
                 }
                 if (spil.IsStarted)
                 {
-                    throw new InvalidOperationException("Spillet er starter");
+                    throw new InvalidOperationException("Spillet er startet");
                 }
 
                 FuncLayer.FjernSpillerFraSpil(spiller);
@@ -238,17 +238,17 @@ namespace Yatzy
         {
             try
             {
-                Spiller? spiller = lbSpillerList.SelectedItem as Spiller;
-                if (spiller != null)
+                Spiller? spiller_1 = lbSpillerList.SelectedItem as Spiller;
+                if (spiller_1 != null)
                 {
-                    txtSpillerNavn.Text = spiller.Navn;
+                    txtSpillerNavn.Text = spiller_1.Navn;
                     btnFjernSpiller.IsEnabled = true;
                     btnSaveSpiller.IsEnabled = true;
                     btnTilføjSpillerTilSpil.IsEnabled = true;
-                    SpillerSpil? spillerSpil = FuncLayer.Spil.Spillere.FirstOrDefault(spillere => spillere.Navn == spiller.Navn);
-                    if (spillerSpil != null && lbSpillerList.SelectedItem != spillerSpil)
+                    Spiller? spiller_2 = FuncLayer.Spillere.FirstOrDefault(spillere => spillere == spiller_1);
+                    if (spiller_2 != null && lbSpillerList.SelectedItem == spiller_2)
                     {
-                        lbSpillerSpil.SelectedItem = spillerSpil;
+                        lbSpillerSpil.SelectedItem = FuncLayer.SpillerListe.First(spillerSpil => spillerSpil.Spiller == spiller_2);
                     }
                 }
                 else

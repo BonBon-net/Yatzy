@@ -64,7 +64,7 @@ namespace Yatzy.YatzyDbContext
         public DateTime DateTime { get; set; }
         public int Kasted { get; set; }
         public int SpillerTurIndex { get; set; }
-        public SpillerSpil HighestScorePlayer { get; set; }
+        public SpillerSpil? HighestScorePlayer { get; set; }
         public bool IsStarted { get; set; } = false;
     }
 }
