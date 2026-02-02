@@ -154,11 +154,11 @@ namespace Yatzy
             try
             {
                 SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
-                Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spiller == null)
                 {
                     throw new NullReferenceException("No player is selected");
                 }
+                Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spil == null)
                 {
                     throw new NullReferenceException("No game is selected");
@@ -188,10 +188,10 @@ namespace Yatzy
                 {
                     throw new NullReferenceException("Spiller er ikke valgt");
                 }
-                if (FuncLayer.Spil.IsStarted)
-                {
-                    throw new InvalidOperationException("Spillet er gået igang");
-                }
+                //if (FuncLayer.Spil.IsStarted)
+                //{
+                //    throw new InvalidOperationException("Spillet er gået igang");
+                //}
                 if (FuncLayer.Spil.Spillere.FirstOrDefault(spilSpiller => spilSpiller.Spiller == spiller) != null)
                 {
                     throw new InvalidOperationException("Spiller har blevet valgt");

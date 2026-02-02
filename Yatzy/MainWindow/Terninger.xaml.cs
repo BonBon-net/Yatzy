@@ -74,6 +74,18 @@ namespace Yatzy
             }
 
             txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
+
+            if (FuncLayer.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
+            {
+                SpillerSpil? spiller = FuncLayer.Spil.Spillere.FirstOrDefault(Spiller => Spiller.HasPlayerNullScoreBoardValue() == true);
+                if (spiller == null)
+                {
+                    btnKast.IsEnabled = false;
+                    btnRegister.IsEnabled = false;
+                    btnSaveGame.IsEnabled = false;
+                    txbSpillerTur.Text = $"Player Won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
+                }
+            }
         }
 
         private async void KastTerninger_Click(object sender, RoutedEventArgs e)
@@ -236,7 +248,7 @@ namespace Yatzy
 
         private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && FuncLayer.Spil.Spillere.Count > FuncLayer.Spil.NullPlayerCount)
             {
                 SelectedTerning(imgTerningSelected1, 1);
             }
@@ -244,7 +256,7 @@ namespace Yatzy
 
         private void Terning2Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && FuncLayer.Spil.Spillere.Count > FuncLayer.Spil.NullPlayerCount)
             {
                 SelectedTerning(imgTerningSelected2, 2);
             }
@@ -252,7 +264,7 @@ namespace Yatzy
 
         private void Terning3Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && FuncLayer.Spil.Spillere.Count > FuncLayer.Spil.NullPlayerCount)
             {
                 SelectedTerning(imgTerningSelected3, 3);
             }
@@ -260,7 +272,7 @@ namespace Yatzy
 
         private void Terning4Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && FuncLayer.Spil.Spillere.Count > FuncLayer.Spil.NullPlayerCount)
             {
                 SelectedTerning(imgTerningSelected4, 4);
             }
@@ -268,7 +280,7 @@ namespace Yatzy
 
         private void Terning5Selected_MouseClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender as Image != null && Kastet > 0 && !FuncLayer.PlayerHasWon)
+            if (sender as Image != null && Kastet > 0 && FuncLayer.Spil.Spillere.Count > FuncLayer.Spil.NullPlayerCount)
             {
                 SelectedTerning(imgTerningSelected5, 5);
             }
@@ -285,21 +297,30 @@ namespace Yatzy
                     int Score = FuncLayer.Registrer(cell, AlleTerninger);
                     //TerningUserControl.txbSpillerTur.Text = $"Turn: {funcLayer.SpillerListe.First().Navn}";
 
-                    if (FuncLayer.PlayerHasWon)
+                    if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
                     {
                         btnKast.IsEnabled = false;
                         btnRegister.IsEnabled = false;
-                        txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer.Navn}";
+                        btnSaveGame.IsEnabled = false;
+                        txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
                         //txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
                     }
                     else
                     {
-                        SpillerSpil spiller = FuncLayer.NæsteSpiller();
-                        dgSpillerScoreBoard.UnselectAllCells();
-                        dgSpillerScoreBoard.SelectedItem = null;
-                        FuncLayer.Spil.Kasted = 0;
-                        FuncLayer.Spil.IsStarted = true;
-                        ResetUi();
+                        bool HasNull = false;
+                        if (FuncLayer.Spil.Spillere.Count != FuncLayer.Spil.NullPlayerCount)
+                        {
+                            while (!HasNull)
+                            {
+                                SpillerSpil spiller = FuncLayer.NæsteSpiller();
+                                dgSpillerScoreBoard.UnselectAllCells();
+                                dgSpillerScoreBoard.SelectedItem = null;
+                                FuncLayer.Spil.Kasted = 0;
+                                FuncLayer.Spil.IsStarted = true;
+                                ResetUi();
+                                HasNull = spiller.HasPlayerNullScoreBoardValue();
+                            }
+                        }
                     }
                     btnSaveGame.IsEnabled = true;
                 }

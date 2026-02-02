@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using Yatzy.YatzyDbContext;
 
@@ -26,6 +27,7 @@ namespace Yatzy
             RaisePropertyChanged(nameof(SpillerTur));
             RaisePropertyChanged(nameof(Spil));
             RaisePropertyChanged(nameof(SpilListe));
+            RaisePropertyChanged(nameof(Spil.Terninger));
         }
 
         private Model model { get; set; }
@@ -76,8 +78,6 @@ namespace Yatzy
         }
 
         public Spil Spil { get; set; }
-        public bool PlayerHasWon = false;
-        public int CurrentPlayerIndex;
         public SpillerSpil SpillerTur
         {
             get
@@ -85,7 +85,7 @@ namespace Yatzy
                 SpillerSpil? Spiller;
                 try
                 {
-                    Spiller = Spil.Spillere[CurrentPlayerIndex];
+                    Spiller = Spil.Spillere[Spil.SpillerTurIndex];
                 }
                 catch (Exception)
                 {
@@ -103,8 +103,6 @@ namespace Yatzy
             {
                 throw new InvalidOperationException("Der er igen spillere");
             }
-
-            CurrentPlayerIndex = Spil.SpillerTurIndex;
 
             RaisePropertyChanged(nameof(SpillerTur));
         }
@@ -138,8 +136,6 @@ namespace Yatzy
 
         public void StopSpil()
         {
-            CurrentPlayerIndex = 0;
-
             OnPropertyChanged();
         }
 
@@ -269,14 +265,51 @@ namespace Yatzy
             }
 
             // Remove player from Game
+            if (spil.NullPlayerCount > 0 && !spiller.HasPlayerNullScoreBoardValue())
+            {
+                spil.NullPlayerCount -= 1;
+            }
             spil.HighestScorePlayer = null;
             model.ScoreBoards.Remove(spiller.ScoreBoard);
             model.SpillerSpil.Remove(spiller);
-
-            //spil.Spillere.Remove(spiller);
             model.SaveChanges();
 
-            // setting new HighestScorePlayer
+            // set Next player 
+            if (spil.SpillerTurIndex >= spil.Spillere.Count)
+            {
+                spil.SpillerTurIndex = 0;
+            }
+            bool foundSpillerTur = false;
+            if (spil.NullPlayerCount != spil.Spillere.Count)
+            {
+                for (int i = spil.SpillerTurIndex; i < spil.Spillere.Count; i++)
+                {
+                    if (spil.Spillere[i].HasPlayerNullScoreBoardValue())
+                    {
+                        spil.SpillerTurIndex = i;
+                        foundSpillerTur = true;
+                        break;
+                    }
+                }
+                if (!foundSpillerTur)
+                {
+                    for (int i = 0; i < spil.SpillerTurIndex; i++)
+                    {
+                        if (spil.Spillere[i].HasPlayerNullScoreBoardValue())
+                        {
+                            spil.SpillerTurIndex = i;
+                            foundSpillerTur = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (spil.NullPlayerCount > spil.Spillere.Count)
+            {
+                throw new InvalidDataException(nameof(spil.NullPlayerCount));
+            }
+
+            // Found & Set new HighestScorePlayer
             if (spil.Spillere.Count > 0)
             {
                 SpillerSpil spillerA = spil.Spillere.First();
@@ -308,15 +341,16 @@ namespace Yatzy
 
         public SpillerSpil NæsteSpiller()
         {
-            if ((SpillerListe.Count - 1) == CurrentPlayerIndex)
+            if ((SpillerListe.Count - 1) == Spil.SpillerTurIndex)
             {
-                CurrentPlayerIndex = 0;
+                Spil.SpillerTurIndex = 0;
             }
             else
             {
-                CurrentPlayerIndex += 1;
+                Spil.SpillerTurIndex += 1;
             }
             OnPropertyChanged();
+
             return SpillerTur;
         }
 
@@ -339,27 +373,9 @@ namespace Yatzy
                 Spil.HighestScorePlayer = SpillerTur;
             }
 
-            if (SpillerListe.Count - 1 == CurrentPlayerIndex)
+            if (!Spil.Spillere[Spil.SpillerTurIndex].HasPlayerNullScoreBoardValue())
             {
-                string[] headers = { "Enere", "Toere", "Treere", "Firere", "Femmere", "Seksere", "EtPar", "ToPar", "TreEns", "FireEns", "LilleStraight", "StorStraight", "Hus", "Chance", "Yatzy" };
-                // check if Last player has a null header
-                // If last player has no null value then end game
-                int count = 0;
-                for (int i = 0; i < headers.Length; i++)
-                {
-                    try
-                    {
-                        RegnHeaderValue(headers[i]);
-                    }
-                    catch
-                    {
-                        count++;
-                    }
-                }
-                if (count == headers.Length)
-                {
-                    PlayerHasWon = true;
-                }
+                Spil.NullPlayerCount += 1;
             }
 
             OnPropertyChanged();

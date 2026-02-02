@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -62,8 +63,9 @@ namespace Yatzy.YatzyDbContext
         public List<Terning> Terninger { get; set; } = new List<Terning>();
 
         public DateTime DateTime { get; set; }
-        public int Kasted { get; set; }
-        public int SpillerTurIndex { get; set; }
+        public int Kasted { get; set; } = 0;
+        public int SpillerTurIndex { get; set; } = 0;
+        public int NullPlayerCount { get; set; } = 0;
         public SpillerSpil? HighestScorePlayer { get; set; } = null;
         public bool IsStarted { get; set; } = false;
     }
@@ -144,6 +146,24 @@ public class SpillerSpil : INotifyPropertyChanged
         ScoreBoard = new();
         return scoreBoard;
     }
+
+    public bool HasPlayerNullScoreBoardValue()
+    {
+        ScoreBoard scoreBoard = ScoreBoard;
+
+        if (scoreBoard.Enere == null || scoreBoard.Toere == null ||
+            scoreBoard.Treere == null || scoreBoard.Firere == null ||
+            scoreBoard.Femmere == null || scoreBoard.Seksere == null ||
+            scoreBoard.EtPar == null || scoreBoard.ToPar == null ||
+            scoreBoard.TreEns == null || scoreBoard.FireEns == null ||
+            scoreBoard.LilleStraight == null || scoreBoard.StorStraight == null ||
+            scoreBoard.Hus == null || scoreBoard.Chance == null || scoreBoard.Yatzy == null)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 public class Terning : INotifyPropertyChanged
@@ -221,8 +241,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(enere));
             }
-            BudgetValue += enere - 3;
-            SumValue += enere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += enere;
             OnPropertyChanged(nameof(TotalSum));
@@ -244,8 +262,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(toere));
             }
-            BudgetValue += toere - 6;
-            SumValue += toere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += toere;
             OnPropertyChanged(nameof(TotalSum));
@@ -267,8 +283,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(treere));
             }
-            BudgetValue += treere - 9;
-            SumValue += treere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += treere;
             OnPropertyChanged(nameof(TotalSum));
@@ -290,8 +304,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(firere));
             }
-            BudgetValue += firere - 12;
-            SumValue += firere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += firere;
             OnPropertyChanged(nameof(TotalSum));
@@ -313,8 +325,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(Femmere));
             }
-            BudgetValue += Femmere - 15;
-            SumValue += Femmere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += Femmere;
             OnPropertyChanged(nameof(TotalSum));
@@ -336,8 +346,6 @@ public class ScoreBoard : INotifyPropertyChanged
             {
                 throw new NullReferenceException(nameof(Seksere));
             }
-            BudgetValue += seksere - 18;
-            SumValue += seksere;
             OnPropertyChanged(nameof(BonusValue));
             totalSum += seksere;
             OnPropertyChanged(nameof(TotalSum));
@@ -351,6 +359,8 @@ public class ScoreBoard : INotifyPropertyChanged
     {
         get
         {
+            BudgetValue = GetBudgetValue();
+            SumValue = GetSumValue();
             if (SumValue >= 63 && bonus == 0)
             {
                 bonus = 50;
@@ -544,5 +554,65 @@ public class ScoreBoard : INotifyPropertyChanged
             totalSum = value;
             OnPropertyChanged(nameof(TotalSum));
         }
+    }
+
+    private int? GetBudgetValue()
+    {
+        int? BudgetValue = 0;
+        if (Enere != null)
+        {
+            BudgetValue += Enere.Value - 3;
+        }
+        if (Toere != null)
+        {
+            BudgetValue += Toere.Value - 6;
+        }
+        if (Treere != null)
+        {
+            BudgetValue += Treere.Value - 9;
+        }
+        if (Firere != null)
+        {
+            BudgetValue += Firere.Value - 12;
+        }
+        if (Femmere != null)
+        {
+            BudgetValue += Femmere.Value - 15;
+        }
+        if (Seksere != null)
+        {
+            BudgetValue += Seksere.Value - 18;
+        }
+        return BudgetValue;
+    }
+
+    private int? GetSumValue()
+    {
+        int? SumValue = 0;
+        if (Enere != null)
+        {
+            SumValue += Enere.Value;
+        }
+        if (Toere != null)
+        {
+            SumValue += Toere.Value;
+        }
+        if (Treere != null)
+        {
+            SumValue += Treere.Value;
+        }
+        if (Firere != null)
+        {
+            SumValue += Firere.Value;
+        }
+        if (Femmere != null)
+        {
+            SumValue += Femmere.Value;
+        }
+        if (Seksere != null)
+        {
+            SumValue += Seksere.Value;
+        }
+        return SumValue;
     }
 }
