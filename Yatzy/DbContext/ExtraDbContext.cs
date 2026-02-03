@@ -237,10 +237,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             enere = value;
             OnPropertyChanged(nameof(Enere));
-            if (enere == null)
-            {
-                throw new NullReferenceException(nameof(enere));
-            }
+            //if (enere == null)
+            //{
+            //    throw new NullReferenceException(nameof(enere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += enere;
             OnPropertyChanged(nameof(TotalSum));
@@ -258,10 +258,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             toere = value;
             OnPropertyChanged(nameof(Toere));
-            if (toere == null)
-            {
-                throw new NullReferenceException(nameof(toere));
-            }
+            //if (toere == null)
+            //{
+            //    throw new NullReferenceException(nameof(toere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += toere;
             OnPropertyChanged(nameof(TotalSum));
@@ -279,10 +279,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             treere = value;
             OnPropertyChanged(nameof(Treere));
-            if (treere == null)
-            {
-                throw new NullReferenceException(nameof(treere));
-            }
+            //if (treere == null)
+            //{
+            //    throw new NullReferenceException(nameof(treere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += treere;
             OnPropertyChanged(nameof(TotalSum));
@@ -300,10 +300,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             firere = value;
             OnPropertyChanged(nameof(Firere));
-            if (firere == null)
-            {
-                throw new NullReferenceException(nameof(firere));
-            }
+            //if (firere == null)
+            //{
+            //    throw new NullReferenceException(nameof(firere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += firere;
             OnPropertyChanged(nameof(TotalSum));
@@ -321,10 +321,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             femmere = value;
             OnPropertyChanged(nameof(Femmere));
-            if (Femmere == null)
-            {
-                throw new NullReferenceException(nameof(Femmere));
-            }
+            //if (Femmere == null)
+            //{
+            //    throw new NullReferenceException(nameof(Femmere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += Femmere;
             OnPropertyChanged(nameof(TotalSum));
@@ -342,10 +342,10 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             seksere = value;
             OnPropertyChanged(nameof(Seksere));
-            if (seksere == null)
-            {
-                throw new NullReferenceException(nameof(Seksere));
-            }
+            //if (seksere == null)
+            //{
+            //    throw new NullReferenceException(nameof(Seksere));
+            //}
             OnPropertyChanged(nameof(BonusValue));
             totalSum += seksere;
             OnPropertyChanged(nameof(TotalSum));

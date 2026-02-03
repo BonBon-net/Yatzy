@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class clsc : Migration
+    public partial class clsc1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,7 +90,8 @@ namespace Yatzy.Migrations
                     DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Kasted = table.Column<int>(type: "int", nullable: false),
                     SpillerTurIndex = table.Column<int>(type: "int", nullable: false),
-                    HighestScorePlayerId = table.Column<int>(type: "int", nullable: false),
+                    NullPlayerCount = table.Column<int>(type: "int", nullable: false),
+                    HighestScorePlayerId = table.Column<int>(type: "int", nullable: true),
                     IsStarted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -100,8 +101,7 @@ namespace Yatzy.Migrations
                         name: "FK_SpilTabel_SpillerSpil_HighestScorePlayerId",
                         column: x => x.HighestScorePlayerId,
                         principalTable: "SpillerSpil",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

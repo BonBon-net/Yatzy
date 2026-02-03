@@ -83,11 +83,11 @@ namespace Yatzy
             get
             {
                 SpillerSpil? Spiller;
-                try
+                if (Spil != null && Spil.Spillere.Count > 0)
                 {
                     Spiller = Spil.Spillere[Spil.SpillerTurIndex];
                 }
-                catch (Exception)
+                else
                 {
                     Spiller = null;
                 }

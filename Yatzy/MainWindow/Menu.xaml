@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yatzy"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             Height="450" Width="800">
     <Grid>
         <TextBox x:Name="txtSpillerNavn" HorizontalAlignment="Left" Margin="647,61,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="txtSpillerNavn_TextChanged"/>
         <Button x:Name="btnTilføjSpiller" Content="Tilføj Spiller" IsEnabled="False" HorizontalAlignment="Left" Margin="697,84,0,0" VerticalAlignment="Top" Click="TilføjSpiller_Click"/>
