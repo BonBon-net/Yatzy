@@ -379,6 +379,7 @@ namespace Yatzy
             }
 
             OnPropertyChanged();
+            RaisePropertyChanged(nameof(SpillerTur.ScoreBoard.TotalSum));
 
             return score;
         }

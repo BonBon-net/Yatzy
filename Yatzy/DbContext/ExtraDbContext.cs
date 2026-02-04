@@ -237,12 +237,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             enere = value;
             OnPropertyChanged(nameof(Enere));
-            //if (enere == null)
-            //{
-            //    throw new NullReferenceException(nameof(enere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += enere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -258,12 +253,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             toere = value;
             OnPropertyChanged(nameof(Toere));
-            //if (toere == null)
-            //{
-            //    throw new NullReferenceException(nameof(toere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += toere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -279,12 +269,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             treere = value;
             OnPropertyChanged(nameof(Treere));
-            //if (treere == null)
-            //{
-            //    throw new NullReferenceException(nameof(treere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += treere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -300,12 +285,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             firere = value;
             OnPropertyChanged(nameof(Firere));
-            //if (firere == null)
-            //{
-            //    throw new NullReferenceException(nameof(firere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += firere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -321,12 +301,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             femmere = value;
             OnPropertyChanged(nameof(Femmere));
-            //if (Femmere == null)
-            //{
-            //    throw new NullReferenceException(nameof(Femmere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += Femmere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -342,12 +317,7 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             seksere = value;
             OnPropertyChanged(nameof(Seksere));
-            //if (seksere == null)
-            //{
-            //    throw new NullReferenceException(nameof(Seksere));
-            //}
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += seksere;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -364,7 +334,6 @@ public class ScoreBoard : INotifyPropertyChanged
             if (SumValue >= 63 && bonus == 0)
             {
                 bonus = 50;
-                totalSum += bonus;
                 OnPropertyChanged(nameof(Bonus));
             }
             if (BudgetValue >= 0)
@@ -379,7 +348,6 @@ public class ScoreBoard : INotifyPropertyChanged
         set
         {
             OnPropertyChanged(nameof(BonusValue));
-            totalSum += SumValue + BudgetValue;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -393,7 +361,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             bonus = value;
             OnPropertyChanged(nameof(Bonus));
-            totalSum += bonus;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -409,7 +376,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             etPar = value;
             OnPropertyChanged(nameof(EtPar));
-            totalSum += etPar;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -425,7 +391,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             toPar = value;
             OnPropertyChanged(nameof(ToPar));
-            totalSum += toPar;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -441,7 +406,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             treEns = value;
             OnPropertyChanged(nameof(TreEns));
-            totalSum += treEns;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -457,7 +421,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             fireEns = value;
             OnPropertyChanged(nameof(FireEns));
-            totalSum += fireEns;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -473,7 +436,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             lilleStraight = value;
             OnPropertyChanged(nameof(LilleStraight));
-            totalSum += lilleStraight;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -489,7 +451,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             storStraight = value;
             OnPropertyChanged(nameof(StorStraight));
-            totalSum += storStraight;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -505,7 +466,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             hus = value;
             OnPropertyChanged(nameof(Hus));
-            totalSum += hus;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -521,7 +481,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             chance = value;
             OnPropertyChanged(nameof(Chance));
-            totalSum += chance;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -537,7 +496,6 @@ public class ScoreBoard : INotifyPropertyChanged
         {
             yatzy = value;
             OnPropertyChanged(nameof(Yatzy));
-            totalSum += yatzy;
             OnPropertyChanged(nameof(TotalSum));
         }
     }
@@ -547,6 +505,7 @@ public class ScoreBoard : INotifyPropertyChanged
     {
         get
         {
+            totalSum = ((Enere ?? 0) + (Toere ?? 0) + (Treere ?? 0) + (Firere ?? 0) + (Femmere ?? 0) + (Seksere ?? 0) + (Bonus) + (EtPar ?? 0) + (ToPar ?? 0) + (TreEns ?? 0) + (FireEns ?? 0) + (LilleStraight ?? 0) + (StorStraight ?? 0) + (Hus ?? 0) + (Chance ?? 0) + (Yatzy ?? 0));
             return totalSum;
         }
         set

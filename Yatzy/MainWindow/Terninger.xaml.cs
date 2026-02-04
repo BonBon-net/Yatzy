@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -88,6 +89,7 @@ namespace Yatzy
             }
 
             txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
+            txbSpillerTur.Text = $"{FuncLayer.SpillerTur.Navn}";
 
             if (FuncLayer.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
             {
@@ -136,59 +138,6 @@ namespace Yatzy
                 throw new UnauthorizedAccessException("Denied - Invalid action");
             }
 
-            void FindRows()
-            {
-                string[] Headers = new string[]
-                {
-                    "Enere",
-                    "Toere",
-                    "Treere",
-                    "Firere",
-                    "Femmere",
-                    "Seksere",
-                    "EtPar",
-                    "ToPar",
-                    "TreEns",
-                    "FireEns",
-                    "LilleStraight",
-                    "StorStraight",
-                    "Hus",
-                    "Chance",
-                    "Yatzy"
-                };
-
-                for (int i = 0; i < Headers.Length; i++)
-                {
-                    PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i]);
-                    if (property == null)
-                    {
-                        throw new NullReferenceException("Property not found in SpillerTur");
-                    }
-                    int? scoreValue = (int?)property.GetValue(FuncLayer.SpillerTur.ScoreBoard);
-                    if (scoreValue == null)
-                    {
-                        int calculatedScore = FuncLayer.RegnHeaderValue(Headers[i]);
-                        if (calculatedScore > 0)
-                        {
-                            if (dgSpillerScoreBoard.Columns.Count > 0)
-                            {
-                                if (i > 5)
-                                {
-                                    dgSpillerScoreBoard.Columns[i + 3].CellStyle = ScoreAbilityColumnStyle;
-                                }
-                                else
-                                {
-                                    dgSpillerScoreBoard.Columns[i + 1].CellStyle = ScoreAbilityColumnStyle;
-                                }
-                            }
-
-                            FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i])!.SetValue(FuncLayer.SpillerTur.ScoreBoard, calculatedScore);
-
-                            dgSpillerScoreBoard.Items.Refresh();
-                        }
-                    }
-                }
-            }
             void CheckTerningValues()
             {
                 for (int i = 0; i < AlleTerninger.Count; i++)
@@ -307,33 +256,48 @@ namespace Yatzy
                 if (dgSpillerScoreBoard.SelectedCells.Count > 0)
                 {
                     DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+                    string header = cell.Column.Header.ToString()!;
+                    PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.TrimString(header));
+                    if (property == null)
+                    {
+                        throw new NullReferenceException("Column not found");
+                    }
 
                     ResetScoreBoardStyles();
-                    int Score = FuncLayer.Registrer(cell, AlleTerninger);
-                    //TerningUserControl.txbSpillerTur.Text = $"Turn: {funcLayer.SpillerListe.First().Navn}";
-
-                    if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
+                    if ((header == "Enere" && FuncLayer.SpillerTur.ScoreBoard.Enere != null) || (header == "Toere" && FuncLayer.SpillerTur.ScoreBoard.Toere != null) || (header == "Treere" && FuncLayer.SpillerTur.ScoreBoard.Treere != null) || (header == "Firere" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "Femmere" && FuncLayer.SpillerTur.ScoreBoard.Femmere != null) || (header == "Seksere" && FuncLayer.SpillerTur.ScoreBoard.Seksere != null) ||
+                    (header == "EtPar" && FuncLayer.SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && FuncLayer.SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && FuncLayer.SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "LilleStraight" && FuncLayer.SpillerTur.ScoreBoard.LilleStraight != null) ||
+                    (header == "StorStraight" && FuncLayer.SpillerTur.ScoreBoard.StorStraight != null) || (header == "Hus" && FuncLayer.SpillerTur.ScoreBoard.Hus != null) || (header == "Chance" && FuncLayer.SpillerTur.ScoreBoard.Chance != null) || (header == "Yatzy" && FuncLayer.SpillerTur.ScoreBoard.Yatzy != null))
                     {
-                        btnKast.IsEnabled = false;
-                        btnRegister.IsEnabled = false;
-                        btnSaveGame.IsEnabled = false;
-                        txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
-                        //txbSpillerTur.Text = FuncLayer.HighestScorePlayer.Navn;
+                        FindRows();
+                        MessageBox.Show("Column allready taken");
+                        return;
                     }
                     else
                     {
-                        bool HasNull = false;
-                        if (FuncLayer.Spil.Spillere.Count != FuncLayer.Spil.NullPlayerCount)
+                        FuncLayer.Registrer(cell, FuncLayer.Spil.Terninger);
+                        if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
                         {
-                            while (!HasNull)
+                            btnKast.IsEnabled = false;
+                            btnRegister.IsEnabled = false;
+                            btnSaveGame.IsEnabled = false;
+                            txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
+                        }
+                        else
+                        {
+                            bool HasNull = false;
+                            if (FuncLayer.Spil.Spillere.Count != FuncLayer.Spil.NullPlayerCount)
                             {
-                                SpillerSpil spiller = FuncLayer.NæsteSpiller();
-                                dgSpillerScoreBoard.UnselectAllCells();
-                                dgSpillerScoreBoard.SelectedItem = null;
-                                FuncLayer.Spil.Kasted = 0;
-                                FuncLayer.Spil.IsStarted = true;
-                                ResetUi();
-                                HasNull = spiller.HasPlayerNullScoreBoardValue();
+                                while (!HasNull)
+                                {
+                                    SpillerSpil spiller = FuncLayer.NæsteSpiller();
+                                    dgSpillerScoreBoard.UnselectAllCells();
+                                    dgSpillerScoreBoard.SelectedItem = null;
+                                    FuncLayer.Spil.Kasted = 0;
+                                    FuncLayer.Spil.IsStarted = true;
+                                    ResetUi();
+                                    HasNull = spiller.HasPlayerNullScoreBoardValue();
+                                    txbSpillerTur.Text = $"{FuncLayer.SpillerTur.Navn}";
+                                }
                             }
                         }
                     }
@@ -374,6 +338,7 @@ namespace Yatzy
                 if (result == MessageBoxResult.Yes)
                 {
                     UserControlManager.StopGame();
+                    ResetScoreBoardStyles();
                     dgSpillerScoreBoard.SelectedItem = null;
                     btnSaveGame.IsEnabled = false;
                     ResetUi();
@@ -452,6 +417,7 @@ namespace Yatzy
 
         private void ResetScoreBoardStyles()
         {
+            // Set all columns to unselected style
             for (int i = 0; i < dgSpillerScoreBoard.Columns.Count; i++)
             {
                 if (FuncLayer.SpillerTur != null && dgSpillerScoreBoard.Columns[i].CellStyle != UnselectedColumnStyle)
@@ -474,76 +440,91 @@ namespace Yatzy
                             if (Header == "Enere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Enere = null;
+                                dgSpillerScoreBoard.Columns[1].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[1].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Toere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Toere = null;
+                                dgSpillerScoreBoard.Columns[2].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[2].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Treere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Treere = null;
+                                dgSpillerScoreBoard.Columns[3].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[3].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Firere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Firere = null;
+                                dgSpillerScoreBoard.Columns[4].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[4].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Femmere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Femmere = null;
+                                dgSpillerScoreBoard.Columns[5].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[5].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Seksere")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Seksere = null;
+                                dgSpillerScoreBoard.Columns[6].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[6].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "EtPar")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.EtPar = null;
+                                dgSpillerScoreBoard.Columns[9].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[9].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "ToPar")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.ToPar = null;
+                                dgSpillerScoreBoard.Columns[10].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[10].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "TreEns")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.TreEns = null;
+                                dgSpillerScoreBoard.Columns[11].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[11].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "FireEns")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.FireEns = null;
+                                dgSpillerScoreBoard.Columns[12].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[12].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "LilleStraight")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.LilleStraight = null;
+                                dgSpillerScoreBoard.Columns[13].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[13].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "StorStraight")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.StorStraight = null;
+                                dgSpillerScoreBoard.Columns[14].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[14].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Hus")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Hus = null;
+                                dgSpillerScoreBoard.Columns[15].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[15].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Chance")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Chance = null;
+                                dgSpillerScoreBoard.Columns[16].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[16].CellStyle = UnselectedColumnStyle;
                             }
                             else if (Header == "Yatzy")
                             {
                                 FuncLayer.SpillerTur.ScoreBoard.Yatzy = null;
+                                dgSpillerScoreBoard.Columns[17].CellStyle = null;
                                 dgSpillerScoreBoard.Columns[17].CellStyle = UnselectedColumnStyle;
                             }
                         }
@@ -551,8 +532,7 @@ namespace Yatzy
                 }
             }
 
-            dgSpillerScoreBoard.UnselectAllCells();
-            dgSpillerScoreBoard.UnselectAll();
+            // Refresh the DataGrid to apply style changes
             dgSpillerScoreBoard.Items.Refresh();
         }
 
@@ -574,15 +554,69 @@ namespace Yatzy
 
             // Style for unselected column
             //UnselectedColumnStyle = new Style(typeof(DataGridCell));
-            UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.White));
-            UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
-            UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
+            //UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.White));
+            //UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
+            UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(-90)));
 
             // Style for score ability column
             //ScoreAbilityColumnStyle = new Style(typeof(DataGridCell));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
+        }
+
+        private void FindRows()
+        {
+            string[] Headers = new string[]
+            {
+                    "Enere",
+                    "Toere",
+                    "Treere",
+                    "Firere",
+                    "Femmere",
+                    "Seksere",
+                    "EtPar",
+                    "ToPar",
+                    "TreEns",
+                    "FireEns",
+                    "LilleStraight",
+                    "StorStraight",
+                    "Hus",
+                    "Chance",
+                    "Yatzy"
+            };
+
+            for (int i = 0; i < Headers.Length; i++)
+            {
+                PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i]);
+                if (property == null)
+                {
+                    throw new NullReferenceException("Property not found in SpillerTur");
+                }
+                int? scoreValue = (int?)property.GetValue(FuncLayer.SpillerTur.ScoreBoard);
+                if (scoreValue == null)
+                {
+                    int calculatedScore = FuncLayer.RegnHeaderValue(Headers[i]);
+                    if (calculatedScore > 0)
+                    {
+                        if (dgSpillerScoreBoard.Columns.Count > 0)
+                        {
+                            if (i > 5)
+                            {
+                                dgSpillerScoreBoard.Columns[i + 3].CellStyle = ScoreAbilityColumnStyle;
+                            }
+                            else
+                            {
+                                dgSpillerScoreBoard.Columns[i + 1].CellStyle = ScoreAbilityColumnStyle;
+                            }
+                        }
+
+                        FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i])!.SetValue(FuncLayer.SpillerTur.ScoreBoard, calculatedScore);
+
+                        dgSpillerScoreBoard.Items.Refresh();
+                    }
+                }
+            }
         }
     }
 }
