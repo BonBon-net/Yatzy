@@ -48,6 +48,7 @@ namespace Yatzy
         //public Terning terning { get; set; } = new Terning();
 
         private string _txbKastTilbage = "Rolled:";
+        private string _txbSpillerTur = "Tur:";
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();
@@ -89,7 +90,7 @@ namespace Yatzy
             }
 
             txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
-            txbSpillerTur.Text = $"{FuncLayer.SpillerTur.Navn}";
+            txbSpillerTur.Text = $"{_txbSpillerTur} {FuncLayer.SpillerTur.Navn}";
 
             if (FuncLayer.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
             {
@@ -101,6 +102,11 @@ namespace Yatzy
                     btnSaveGame.IsEnabled = false;
                     txbSpillerTur.Text = $"Player Won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
                 }
+            }
+
+            if (FuncLayer.Spil.Kasted > 0)
+            {
+                FindRows();
             }
         }
 
@@ -115,12 +121,8 @@ namespace Yatzy
                 ResetScoreBoardStyles();
                 int[] RulleTerninger = GetRulNumber();
                 KastTerningerne(RulleTerninger);
-                if (true)
-                {
-                    // experiment
-                    await Task.Delay(awaitTime * mellemKast * 5);
-                    FindRows();
-                }
+                await Task.Delay(awaitTime * mellemKast * 6);
+                FindRows();
                 // Finishing 'KastTertinger'
                 FuncLayer.Spil.Kasted++;
                 txbKastTilbage.Text = $"{_txbKastTilbage} {FuncLayer.Spil.Kasted}";
@@ -296,7 +298,7 @@ namespace Yatzy
                                     FuncLayer.Spil.IsStarted = true;
                                     ResetUi();
                                     HasNull = spiller.HasPlayerNullScoreBoardValue();
-                                    txbSpillerTur.Text = $"{FuncLayer.SpillerTur.Navn}";
+                                    txbSpillerTur.Text = $"{_txbSpillerTur} {FuncLayer.SpillerTur.Navn}";
                                 }
                             }
                         }
@@ -381,8 +383,10 @@ namespace Yatzy
                 MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    FuncLayer.GemSpil();
                     btnSaveGame.IsEnabled = false;
+                    ResetScoreBoardStyles();
+                    FuncLayer.GemSpil();
+                    FindRows();
                     MessageBox.Show("Game saved successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -547,19 +551,19 @@ namespace Yatzy
         private void SetDefaltColumnStyle()
         {
             // Style for selected column
-            //SelectedColumnStyle = new Style(typeof(DataGridCell));
+            // SelectedColumnStyle = new Style(typeof(DataGridCell));
             SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Blue));
             SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
 
             // Style for unselected column
-            //UnselectedColumnStyle = new Style(typeof(DataGridCell));
-            //UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.White));
-            //UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
+            // UnselectedColumnStyle = new Style(typeof(DataGridCell));
+            // UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.White));
+            // UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(-90)));
 
             // Style for score ability column
-            //ScoreAbilityColumnStyle = new Style(typeof(DataGridCell));
+            // ScoreAbilityColumnStyle = new Style(typeof(DataGridCell));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
