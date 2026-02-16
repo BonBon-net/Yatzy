@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -552,7 +553,7 @@ namespace Yatzy
         {
             // Style for selected column
             // SelectedColumnStyle = new Style(typeof(DataGridCell));
-            SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Blue));
+            SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
             SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             SelectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
 
@@ -563,16 +564,48 @@ namespace Yatzy
             UnselectedColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(-90)));
 
             // Style for score ability column
+            // ScoreAbilityColumnStyle
+            // headerStyle
+            // DataGridCell
             // ScoreAbilityColumnStyle = new Style(typeof(DataGridCell));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Green));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
+            //ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Green));
+            //ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.Black));
+            //ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.ForegroundProperty, new RotateTransform(270)));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
+            //ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.ForegroundProperty, new RotateTransform(270)));
+            //ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.White));
+
+            // 1. Create a Style for the Column Header
+            //Style headerStyle = new Style(typeof());
+            ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.DarkRed));
+            ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.White));
+            ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
         }
 
         private void FindRows()
         {
+
+            //DataGridCell GetCell(DataGrid grid, DataGridRow row, int columnIndex = 0)
+            //{
+            //    if (row == null) return null;
+
+            //    var presenter = row.FindVisualChild<DataGridCellsPresenter>();
+            //    if (presenter == null) return null;
+
+            //    var cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(columnIndex);
+            //    if (cell != null) return cell;
+
+            //    // now try to bring into view and retreive the cell
+            //    grid.ScrollIntoView(row, grid.Columns[columnIndex]);
+            //    cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(columnIndex);
+
+            //    return cell;
+            //}
+
             string[] Headers = new string[]
-            {
+                {
                     "Enere",
                     "Toere",
                     "Treere",
@@ -588,7 +621,7 @@ namespace Yatzy
                     "Hus",
                     "Chance",
                     "Yatzy"
-            };
+                };
 
             for (int i = 0; i < Headers.Length; i++)
             {
@@ -607,6 +640,7 @@ namespace Yatzy
                         {
                             if (i > 5)
                             {
+                                //dgSpillerScoreBoard.GetCell(FuncLayer.SpillerTur, i + 3);
                                 dgSpillerScoreBoard.Columns[i + 3].CellStyle = ScoreAbilityColumnStyle;
                             }
                             else
