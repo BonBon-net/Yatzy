@@ -30,7 +30,7 @@ namespace Yatzy
             RaisePropertyChanged(nameof(Spil.Terninger));
         }
 
-        private Model model { get; set; }
+        public Model model { get; set; }
         public FuncLayer()
         {
             LoadModel();

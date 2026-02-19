@@ -381,15 +381,15 @@ namespace Yatzy
         {
             try
             {
+                ResetScoreBoardStyles();
                 MessageBoxResult result = MessageBox.Show("Do you want to save game?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
                     btnSaveGame.IsEnabled = false;
-                    ResetScoreBoardStyles();
                     FuncLayer.GemSpil();
-                    FindRows();
                     MessageBox.Show("Game saved successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                FindRows();
             }
             catch (Exception ex)
             {
@@ -451,6 +451,7 @@ namespace Yatzy
                             int? scoreValue = (int?)property.GetValue(FuncLayer.SpillerTur.ScoreBoard);
                             if (scoreValue != null)
                             {
+                                //FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Header)!.SetValue(FuncLayer.SpillerTur.ScoreBoard, null);
                                 // set score to null
                                 if (Header == "Enere")
                                 {
@@ -549,7 +550,7 @@ namespace Yatzy
             }
 
             // Refresh the DataGrid to apply style changes
-            //dgSpillerScoreBoard.Items.Refresh();
+            dgSpillerScoreBoard.Items.Refresh();
         }
 
         private int Kastet

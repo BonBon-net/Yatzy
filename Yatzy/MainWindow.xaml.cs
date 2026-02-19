@@ -27,8 +27,8 @@ namespace Yatzy
         public void StartGame()
         {
             funcLayer.StartSpil();
-            TerningUserControl.Init();
             ChangeUserControl(TerningUserControl);
+            TerningUserControl.Init();
         }
 
         public void StopGame()
