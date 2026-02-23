@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Yatzy.Bots;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -9,7 +10,7 @@ namespace Yatzy
     /// </summary>
     public partial class MainWindow : Window, IUserControlManager
     {
-        FuncLayer funcLayer = new FuncLayer();
+        FuncLayer FuncLayer = new FuncLayer();
         IUserControlManager userControlManager;
         Terninger TerningUserControl;
         Menu MenuUserControl;
@@ -18,15 +19,16 @@ namespace Yatzy
         {
             InitializeComponent();
             userControlManager = this;
-            MenuUserControl = new Menu(funcLayer, this);
-            TerningUserControl = new Terninger(funcLayer, this);
-            DataContext = funcLayer;
+            MenuUserControl = new Menu(FuncLayer, this);
+            TerningUserControl = new Terninger(FuncLayer, this);
+            new __BotHelper(FuncLayer, TerningUserControl);
+            DataContext = FuncLayer;
             ChangeUserControl(MenuUserControl);
         }
 
         public void StartGame()
         {
-            funcLayer.StartSpil();
+            FuncLayer.StartSpil();
             ChangeUserControl(TerningUserControl);
             TerningUserControl.Init();
         }
@@ -34,7 +36,7 @@ namespace Yatzy
         public void StopGame()
         {
             ChangeUserControl(MenuUserControl);
-            funcLayer.StopSpil();
+            FuncLayer.StopSpil();
         }
 
         public void ChangeUserControl(UserControl newControl)

@@ -16,13 +16,13 @@ namespace Yatzy
         public Menu(FuncLayer FuncLayer, IUserControlManager userControlManager)
         {
             InitializeComponent();
-            //DataContext = MainWindow.funcLayer;
+            //DataContext = MainWindow.FuncLayer;
             this.FuncLayer = FuncLayer;
             DataContext = this.FuncLayer;
             UserControlManager = userControlManager;
             StartSpil_IsEnabled();
             txtSpillerNavn.Text = string.Empty;
-            //this.funcLayer.RaisePropertyChanged(nameof(this.funcLayer.SpillerListe));
+            //this.FuncLayer.RaisePropertyChanged(nameof(this.FuncLayer.SpillerListe));
         }
 
         private void TilføjSpiller_Click(object sender, RoutedEventArgs e)

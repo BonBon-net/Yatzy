@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Yatzy.Bots;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy
@@ -652,17 +653,17 @@ namespace Yatzy
                 throw new ApplicationException("Ugyldigt kolonne header");
             }
             return score;
+        }
 
-            int[] CalculateValues()
+        public int[] CalculateValues()
+        {
+            int[] values = new int[6];
+            for (int i = 0; i < Spil.Terninger.Count; i++)
             {
-                int[] values = new int[6];
-                for (int i = 0; i < Spil.Terninger.Count; i++)
-                {
-                    int diceValue = Spil.Terninger[i].DiceValue;
-                    values[diceValue - 1] += 1;
-                }
-                return values;
+                int diceValue = Spil.Terninger[i].DiceValue;
+                values[diceValue - 1] += 1;
             }
+            return values;
         }
 
         public string TrimString(string stringTrimed)

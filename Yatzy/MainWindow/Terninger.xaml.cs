@@ -12,6 +12,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Yatzy.Bots;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace Yatzy
