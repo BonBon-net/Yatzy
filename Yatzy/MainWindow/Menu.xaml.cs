@@ -125,10 +125,14 @@ namespace Yatzy
                 if (string.IsNullOrEmpty(txtSpillerNavn.Text))
                 {
                     btnTilføjSpiller.IsEnabled = false;
+                    btnSpillerBot.IsEnabled = false;
+                    btnSpillerBot.IsEnabled = false;
                 }
                 else
                 {
                     btnTilføjSpiller.IsEnabled = true;
+                    btnSpillerBot.IsEnabled = true;
+                    btnSpillerBot.IsEnabled = true;
                 }
             }
             catch (Exception ex)
@@ -153,15 +157,15 @@ namespace Yatzy
         {
             try
             {
-                SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
-                if (spiller == null)
-                {
-                    throw new NullReferenceException("No player is selected");
-                }
                 Spil? spil = lbActiveSpil.SelectedItem as Spil;
                 if (spil == null)
                 {
                     throw new NullReferenceException("No game is selected");
+                }
+                SpillerSpil? spiller = lbSpillerSpil.SelectedItem as SpillerSpil;
+                if (spiller == null)
+                {
+                    throw new NullReferenceException("No player is selected");
                 }
 
                 FuncLayer.FjernSpillerFraSpil(spiller, spil);
@@ -270,6 +274,7 @@ namespace Yatzy
                 if (spillerSpil != null)
                 {
                     btnFjernSpillerFraSpil.IsEnabled = true;
+                    //btnSpillerBot.IsEnabled = true;
                     Spiller? spiller = FuncLayer.Spillere.FirstOrDefault(spiller => spiller.Navn == spillerSpil.Navn);
                     if (spiller != null && lbSpillerList.SelectedItem != spiller)
                     {
@@ -279,6 +284,7 @@ namespace Yatzy
                 else
                 {
                     btnFjernSpillerFraSpil.IsEnabled = false;
+                    //btnSpillerBot.IsEnabled = false;
                 }
             }
             catch (Exception ex)
@@ -332,6 +338,21 @@ namespace Yatzy
             {
                 Spil spil = FuncLayer.NytSpil();
                 lbActiveSpil.SelectedIndex = FuncLayer.SpilListe.IndexOf(spil);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        private void btnSpillerBot_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Spiller spiller = FuncLayer.OpretBot(txtSpillerNavn.Text);
+                txtSpillerNavn.Clear();
+                StartSpil_IsEnabled();
+                lbSpillerList.SelectedItem = spiller;
             }
             catch (Exception ex)
             {

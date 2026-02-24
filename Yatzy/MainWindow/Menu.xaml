@@ -7,11 +7,11 @@
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="txtSpillerNavn" HorizontalAlignment="Left" Margin="647,49,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="143" Height="30" FontSize="20" TextChanged="txtSpillerNavn_TextChanged"/>
+        <TextBox x:Name="txtSpillerNavn" HorizontalAlignment="Left" Margin="611,49,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="179" Height="30" FontSize="20" TextChanged="txtSpillerNavn_TextChanged"/>
         <Button x:Name="btnTilføjSpiller" Content="Tilføj Spiller" IsEnabled="False" FontSize="18" HorizontalAlignment="Left" Margin="693,84,0,0" VerticalAlignment="Top" Click="TilføjSpiller_Click"/>
         <Button x:Name="btnFjernSpiller" IsEnabled="False" Content="Fjern Spiller" FontSize="18" HorizontalAlignment="Left" Margin="652,123,0,0" VerticalAlignment="Top" Click="FjernSpiller_Click"/>
-        <Button x:Name="btnStartSpil" IsEnabled="False" Content="Start Spill" FontSize="18" HorizontalAlignment="Left" Margin="545,84,0,0" VerticalAlignment="Top" Click="StartSpil_Click" RenderTransformOrigin="1.345,0.522"/>
-        <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Gem" FontSize="18" HorizontalAlignment="Left" Margin="647,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click" RenderTransformOrigin="1.511,0.883"/>
+        <Button x:Name="btnStartSpil" IsEnabled="False" Content="Start Spill" FontSize="18" HorizontalAlignment="Left" Margin="495,84,0,0" VerticalAlignment="Top" Click="StartSpil_Click" RenderTransformOrigin="1.345,0.522"/>
+        <Button x:Name="btnSaveSpiller" IsEnabled="False" Content="Gem" FontSize="18" HorizontalAlignment="Left" Margin="611,84,0,0" VerticalAlignment="Top" Click="btnSaveSpiller_Click" RenderTransformOrigin="1.511,0.883"/>
         <TextBlock HorizontalAlignment="Left" Margin="647,17,0,0" TextWrapping="Wrap" Text="Spiller Navn" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="143"/>
         <ListBox x:Name="lbSpillerSpil" HorizontalAlignment="Left" Height="256" Margin="427,184,0,0" VerticalAlignment="Top" Width="179" ItemsSource="{Binding Spil.Spillere}" DisplayMemberPath="Spiller.Navn" SelectionMode="Single" SelectionChanged="lbSpillerSpil_SelectionChanged" />
         <TextBlock HorizontalAlignment="Left" Margin="427,152,0,0" TextWrapping="Wrap" Text="Deltagere" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="179"/>
@@ -23,6 +23,7 @@
         <TextBlock HorizontalAlignment="Left" Margin="243,152,0,0" TextWrapping="Wrap" Text="Active spil" VerticalAlignment="Top" TextAlignment="Center" FontSize="20" Width="179"/>
         <Button x:Name="btnFjernActivSpil" IsEnabled="False" Content="Fjern" HorizontalAlignment="Left" Margin="336,123,0,0" FontSize="18" VerticalAlignment="Top" Click="btnFjernActivSpil_Click"/>
         <Button x:Name="btnNytSpil" IsEnabled="True" Content="Nyt spil" HorizontalAlignment="Left" Margin="263,123,0,0" FontSize="18" VerticalAlignment="Top" RenderTransformOrigin="-0.151,0.251" Click="btnNytSpil_Click"/>
+        <Button x:Name="btnSpillerBot" Content="Bot" IsEnabled="False" HorizontalAlignment="Left" Margin="657,84,0,0" FontSize="18" VerticalAlignment="Top" Click="btnSpillerBot_Click" RenderTransformOrigin="2.379,1.551"/>
 
     </Grid>
 </UserControl>

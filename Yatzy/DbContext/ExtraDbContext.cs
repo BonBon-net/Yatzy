@@ -96,14 +96,15 @@ public class SpillerSpil : INotifyPropertyChanged
         scoreBoard = new ScoreBoard();
     }
 
-    public SpillerSpil(int id, string spillerNavn)
-    {
-        Id = id;
-        Spiller = new Spiller(0, spillerNavn);
-        scoreBoard = new ScoreBoard();
-    }
+    //public SpillerSpil(int id, string spillerNavn)
+    //{
+    //    Id = id;
+    //    Spiller = new Spiller(0, spillerNavn);
+    //    scoreBoard = new ScoreBoard();
+    //}
 
     public int Id { get; set; }
+    //public bool IsComputerPlayer { get; set; } = false;
 
     public string Navn
     {
@@ -177,7 +178,7 @@ public class Terning : INotifyPropertyChanged
     public bool IsHeld { get; set; } = false;
 }
 
-public class Spiller : INotifyPropertyChanged
+public abstract class Spiller : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     // Helper method to keep the setters clean
@@ -207,6 +208,30 @@ public class Spiller : INotifyPropertyChanged
             navn = value;
             OnPropertyChanged(nameof(navn));
         }
+    }
+
+    public abstract bool[]? Handling();
+}
+
+public class Human : Spiller
+{
+    public Human(int id, string name) : base(id, name) { }
+    
+    // ...
+    public override bool[]? Handling()
+    {
+        return null;
+    }
+}
+
+public class Bot : Spiller
+{
+    public Bot(int id, string  name) : base(id, name + " (bot)") { }
+
+    // ...
+    public override bool[]? Handling()
+    {
+        return new bool[] { true, false, false, true, false };
     }
 }
 

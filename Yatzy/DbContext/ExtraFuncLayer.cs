@@ -92,6 +92,7 @@ namespace Yatzy
                 {
                     Spiller = null;
                 }
+
                 return Spiller;
             }
         }
@@ -148,6 +149,7 @@ namespace Yatzy
             return Spil;
         }
 
+        // 
         public void TilføjSpillerTilSpil(Spiller spiller)
         {
             if (spiller == null)
@@ -161,6 +163,32 @@ namespace Yatzy
             OnPropertyChanged();
         }
 
+        public Spiller OpretBot(string spillerNavn)
+        {
+            if (string.IsNullOrEmpty(spillerNavn))
+            {
+                throw new InvalidDataException("Spiller navnet kan ikke være tom");
+            }
+
+            // Update player name
+            spillerNavn = FormaterSpillerNavn(spillerNavn);
+            // lambda
+            if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
+            {
+                throw new InvalidOperationException("Spiller navnet er allerede i brug");
+            }
+            Spiller spiller = new Bot(0, spillerNavn);
+
+            // Add new player to List
+            Spillere.Add(spiller);
+            model.SaveChanges();
+            OnPropertyChanged();
+
+            return spiller;
+
+        }
+
+        // Opret helt ny spiller
         public Spiller TilføjSpiller(string spillerNavn)
         {
             if (string.IsNullOrEmpty(spillerNavn))
@@ -175,7 +203,7 @@ namespace Yatzy
             {
                 throw new InvalidOperationException("Spiller navnet er allerede i brug");
             }
-            Spiller spiller = new(0, spillerNavn);
+            Spiller spiller = new Human(0, spillerNavn);
 
             // Add new player to List
             Spillere.Add(spiller);
@@ -354,6 +382,60 @@ namespace Yatzy
 
             return SpillerTur;
         }
+
+        //public void Registering(Terninger TerningUserControl)
+        //{
+        //    if (TerningUserControl.dgSpillerScoreBoard.SelectedCells.Count > 0)
+        //    {
+        //        DataGridCellInfo cell = TerningUserControl.dgSpillerScoreBoard.SelectedCells[0];
+        //        string header = cell.Column.Header.ToString()!;
+        //        PropertyInfo? property = SpillerTur.ScoreBoard.GetType().GetProperty(TrimString(header));
+        //        if (property == null)
+        //        {
+        //            throw new NullReferenceException("Column not found");
+        //        }
+
+        //        TerningUserControl.ResetScoreBoardStyles();
+        //        if ((header == "Enere" && SpillerTur.ScoreBoard.Enere != null) || (header == "Toere" && SpillerTur.ScoreBoard.Toere != null) || (header == "Treere" && SpillerTur.ScoreBoard.Treere != null) || (header == "Firere" && SpillerTur.ScoreBoard.Firere != null) || (header == "Femmere" && SpillerTur.ScoreBoard.Femmere != null) || (header == "Seksere" && SpillerTur.ScoreBoard.Seksere != null) ||
+        //        (header == "EtPar" && SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && SpillerTur.ScoreBoard.Firere != null) || (header == "LilleStraight" && SpillerTur.ScoreBoard.LilleStraight != null) ||
+        //        (header == "StorStraight" && SpillerTur.ScoreBoard.StorStraight != null) || (header == "Hus" && SpillerTur.ScoreBoard.Hus != null) || (header == "Chance" && SpillerTur.ScoreBoard.Chance != null) || (header == "Yatzy" && SpillerTur.ScoreBoard.Yatzy != null))
+        //        {
+        //            TerningUserControl.FindRows();
+        //            MessageBox.Show("Column allready taken");
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            Registrer(cell, Spil.Terninger);
+        //            if (Spil.Spillere.Count == Spil.NullPlayerCount)
+        //            {
+        //                TerningUserControl.btnKast.IsEnabled = false;
+        //                TerningUserControl.btnRegister.IsEnabled = false;
+        //                TerningUserControl.btnSaveGame.IsEnabled = false;
+        //                TerningUserControl.txbSpillerTur.Text = $"Player won: {Spil.HighestScorePlayer!.Navn}";
+        //            }
+        //            else
+        //            {
+        //                bool HasNull = false;
+        //                if (Spil.Spillere.Count != Spil.NullPlayerCount)
+        //                {
+        //                    while (!HasNull)
+        //                    {
+        //                        SpillerSpil spiller = NæsteSpiller();
+        //                        TerningUserControl.dgSpillerScoreBoard.UnselectAllCells();
+        //                        TerningUserControl.dgSpillerScoreBoard.SelectedItem = null;
+        //                        Spil.Kasted = 0;
+        //                        Spil.IsStarted = true;
+        //                        TerningUserControl.ResetUi();
+        //                        HasNull = spiller.HasPlayerNullScoreBoardValue();
+        //                        TerningUserControl.txbSpillerTur.Text = $"{TerningUserControl._txbSpillerTur} {SpillerTur.Navn}";
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        TerningUserControl.btnSaveGame.IsEnabled = true;
+        //    }
+        //}
 
         public int Registrer(DataGridCellInfo cell, List<Terning> terninger)
         {
@@ -677,6 +759,32 @@ namespace Yatzy
             return stringTrimed;
         }
 
+        public bool PlayerBot(Spil? spil, SpillerSpil? spiller)
+        {
+            if (spil == null)
+            {
+                throw new NullReferenceException("No game is selected");
+            }
+            if (spiller == null)
+            {
+                throw new NullReferenceException("No player is selected");
+            }
+
+            //if (spiller.IsComputerPlayer)
+            //{
+            //    spiller.IsComputerPlayer = false;
+            //}
+            //else
+            //{
+            //    spiller.IsComputerPlayer = true;
+            //}
+
+            model.SaveChanges();
+            OnPropertyChanged();
+
+            return false; // spiller.IsComputerPlayer;
+        }
+
         // Private methods
 
         private string FormaterSpillerNavn(string spillerNavn)
@@ -692,6 +800,11 @@ namespace Yatzy
                 spillerNavn += navnDele[i].First().ToString().ToUpper() + navnDele[i].Substring(1).ToLower();
             }
             return spillerNavn;
+        }
+
+        public bool[]? SpillerHandling()
+        {
+            return SpillerTur.Spiller.Handling();
         }
     }
 }

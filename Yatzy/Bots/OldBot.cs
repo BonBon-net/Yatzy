@@ -9,13 +9,13 @@ using System.Windows.Controls;
 
 namespace Yatzy.Bots
 {
-    public class Bot
+    public class OldBot
     {
         private FuncLayer FuncLayer;
         private Terninger TerningUserControl;
         private __BotHelper __BotHelper;
 
-        public Bot(FuncLayer funcLayer, Terninger terningUserControl, __BotHelper __botHelper)
+        public OldBot(FuncLayer funcLayer, Terninger terningUserControl, __BotHelper __botHelper)
         {
             this.FuncLayer = funcLayer;
             this.TerningUserControl = terningUserControl;

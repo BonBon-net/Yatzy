@@ -49,8 +49,8 @@ namespace Yatzy
         private Image[] TerningSelection { get; }
         //public Terning terning { get; set; } = new Terning();
 
-        private string _txbKastTilbage = "Rolled:";
-        private string _txbSpillerTur = "Tur:";
+        public string _txbKastTilbage = "Rolled:";
+        public string _txbSpillerTur = "Tur:";
 
         // Create a Random instance (ideally as a field, not inside a method for repeated use)
         private readonly Random rnd = new Random();
@@ -123,7 +123,9 @@ namespace Yatzy
                 ResetScoreBoardStyles();
                 int[] RulleTerninger = GetRulNumber();
                 KastTerningerne(RulleTerninger);
+
                 await Task.Delay(awaitTime * mellemKast * 6);
+
                 FindRows();
                 // Finishing 'KastTertinger'
                 FuncLayer.Spil.Kasted++;
@@ -176,6 +178,7 @@ namespace Yatzy
                 // Sets the new dice image in UI 'Image'
                 TerningImages[index].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[index].DiceValue - 1]);
             }
+
             int[] GetRulNumber()
             {
                 int[] RulleTerninger = { 0, 0, 0, 0, 0 };
@@ -210,6 +213,20 @@ namespace Yatzy
                     }
                     MessageBox.Show(messageInput, "Test data for terninger");
                 }
+            }
+
+            // Nu har vi slået
+            // Nu venter programmet på at spilleren vælger næste handling
+            SpillerHandling();
+        }
+
+        private void SpillerHandling()
+        {
+            bool[] holdings = FuncLayer.SpillerHandling();
+
+            for (int i = 0; i < holdings.Length; i++)
+            {
+                SelectedTerning(TerningSelection[i], i + 1);
             }
         }
 
@@ -257,6 +274,7 @@ namespace Yatzy
         {
             try
             {
+                //FuncLayer.Registering(this);
                 if (dgSpillerScoreBoard.SelectedCells.Count > 0)
                 {
                     DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
@@ -314,26 +332,6 @@ namespace Yatzy
             }
         }
 
-        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            try
-            {
-                int value = Kastet;
-                if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
-                {
-                    btnRegister.IsEnabled = true;
-                }
-                else
-                {
-                    btnRegister.IsEnabled = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error message");
-            }
-        }
-
         private void btnStopGame_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -365,7 +363,7 @@ namespace Yatzy
             }
         }
 
-        private void ResetUi()
+        public void ResetUi()
         {
             btnRegister.IsEnabled = false;
             btnKast.IsEnabled = true;
@@ -421,7 +419,7 @@ namespace Yatzy
             btnSaveGame.IsEnabled = true;
         }
 
-        private void ResetScoreBoardStyles()
+        public void ResetScoreBoardStyles()
         {
             if (FuncLayer.SpillerTur == null)
             {
@@ -603,7 +601,27 @@ namespace Yatzy
             ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
         }
 
-        private void FindRows()
+        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                int value = Kastet;
+                if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
+                {
+                    btnRegister.IsEnabled = true;
+                }
+                else
+                {
+                    btnRegister.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
+            }
+        }
+
+        public void FindRows()
         {
             string[] Headers = new string[] {
                     "Enere",
@@ -651,6 +669,26 @@ namespace Yatzy
                         }
                     }
                 }
+            }
+        }
+
+        private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            try
+            {
+                int value = Kastet;
+                if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
+                {
+                    btnRegister.IsEnabled = true;
+                }
+                else
+                {
+                    btnRegister.IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error message");
             }
         }
     }

@@ -12,8 +12,8 @@ using Yatzy.YatzyDbContext;
 namespace Yatzy.Migrations
 {
     [DbContext(typeof(Model))]
-    [Migration("20260203074009_clsc1")]
-    partial class clsc1
+    [Migration("20260224084950_clac1")]
+    partial class clac1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,6 +117,9 @@ namespace Yatzy.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsComputerPlayer")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ScoreBoardId")
                         .HasColumnType("int");

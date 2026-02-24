@@ -3,9 +3,11 @@ using Microsoft.Windows.Themes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static Yatzy.Terninger;
 
 namespace Yatzy.Bots
 {
@@ -18,15 +20,8 @@ namespace Yatzy.Bots
         {
             this.FuncLayer = funcLayer;
             this.TerningUserControl = terningUserControl;
-            new Bot(FuncLayer, TerningUserControl, this);
+            new OldBot(FuncLayer, TerningUserControl, this);
         }
-
-        public async void BotPlayer()
-        {
-
-        }
-
-        //private FuncLayer FuncLayer
 
         public List<Terning> GetTernings()
         {
@@ -43,13 +38,13 @@ namespace Yatzy.Bots
                 DataGridCell cell = VisualTreeHelpers.GetCell(TerningUserControl.dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i);
                 if (cell != null)
                 {
-                    //if (TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Navn" &&
-                    //    TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "SUM" &&
-                    //    TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Bonus" &&
-                    //    TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Total")
-                    //{
-                    //}
-                    cells.Add(cell);
+                    if (TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Navn" &&
+                        TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "SUM" &&
+                        TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Bonus" &&
+                        TerningUserControl.dgSpillerScoreBoard.Columns[i].Header.ToString() != "Total")
+                    {
+                        cells.Add(cell);
+                    }
                 }
                 else
                 {
@@ -61,3 +56,4 @@ namespace Yatzy.Bots
         }
     }
 }
+

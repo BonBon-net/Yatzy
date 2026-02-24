@@ -21,7 +21,7 @@ namespace Yatzy
             userControlManager = this;
             MenuUserControl = new Menu(FuncLayer, this);
             TerningUserControl = new Terninger(FuncLayer, this);
-            new __BotHelper(FuncLayer, TerningUserControl);
+            //new __BotHelper(FuncLayer, TerningUserControl);
             DataContext = FuncLayer;
             ChangeUserControl(MenuUserControl);
         }

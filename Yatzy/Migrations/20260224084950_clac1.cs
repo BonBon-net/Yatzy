@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class clsc1 : Migration
+    public partial class clac1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,6 +60,7 @@ namespace Yatzy.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IsComputerPlayer = table.Column<bool>(type: "bit", nullable: false),
                     SpillerId = table.Column<int>(type: "int", nullable: false),
                     ScoreBoardId = table.Column<int>(type: "int", nullable: false),
                     SpilId = table.Column<int>(type: "int", nullable: true)
