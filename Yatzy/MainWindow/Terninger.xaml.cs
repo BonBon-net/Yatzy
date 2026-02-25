@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yatzy.Bots;
+using Yatzy.YatzyDbContext;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace Yatzy
@@ -114,11 +115,26 @@ namespace Yatzy
 
         private async void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
+            UdførKastTerninger();
+        }
+
+        private async void UdførKastTerninger()
+        {
             int awaitTime = 35;
             int mellemKast = 0;
+            int botWaitTime = rnd.Next(1250, 3000 + 1);
 
             if (FuncLayer.Spil.Kasted < 3)
             {
+                if (FuncLayer.SpillerTur.Spiller is Bot)
+                {
+                    btnKast.IsEnabled = false;
+                    btnRegister.IsEnabled = false;
+                    btnSaveGame.IsEnabled = false;
+                    btnStopGame.IsEnabled = false;
+                    await Task.Delay(botWaitTime);
+                }
+
                 // Throws dice's
                 ResetScoreBoardStyles();
                 int[] RulleTerninger = GetRulNumber();
@@ -137,11 +153,20 @@ namespace Yatzy
                     btnKast.IsEnabled = false;
                 }
                 btnSaveGame.IsEnabled = true;
+
+                // Nu har vi slået
+                // Nu venter programmet på at spilleren vælger næste handling
+                if (FuncLayer.SpillerTur.Spiller is Bot && FuncLayer.Spil.Kasted == 3)
+                {
+                    await Task.Delay(botWaitTime);
+                    btnStopGame.IsEnabled = true;
+                }
+                SpillerHandling();
             }
             else
             {
                 btnKast.IsEnabled = false;
-                throw new UnauthorizedAccessException("Denied - Invalid action");
+                //throw new UnauthorizedAccessException("Denied - Invalid action");
             }
 
             void CheckTerningValues()
@@ -214,20 +239,45 @@ namespace Yatzy
                     MessageBox.Show(messageInput, "Test data for terninger");
                 }
             }
-
-            // Nu har vi slået
-            // Nu venter programmet på at spilleren vælger næste handling
-            SpillerHandling();
         }
 
         private void SpillerHandling()
         {
-            bool[] holdings = FuncLayer.SpillerHandling();
+            bool[]? holdings = FuncLayer.HoldTerninger();
 
-            for (int i = 0; i < holdings.Length; i++)
+            if (holdings != null)
             {
-                SelectedTerning(TerningSelection[i], i + 1);
+                for (int i = 0; i < holdings.Length; i++)
+                {
+                    if (holdings[i] != AlleTerninger[i].IsHeld)
+                    {
+                        SelectedTerning(TerningSelection[i], i + 1);
+                    }
+                }
             }
+
+            ResetScoreBoardStyles();
+            (Handling h, string header) = FuncLayer.AngivHandling();
+            FindRows();
+
+            switch (h)
+            {
+                case Handling.Ingen:
+                    {
+                        break;
+                    }
+                case Handling.Kast:
+                    {
+                        UdførKastTerninger();
+                        break;
+                    }
+                case Handling.Registrer:
+                    {
+                        UdførRegistrer(header);
+                        break;
+                    }
+            }
+
         }
 
         private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
@@ -269,62 +319,71 @@ namespace Yatzy
                 SelectedTerning(imgTerningSelected5, 5);
             }
         }
-
         private void Register_Click(object sender, RoutedEventArgs e)
+        {
+            UdførRegistrer();
+        }
+
+        private void UdførRegistrer()
+        {
+            if (dgSpillerScoreBoard.SelectedCells.Count > 0)
+            {
+                DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+                string header = cell.Column.Header.ToString()!;
+                UdførRegistrer(header);
+            }
+        }
+
+        private void UdførRegistrer(string header)
         {
             try
             {
                 //FuncLayer.Registering(this);
-                if (dgSpillerScoreBoard.SelectedCells.Count > 0)
+                PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.TrimString(header));
+                if (property == null)
                 {
-                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
-                    string header = cell.Column.Header.ToString()!;
-                    PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.TrimString(header));
-                    if (property == null)
-                    {
-                        throw new NullReferenceException("Column not found");
-                    }
+                    throw new NullReferenceException("Column not found");
+                }
 
-                    ResetScoreBoardStyles();
-                    if ((header == "Enere" && FuncLayer.SpillerTur.ScoreBoard.Enere != null) || (header == "Toere" && FuncLayer.SpillerTur.ScoreBoard.Toere != null) || (header == "Treere" && FuncLayer.SpillerTur.ScoreBoard.Treere != null) || (header == "Firere" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "Femmere" && FuncLayer.SpillerTur.ScoreBoard.Femmere != null) || (header == "Seksere" && FuncLayer.SpillerTur.ScoreBoard.Seksere != null) ||
-                    (header == "EtPar" && FuncLayer.SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && FuncLayer.SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && FuncLayer.SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "LilleStraight" && FuncLayer.SpillerTur.ScoreBoard.LilleStraight != null) ||
-                    (header == "StorStraight" && FuncLayer.SpillerTur.ScoreBoard.StorStraight != null) || (header == "Hus" && FuncLayer.SpillerTur.ScoreBoard.Hus != null) || (header == "Chance" && FuncLayer.SpillerTur.ScoreBoard.Chance != null) || (header == "Yatzy" && FuncLayer.SpillerTur.ScoreBoard.Yatzy != null))
+                ResetScoreBoardStyles();
+                if ((header == "Enere" && FuncLayer.SpillerTur.ScoreBoard.Enere != null) || (header == "Toere" && FuncLayer.SpillerTur.ScoreBoard.Toere != null) || (header == "Treere" && FuncLayer.SpillerTur.ScoreBoard.Treere != null) || (header == "Firere" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "Femmere" && FuncLayer.SpillerTur.ScoreBoard.Femmere != null) || (header == "Seksere" && FuncLayer.SpillerTur.ScoreBoard.Seksere != null) ||
+                (header == "EtPar" && FuncLayer.SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && FuncLayer.SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && FuncLayer.SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "LilleStraight" && FuncLayer.SpillerTur.ScoreBoard.LilleStraight != null) ||
+                (header == "StorStraight" && FuncLayer.SpillerTur.ScoreBoard.StorStraight != null) || (header == "Hus" && FuncLayer.SpillerTur.ScoreBoard.Hus != null) || (header == "Chance" && FuncLayer.SpillerTur.ScoreBoard.Chance != null) || (header == "Yatzy" && FuncLayer.SpillerTur.ScoreBoard.Yatzy != null))
+                {
+                    FindRows();
+                    MessageBox.Show("Column allready taken");
+                    return;
+                }
+                else
+                {
+                    FuncLayer.Registrer(header, FuncLayer.Spil.Terninger);
+                    if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
                     {
-                        FindRows();
-                        MessageBox.Show("Column allready taken");
-                        return;
+                        btnKast.IsEnabled = false;
+                        btnRegister.IsEnabled = false;
+                        btnSaveGame.IsEnabled = false;
+                        txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
                     }
                     else
                     {
-                        FuncLayer.Registrer(cell, FuncLayer.Spil.Terninger);
-                        if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
+                        bool HasNull = false;
+                        if (FuncLayer.Spil.Spillere.Count != FuncLayer.Spil.NullPlayerCount)
                         {
-                            btnKast.IsEnabled = false;
-                            btnRegister.IsEnabled = false;
-                            btnSaveGame.IsEnabled = false;
-                            txbSpillerTur.Text = $"Player won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
-                        }
-                        else
-                        {
-                            bool HasNull = false;
-                            if (FuncLayer.Spil.Spillere.Count != FuncLayer.Spil.NullPlayerCount)
+                            while (!HasNull)
                             {
-                                while (!HasNull)
-                                {
-                                    SpillerSpil spiller = FuncLayer.NæsteSpiller();
-                                    dgSpillerScoreBoard.UnselectAllCells();
-                                    dgSpillerScoreBoard.SelectedItem = null;
-                                    FuncLayer.Spil.Kasted = 0;
-                                    FuncLayer.Spil.IsStarted = true;
-                                    ResetUi();
-                                    HasNull = spiller.HasPlayerNullScoreBoardValue();
-                                    txbSpillerTur.Text = $"{_txbSpillerTur} {FuncLayer.SpillerTur.Navn}";
-                                }
+                                SpillerSpil spiller = FuncLayer.NæsteSpiller();
+                                dgSpillerScoreBoard.UnselectAllCells();
+                                dgSpillerScoreBoard.SelectedItem = null;
+                                FuncLayer.Spil.Kasted = 0;
+                                FuncLayer.Spil.IsStarted = true;
+                                ResetUi();
+                                HasNull = spiller.HasPlayerNullScoreBoardValue();
+                                txbSpillerTur.Text = $"{_txbSpillerTur} {FuncLayer.SpillerTur.Navn}";
                             }
                         }
                     }
-                    btnSaveGame.IsEnabled = true;
                 }
+                btnSaveGame.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -623,27 +682,10 @@ namespace Yatzy
 
         public void FindRows()
         {
-            string[] Headers = new string[] {
-                    "Enere",
-                    "Toere",
-                    "Treere",
-                    "Firere",
-                    "Femmere",
-                    "Seksere",
-                    "EtPar",
-                    "ToPar",
-                    "TreEns",
-                    "FireEns",
-                    "LilleStraight",
-                    "StorStraight",
-                    "Hus",
-                    "Chance",
-                    "Yatzy"
-            };
-
-            for (int i = 0; i < Headers.Length; i++)
+            //PropertyInfo[] properties = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperties();
+            for (int i = 0; i < FuncLayer.Headers.Length; i++)
             {
-                PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i]);
+                PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.Headers[i]);
                 if (property == null)
                 {
                     throw new NullReferenceException("Property not found in SpillerTur");
@@ -651,10 +693,10 @@ namespace Yatzy
                 int? scoreValue = (int?)property.GetValue(FuncLayer.SpillerTur.ScoreBoard);
                 if (scoreValue == null)
                 {
-                    int calculatedScore = FuncLayer.RegnHeaderValue(Headers[i]);
+                    int calculatedScore = FuncLayer.RegnHeaderValue(FuncLayer.Headers[i]);
                     if (calculatedScore > 0)
                     {
-                        FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(Headers[i])!.SetValue(FuncLayer.SpillerTur.ScoreBoard, calculatedScore);
+                        FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.Headers[i])!.SetValue(FuncLayer.SpillerTur.ScoreBoard, calculatedScore);
                         //dgSpillerScoreBoard.Items.Refresh();
 
                         DataGridCell cell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 1);

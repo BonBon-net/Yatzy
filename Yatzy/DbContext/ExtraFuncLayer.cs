@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using Yatzy.Bots;
 using Yatzy.YatzyDbContext;
 
@@ -21,6 +22,33 @@ namespace Yatzy
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
+
+        public SpillerSpil SpillerTur
+        {
+            get
+            {
+                return Spil.SpillerTur;
+            }
+        }
+
+        public static string[] Headers = new string[] {
+                    "Enere",
+                    "Toere",
+                    "Treere",
+                    "Firere",
+                    "Femmere",
+                    "Seksere",
+                    "EtPar",
+                    "ToPar",
+                    "TreEns",
+                    "FireEns",
+                    "LilleStraight",
+                    "StorStraight",
+                    "Hus",
+                    "Chance",
+                    "Yatzy"
+            };
+
         private void OnPropertyChanged()
         {
             RaisePropertyChanged(nameof(Spillere));
@@ -43,7 +71,9 @@ namespace Yatzy
             model = new Model();
             model.SpilTabel.Load();
             model.SpillerSpil.Load();
-            model.Spillere.Load();
+            //model.Spillere.Load();
+            model.Bots.Load();
+            model.Humans.Load();
             model.ScoreBoards.Load();
             model.Terninger.Load();
         }
@@ -79,23 +109,6 @@ namespace Yatzy
         }
 
         public Spil Spil { get; set; }
-        public SpillerSpil SpillerTur
-        {
-            get
-            {
-                SpillerSpil? Spiller;
-                if (Spil != null && Spil.Spillere.Count > 0)
-                {
-                    Spiller = Spil.Spillere[Spil.SpillerTurIndex];
-                }
-                else
-                {
-                    Spiller = null;
-                }
-
-                return Spiller;
-            }
-        }
 
         // Public methods
 
@@ -437,10 +450,8 @@ namespace Yatzy
         //    }
         //}
 
-        public int Registrer(DataGridCellInfo cell, List<Terning> terninger)
+        public int Registrer(string header, List<Terning> terninger)
         {
-            string header = cell.Column.Header.ToString();
-
             int score = RegnHeaderValue(header);
 
             // Set property value by reflection
@@ -802,9 +813,31 @@ namespace Yatzy
             return spillerNavn;
         }
 
-        public bool[]? SpillerHandling()
+        public bool[]? HoldTerninger()
         {
-            return SpillerTur.Spiller.Handling();
+            return SpillerTur.Spiller.HoldTerninger(Spil);
+        }
+
+        public (Handling handling, string header) AngivHandling()
+        {
+            // Lav liste med alle mulige scores
+            List<(int, string)> results = new List<(int, string)>();
+
+            for (int i = 0; i < Headers.Length; i++)
+            {
+                try
+                {
+                    results.Add((RegnHeaderValue(Headers[i]), Headers[i]));
+                }
+                catch
+                {
+
+                }
+            }
+
+            // Løb alle kolonner igennem og regn resultat og læg ind i listen sammen med kolonnenavn
+
+            return SpillerTur.Spiller.AngivHandling(Spil, results);
         }
     }
 }

@@ -7,11 +7,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Yatzy.YatzyDbContext;
 
 namespace Yatzy.YatzyDbContext
 {
+    public enum Handling {Ingen, Kast, Registrer };
+
     public class Model : DbContext
     {
         //public DbSet<Spiller> SpillerTabel { get; set; }
@@ -21,6 +24,8 @@ namespace Yatzy.YatzyDbContext
         public DbSet<Spiller> Spillere { get; set; }
         public DbSet<ScoreBoard> ScoreBoards { get; set; }
         public DbSet<Terning> Terninger { get; set; }
+        public DbSet<Human> Humans { get; set; }
+        public DbSet<Bot> Bots { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) { options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Yatzy; Trusted_Connection = True; "); }
     }
 
@@ -64,6 +69,21 @@ namespace Yatzy.YatzyDbContext
 
         public DateTime DateTime { get; set; }
         public int Kasted { get; set; } = 0;
+        public SpillerSpil SpillerTur
+        {
+            get
+            {
+                if (SpillerTurIndex < Spillere.Count)
+                {
+                    return Spillere[SpillerTurIndex];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public int SpillerTurIndex { get; set; } = 0;
         public int NullPlayerCount { get; set; } = 0;
         public SpillerSpil? HighestScorePlayer { get; set; } = null;
@@ -195,6 +215,7 @@ public abstract class Spiller : INotifyPropertyChanged
     }
 
     public int Id { get; set; }
+    public string Discriminator { get; set; }
 
     private string navn = string.Empty;
     public string Navn
@@ -210,28 +231,58 @@ public abstract class Spiller : INotifyPropertyChanged
         }
     }
 
-    public abstract bool[]? Handling();
+    public abstract bool[]? HoldTerninger(Spil spil);
+
+    public abstract (Handling handling, string header) AngivHandling(Spil spil, List<(int, string)> results);
 }
 
 public class Human : Spiller
 {
+    public Human() { }
     public Human(int id, string name) : base(id, name) { }
     
     // ...
-    public override bool[]? Handling()
+    public override bool[]? HoldTerninger(Spil spil)
     {
         return null;
+    }
+
+    public override (Handling handling, string header) AngivHandling(Spil spil, List<(int, string)> results)
+    {
+        return (Handling.Ingen, "");
     }
 }
 
 public class Bot : Spiller
 {
+    public Bot() { }
     public Bot(int id, string  name) : base(id, name + " (bot)") { }
 
     // ...
-    public override bool[]? Handling()
+    public override bool[]? HoldTerninger(Spil spil)
     {
+        ScoreBoard scoreBoard = spil.SpillerTur.ScoreBoard;
+        List<Terning> terninger = spil.Terninger;
+
         return new bool[] { true, false, false, true, false };
+    }
+
+    public override (Handling handling, string header) AngivHandling(Spil spil, List<(int, string)> results)
+    {
+        if (spil.Kasted > 2)
+        {
+            string header = string.Empty;
+            ScoreBoard scoreBoard = spil.SpillerTur.ScoreBoard;
+            List<Terning> terninger = spil.Terninger;
+
+
+
+            return (Handling.Registrer, header);
+        }
+        else
+        {
+            return (Handling.Kast, "");
+        }
     }
 }
 
