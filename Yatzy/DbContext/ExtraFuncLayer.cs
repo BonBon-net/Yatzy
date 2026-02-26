@@ -27,7 +27,14 @@ namespace Yatzy
         {
             get
             {
-                return Spil.SpillerTur;
+                if (Spil != null)
+                {
+                    return Spil.SpillerTur;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
