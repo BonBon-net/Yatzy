@@ -12,8 +12,8 @@ using Yatzy.YatzyDbContext;
 namespace Yatzy.Migrations
 {
     [DbContext(typeof(Model))]
-    [Migration("20260225081720_clsc4")]
-    partial class clsc4
+    [Migration("20260227153641_clasc1")]
+    partial class clasc1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

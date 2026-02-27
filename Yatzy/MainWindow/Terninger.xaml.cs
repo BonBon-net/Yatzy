@@ -414,18 +414,20 @@ namespace Yatzy
                     await Task.Delay(rnd.Next(1250, 3000 + 1));
                     UdførKastTerninger();
                 }
-
-                btnRegister.IsEnabled = false;
-                btnSaveGame.IsEnabled = true;
-                btnStopGame.IsEnabled = true;
-
-                if (FuncLayer.SpillerTur.HasPlayerNullScoreBoardValue())
-                {
-                    btnKast.IsEnabled = true;
-                }
                 else
                 {
-                    btnKast.IsEnabled = false;
+                    btnRegister.IsEnabled = false;
+                    btnSaveGame.IsEnabled = true;
+                    btnStopGame.IsEnabled = true;
+
+                    if (FuncLayer.SpillerTur.HasPlayerNullScoreBoardValue())
+                    {
+                        btnKast.IsEnabled = true;
+                    }
+                    else
+                    {
+                        btnKast.IsEnabled = false;
+                    }
                 }
             }
             catch (Exception ex)

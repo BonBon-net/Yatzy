@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class clac1 : Migration
+    public partial class clasc1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,7 @@ namespace Yatzy.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     Navn = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -60,7 +61,6 @@ namespace Yatzy.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsComputerPlayer = table.Column<bool>(type: "bit", nullable: false),
                     SpillerId = table.Column<int>(type: "int", nullable: false),
                     ScoreBoardId = table.Column<int>(type: "int", nullable: false),
                     SpilId = table.Column<int>(type: "int", nullable: true)
