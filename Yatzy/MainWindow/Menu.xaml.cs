@@ -50,6 +50,7 @@ namespace Yatzy
                     string nytNavn = txtSpillerNavn.Text;
                     spiller = FuncLayer.GemSpiller(spiller, nytNavn);
                     lbSpillerList.SelectedItem = spiller;
+                    txtSpillerNavn.Text = spiller.Navn;
                 }
                 else
                 {

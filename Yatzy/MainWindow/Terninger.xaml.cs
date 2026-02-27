@@ -101,10 +101,18 @@ namespace Yatzy
                 if (spiller == null)
                 {
                     btnKast.IsEnabled = false;
-                    btnRegister.IsEnabled = false;
                     btnSaveGame.IsEnabled = false;
                     txbSpillerTur.Text = $"Player Won: {FuncLayer.Spil.HighestScorePlayer!.Navn}";
                 }
+            }
+            btnRegister.IsEnabled = false;
+            if (FuncLayer.SpillerTur.HasPlayerNullScoreBoardValue())
+            {
+                btnKast.IsEnabled = true;
+            }
+            else
+            {
+                btnKast.IsEnabled = false;
             }
 
             if (FuncLayer.Spil.Kasted > 0)
@@ -113,7 +121,7 @@ namespace Yatzy
             }
         }
 
-        private async void KastTerninger_Click(object sender, RoutedEventArgs e)
+        private void KastTerninger_Click(object sender, RoutedEventArgs e)
         {
             UdførKastTerninger();
         }
@@ -148,30 +156,29 @@ namespace Yatzy
                 {
                     btnKast.IsEnabled = false;
                 }
-                if (FuncLayer.SpillerTur.Spiller is Spiller)
-                {
-                    btnSaveGame.IsEnabled = true;
-                }
 
                 // Nu har vi slået
                 // Nu venter programmet på at spilleren vælger næste handling
-                await Task.Delay(botWaitTime);
-                SpillerHandling();
-                if (FuncLayer.SpillerTur.Spiller is Spiller)
+                if (FuncLayer.SpillerTur.Spiller is Bot)
+                {
+                    await Task.Delay(botWaitTime);
+                }
+                else if (FuncLayer.SpillerTur.Spiller is Human)
                 {
                     btnStopGame.IsEnabled = true;
                     btnSaveGame.IsEnabled = true;
                     btnRegister.IsEnabled = true;
-                    if (FuncLayer.Spil.Kasted == 3)
+                    if (FuncLayer.Spil.Kasted >= 3)
                     {
                         btnKast.IsEnabled = false;
                     }
+                    else
+                    {
+                        btnKast.IsEnabled = true;
+                    }
                 }
-                else if (FuncLayer.SpillerTur.Spiller is Bot && FuncLayer.Spil.Kasted == 3)
-                {
-                    btnStopGame.IsEnabled = true;
-                    btnSaveGame.IsEnabled = true;
-                }
+
+                SpillerHandling();
             }
             else
             {
@@ -269,25 +276,28 @@ namespace Yatzy
             ResetScoreBoardStyles();
             (Handling h, string header) = FuncLayer.AngivHandling();
             FindRows();
+            Switch();
 
-            switch (h)
+            void Switch()
             {
-                case Handling.Ingen:
-                    {
-                        break;
-                    }
-                case Handling.Kast:
-                    {
-                        UdførKastTerninger();
-                        break;
-                    }
-                case Handling.Registrer:
-                    {
-                        UdførRegistrer(header);
-                        break;
-                    }
+                switch (h)
+                {
+                    case Handling.Ingen:
+                        {
+                            break;
+                        }
+                    case Handling.Kast:
+                        {
+                            UdførKastTerninger();
+                            break;
+                        }
+                    case Handling.Registrer:
+                        {
+                            UdførRegistrer(header);
+                            break;
+                        }
+                }
             }
-
         }
 
         private void Terning1Selected_MouseClick(object sender, MouseButtonEventArgs e)
@@ -344,7 +354,7 @@ namespace Yatzy
             }
         }
 
-        private void UdførRegistrer(string header)
+        private async void UdførRegistrer(string header)
         {
             try
             {
@@ -393,7 +403,30 @@ namespace Yatzy
                         }
                     }
                 }
+
+                btnKast.IsEnabled = false;
+                btnRegister.IsEnabled = false;
+                btnSaveGame.IsEnabled = false;
+                btnStopGame.IsEnabled = false;
+
+                if (cbAutoStartBots.IsChecked == true && FuncLayer.SpillerTur.Spiller is Bot && FuncLayer.Spil.Kasted == 0)
+                {
+                    await Task.Delay(rnd.Next(1250, 3000 + 1));
+                    UdførKastTerninger();
+                }
+
+                btnRegister.IsEnabled = false;
                 btnSaveGame.IsEnabled = true;
+                btnStopGame.IsEnabled = true;
+
+                if (FuncLayer.SpillerTur.HasPlayerNullScoreBoardValue())
+                {
+                    btnKast.IsEnabled = true;
+                }
+                else
+                {
+                    btnKast.IsEnabled = false;
+                }
             }
             catch (Exception ex)
             {
@@ -412,6 +445,7 @@ namespace Yatzy
                     ResetScoreBoardStyles();
                     dgSpillerScoreBoard.SelectedItem = null;
                     btnSaveGame.IsEnabled = false;
+                    cbAutoStartBots.IsChecked = false;
                     ResetUi();
                 }
             }
@@ -435,8 +469,15 @@ namespace Yatzy
         public void ResetUi()
         {
             btnRegister.IsEnabled = false;
-            btnKast.IsEnabled = true;
-            txbKastTilbage.Text = $"{_txbKastTilbage} 0";
+            if (FuncLayer.SpillerTur.HasPlayerNullScoreBoardValue())
+            {
+                btnKast.IsEnabled = false;
+            }
+            else
+            {
+                btnKast.IsEnabled = true;
+            }
+            txbKastTilbage.Text = $"{_txbKastTilbage} {Kastet}";
             for (int i = 0; i < AlleTerninger.Count; i++)
             {
                 //SelectedTerning(((Image)FindName($"imgTerningSelected{i + 1}")), i + 1);
@@ -477,7 +518,7 @@ namespace Yatzy
                 AlleTerninger[terning - 1].IsHeld = false;
                 imgTerning.Visibility = Visibility.Hidden;
             }
-            if (FuncLayer.SpillerTur.Spiller is Spiller)
+            if (FuncLayer.SpillerTur.Spiller is Human)
             {
                 btnSaveGame.IsEnabled = true;
             }

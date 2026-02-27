@@ -192,10 +192,14 @@ namespace Yatzy
 
             // Update player name
             spillerNavn = FormaterSpillerNavn(spillerNavn);
+            if (!spillerNavn.StartsWith("Bot- "))
+            {
+                spillerNavn = $"Bot- {spillerNavn}";
+            }
             // lambda
             if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {
-                throw new InvalidOperationException("Spiller navnet er allerede i brug");
+                throw new InvalidOperationException("Bot navnet er allerede i brug");
             }
             Spiller spiller = new Bot(0, spillerNavn);
 
@@ -218,6 +222,10 @@ namespace Yatzy
 
             // Update player name
             spillerNavn = FormaterSpillerNavn(spillerNavn);
+            if (spillerNavn.StartsWith("Bot- "))
+            {
+                throw new InvalidOperationException("Human player name can't start with 'Bot- '");
+            }
             // lambda
             if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {
@@ -246,6 +254,20 @@ namespace Yatzy
 
             // Update player name
             spillerNavn = FormaterSpillerNavn(spillerNavn);
+            if (spiller is Human)
+            {
+                if (spillerNavn.StartsWith("Bot- "))
+                {
+                    throw new InvalidOperationException("Human player name can't start with 'Bot- '");
+                }
+            }
+            else if (spiller is Bot)
+            {
+                if (!spillerNavn.StartsWith("Bot- "))
+                {
+                    spillerNavn = $"Bot- {spillerNavn}";
+                }
+            }
             // lambda
             if (Spillere.FirstOrDefault(spiller => spiller.Navn == spillerNavn) != null)
             {

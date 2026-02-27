@@ -257,13 +257,15 @@ public class Human : Spiller
 public class Bot : Spiller
 {
     public Bot() { }
-    public Bot(int id, string name) : base(id, name + " (bot)") { }
+    public Bot(int id, string name) : base(id, name) { }
 
     // ...
     public override bool[]? HoldTerninger(Spil spil)
     {
         ScoreBoard scoreBoard = spil.SpillerTur.ScoreBoard;
         List<Terning> terninger = spil.Terninger;
+
+
 
         return new bool[] { true, false, false, true, false };
     }

@@ -8,6 +8,11 @@
              Height="700" 
              Width="1050" MinWidth="1050" MaxWidth="1050">
     <Grid>
+        <CheckBox x:Name="cbAutoStartBots" Content="Auto start bots" Margin="150,131,748,539" IsChecked="False">
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
         <Image x:Name="imgTerningSelected1" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="0,0,0,0" VerticalAlignment="Top" Width="120"/>
         <Image x:Name="imgTerning1" Visibility="Visible" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" MouseUp="Terning1Selected_MouseClick"/>
         <Image x:Name="imgTerningSelected2" Visibility="Hidden" HorizontalAlignment="Left" Height="120" Margin="110,0,0,0" VerticalAlignment="Top" Width="120"/>
