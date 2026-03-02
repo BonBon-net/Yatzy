@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -232,7 +233,7 @@ public abstract class Spiller : INotifyPropertyChanged
         }
     }
 
-    public abstract bool[]? HoldTerninger(Spil spil);
+    public abstract bool[]? HoldTerninger(Spil spil, List<(int, string)> results);
 
     public abstract (Handling handling, string header) AngivHandling(Spil spil, List<(int, string)> results);
 }
@@ -243,7 +244,7 @@ public class Human : Spiller
     public Human(int id, string name) : base(id, name) { }
 
     // ...
-    public override bool[]? HoldTerninger(Spil spil)
+    public override bool[]? HoldTerninger(Spil spil, List<(int, string)> results)
     {
         return null;
     }
@@ -260,12 +261,132 @@ public class Bot : Spiller
     public Bot(int id, string name) : base(id, name) { }
 
     // ...
-    public override bool[]? HoldTerninger(Spil spil)
+    public override bool[]? HoldTerninger(Spil spil, List<(int, string)> results)
     {
         ScoreBoard scoreBoard = spil.SpillerTur.ScoreBoard;
         List<Terning> terninger = spil.Terninger;
 
+        string header = string.Empty;
 
+        int? optimal = null;
+        int MyScore = 0;
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            switch (results[i].Item2)
+            {
+                case nameof(ScoreBoard.Enere):
+                    {
+                        MyScore = results[i].Item1 - 3;
+                        MyScore += (results[i].Item1 - 3 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Toere):
+                    {
+                        MyScore = results[i].Item1 - 6;
+                        MyScore += (results[i].Item1 - 6 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Treere):
+                    {
+                        MyScore = results[i].Item1 - 9;
+                        MyScore += (results[i].Item1 - 9 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Firere):
+                    {
+                        MyScore = results[i].Item1 - 12;
+                        MyScore += (results[i].Item1 - 12 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Femmere):
+                    {
+                        MyScore = results[i].Item1 - 15;
+                        MyScore += (results[i].Item1 - 15 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Seksere):
+                    {
+                        MyScore = results[i].Item1 - (3 * 6);
+                        MyScore += (results[i].Item1 - (3 * 6) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.EtPar):
+                    {
+                        MyScore = results[i].Item1 - 12;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.ToPar):
+                    {
+                        MyScore = results[i].Item1 - 22;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.TreEns):
+                    {
+                        MyScore = results[i].Item1 - 18;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.FireEns):
+                    {
+                        MyScore = results[i].Item1 - 24;
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.LilleStraight):
+                    {
+                        MyScore = results[i].Item1 - (1 + 2 + 3 + 4 + 5);
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.StorStraight):
+                    {
+                        MyScore = results[i].Item1 - (2 + 3 + 4 + 5 + 6);
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Hus):
+                    {
+                        MyScore = results[i].Item1 - (6 * 3 + 5 * 2);
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Chance):
+                    {
+                        MyScore = results[i].Item1 - (6 * spil.Terninger.Count);
+                        MyScore += results[i].Item1;
+                        break;
+                    }
+                case nameof(ScoreBoard.Yatzy):
+                    {
+                        MyScore = results[i].Item1;
+                        break;
+                    }
+            }
+
+            // Er MyScore en bedre kandidat end optimal så sæt en ny kandidat
+            if (optimal != null)
+            {
+                if (MyScore > optimal)
+                {
+                    optimal = MyScore;
+                    header = results[i].Item2;
+                }
+            }
+            else
+            {
+                optimal = MyScore;
+                header = results[i].Item2;
+            }
+        }
 
         return new bool[] { true, false, false, true, false };
     }

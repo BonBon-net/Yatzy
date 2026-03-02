@@ -844,7 +844,22 @@ namespace Yatzy
 
         public bool[]? HoldTerninger()
         {
-            return SpillerTur.Spiller.HoldTerninger(Spil);
+            // Lav liste med alle mulige scores
+            List<(int, string)> results = new List<(int, string)>();
+
+            for (int i = 0; i < Headers.Length; i++)
+            {
+                try
+                {
+                    results.Add((RegnHeaderValue(Headers[i]), Headers[i]));
+                }
+                catch
+                {
+
+                }
+            }
+
+            return SpillerTur.Spiller.HoldTerninger(Spil, results);
         }
 
         public (Handling handling, string header) AngivHandling()
