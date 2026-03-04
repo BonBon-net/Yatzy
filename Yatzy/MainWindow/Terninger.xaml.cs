@@ -162,6 +162,7 @@ namespace Yatzy
                 if (FuncLayer.SpillerTur.Spiller is Bot)
                 {
                     await Task.Delay(botWaitTime);
+                    ResetScoreBoardStyles();
                 }
                 else if (FuncLayer.SpillerTur.Spiller is Human)
                 {
@@ -214,11 +215,48 @@ namespace Yatzy
 
             void ChanceImange(int index)
             {
-                // Thorws dice 'dummyIndex' for value
-                AlleTerninger[index].DiceValue = rnd.Next(0, TerningSides.Count()) + 1;
+                if (true)
+                {
+                    // Chance'ing an dice at random
+                    chance(rnd.Next(0, TerningSides.Count()) + 1);
+                }
+                else
+                {
+                    // Chance'ing an dice at developer choose
+                    if (index == 0)
+                    {
+                        chance(6);
+                    }
+                    else if (index == 1)
+                    {
+                        chance(2);
+                    }
+                    else if (index == 2)
+                    {
+                        chance(4);
+                    }
+                    else if (index == 3)
+                    {
+                        chance(4);
+                    }
+                    else if (index == 4)
+                    {
+                        chance(1);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
 
-                // Sets the new dice image in UI 'Image'
-                TerningImages[index].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[index].DiceValue - 1]);
+                void chance(int TerningSides)
+                {
+                    // Thorws dice 'dummyIndex' for value
+                    AlleTerninger[index].DiceValue = TerningSides;
+
+                    // Sets the new dice image in UI 'Image'
+                    TerningImages[index].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[index].DiceValue - 1]);
+                }
             }
 
             int[] GetRulNumber()

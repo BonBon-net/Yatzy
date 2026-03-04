@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yatzy.Migrations
 {
     /// <inheritdoc />
-    public partial class clasc1 : Migration
+    public partial class clsc1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
