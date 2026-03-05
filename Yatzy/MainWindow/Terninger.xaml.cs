@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -82,11 +83,9 @@ namespace Yatzy
             for (int i = 0; i < AlleTerninger.Count; i++)
             {
                 ((Image)FindName($"imgTerningSelected{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(SelectetTerning)));
-                //TerningImages[i].SetValue(Image.SourceProperty, BitmapImages[AlleTerninger[i].DiceValue - 1]);
                 ((Image)FindName($"imgTerning{i + 1}")).SetValue(Image.SourceProperty, new BitmapImage(new Uri(TerningSides[FuncLayer.Spil.Terninger[i].DiceValue - 1])));
                 if (FuncLayer.Spil.Kasted > 0 && AlleTerninger[i].IsHeld)
                 {
-                    //SelectedTerning(TerningSelection[i], i + 1);
                     AlleTerninger[i].IsHeld = true;
                     ((Image)FindName($"imgTerningSelected{i + 1}")).Visibility = Visibility.Visible;
                 }
@@ -130,7 +129,6 @@ namespace Yatzy
         {
             int awaitTime = 35;
             int mellemKast = 0;
-            int botWaitTime = rnd.Next(1250, 3000 + 1);
 
             if (FuncLayer.Spil.Kasted < 3)
             {
@@ -145,6 +143,8 @@ namespace Yatzy
                 KastTerningerne(RulleTerninger);
 
                 await Task.Delay(awaitTime * mellemKast * 6);
+
+                CheckTerningValues();
 
                 FindRows();
                 // Finishing 'KastTertinger'
@@ -161,7 +161,7 @@ namespace Yatzy
                 // Nu venter programmet på at spilleren vælger næste handling
                 if (FuncLayer.SpillerTur.Spiller is Bot)
                 {
-                    await Task.Delay(botWaitTime);
+                    await Task.Delay(rnd.Next(1000, 2500 + 1));
                     ResetScoreBoardStyles();
                 }
                 else if (FuncLayer.SpillerTur.Spiller is Human)
@@ -189,11 +189,26 @@ namespace Yatzy
 
             void CheckTerningValues()
             {
-                for (int i = 0; i < AlleTerninger.Count; i++)
+                for (int i = 0; i < FuncLayer.Spil.Terninger.Count; i++)
                 {
-                    if (AlleTerninger[i].DiceValue <= -1)
+                    //if (AlleTerninger[i].DiceValue <= -1)
+                    //{
+                    //    throw new InvalidDataException("A dice had invalid data");
+                    //}
+
+                    BitmapImage? bitmapImage = TerningImages[i].GetValue(Image.SourceProperty) as BitmapImage;
+                    if (bitmapImage != null)
                     {
-                        throw new InvalidDataException("A dice had invalid data");
+                        if (BitmapImages[FuncLayer.Spil.Terninger[i].DiceValue] != bitmapImage)
+                        {
+                            throw new InvalidDataException($"A dice had invalid data" +
+                                $"\n- image Value: [{FuncLayer.Spil.Terninger[i].DiceValue}]" +
+                                $"\n- image Dice Value: [{FuncLayer.Spil.Terninger[i].DiceValue}]");
+                        }
+                    }
+                    else
+                    {
+                        throw new NullReferenceException();
                     }
                 }
             }
@@ -215,7 +230,7 @@ namespace Yatzy
 
             void ChanceImange(int index)
             {
-                if (true)
+                if (FuncLayer.Spil.Kasted == 0)
                 {
                     // Chance'ing an dice at random
                     chance(rnd.Next(0, TerningSides.Count()) + 1);
@@ -223,30 +238,8 @@ namespace Yatzy
                 else
                 {
                     // Chance'ing an dice at developer choose
-                    if (index == 0)
-                    {
-                        chance(6);
-                    }
-                    else if (index == 1)
-                    {
-                        chance(2);
-                    }
-                    else if (index == 2)
-                    {
-                        chance(4);
-                    }
-                    else if (index == 3)
-                    {
-                        chance(4);
-                    }
-                    else if (index == 4)
-                    {
-                        chance(1);
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
+                    int[] TerningSides = new int[5] { 5, 5, 2, 4, 4 };
+                    chance(TerningSides[index]);
                 }
 
                 void chance(int TerningSides)
@@ -316,7 +309,7 @@ namespace Yatzy
             FindRows();
             Switch();
 
-            void Switch()
+            async void Switch()
             {
                 switch (h)
                 {
@@ -326,11 +319,13 @@ namespace Yatzy
                         }
                     case Handling.Kast:
                         {
+                            await Task.Delay(rnd.Next(1000, 2500 + 1));
                             UdførKastTerninger();
                             break;
                         }
                     case Handling.Registrer:
                         {
+                            await Task.Delay(rnd.Next(1000, 2500 + 1));
                             UdførRegistrer(header);
                             break;
                         }
@@ -405,7 +400,7 @@ namespace Yatzy
 
                 ResetScoreBoardStyles();
                 if ((header == "Enere" && FuncLayer.SpillerTur.ScoreBoard.Enere != null) || (header == "Toere" && FuncLayer.SpillerTur.ScoreBoard.Toere != null) || (header == "Treere" && FuncLayer.SpillerTur.ScoreBoard.Treere != null) || (header == "Firere" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "Femmere" && FuncLayer.SpillerTur.ScoreBoard.Femmere != null) || (header == "Seksere" && FuncLayer.SpillerTur.ScoreBoard.Seksere != null) ||
-                (header == "EtPar" && FuncLayer.SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && FuncLayer.SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && FuncLayer.SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && FuncLayer.SpillerTur.ScoreBoard.Firere != null) || (header == "LilleStraight" && FuncLayer.SpillerTur.ScoreBoard.LilleStraight != null) ||
+                (header == "EtPar" && FuncLayer.SpillerTur.ScoreBoard.EtPar != null) || (header == "ToPar" && FuncLayer.SpillerTur.ScoreBoard.ToPar != null) || (header == "TreEns" && FuncLayer.SpillerTur.ScoreBoard.TreEns != null) || (header == "FireEns" && FuncLayer.SpillerTur.ScoreBoard.FireEns != null) || (header == "LilleStraight" && FuncLayer.SpillerTur.ScoreBoard.LilleStraight != null) ||
                 (header == "StorStraight" && FuncLayer.SpillerTur.ScoreBoard.StorStraight != null) || (header == "Hus" && FuncLayer.SpillerTur.ScoreBoard.Hus != null) || (header == "Chance" && FuncLayer.SpillerTur.ScoreBoard.Chance != null) || (header == "Yatzy" && FuncLayer.SpillerTur.ScoreBoard.Yatzy != null))
                 {
                     FindRows();

@@ -378,6 +378,11 @@ public class Bot : Spiller
 
         void CalculateMyScore(int index, int diceValue)
         {
+            if (index > results.Count || index < 0)
+            {
+                throw new NullReferenceException();
+            }
+
             Missing = 3 - (results[index].Item1 / diceValue);
 
             if (Missing < 0)
@@ -392,7 +397,7 @@ public class Bot : Spiller
             }
 
             score = 3 * diceValue;
-            
+
             MyScore = score * probability;
         }
 
@@ -429,36 +434,36 @@ public class Bot : Spiller
                 {
                     case nameof(ScoreBoard.Enere):
                         {
-                            MyScore = results[i].Item1 - 3;
-                            MyScore += (results[i].Item1 - 3 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                            MyScore = results[i].Item1 - (3 * 1);
+                            MyScore += (results[i].Item1 - (3 * 1) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
                             MyScore += results[i].Item1;
                             break;
                         }
                     case nameof(ScoreBoard.Toere):
                         {
-                            MyScore = results[i].Item1 - 6;
-                            MyScore += (results[i].Item1 - 6 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                            MyScore = results[i].Item1 - (3 * 2);
+                            MyScore += (results[i].Item1 - (3 * 2) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
                             MyScore += results[i].Item1;
                             break;
                         }
                     case nameof(ScoreBoard.Treere):
                         {
-                            MyScore = results[i].Item1 - 9;
-                            MyScore += (results[i].Item1 - 9 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                            MyScore = results[i].Item1 - (3 * 3);
+                            MyScore += (results[i].Item1 - (3 * 3) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
                             MyScore += results[i].Item1;
                             break;
                         }
                     case nameof(ScoreBoard.Firere):
                         {
-                            MyScore = results[i].Item1 - 12;
-                            MyScore += (results[i].Item1 - 12 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                            MyScore = results[i].Item1 - (3 * 4);
+                            MyScore += (results[i].Item1 - (3 * 4) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
                             MyScore += results[i].Item1;
                             break;
                         }
                     case nameof(ScoreBoard.Femmere):
                         {
-                            MyScore = results[i].Item1 - 15;
-                            MyScore += (results[i].Item1 - 15 + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
+                            MyScore = results[i].Item1 - (3 * 5);
+                            MyScore += (results[i].Item1 - (3 * 5) + spil.SpillerTur.ScoreBoard.BudgetValue) * 50;
                             MyScore += results[i].Item1;
                             break;
                         }
@@ -519,7 +524,9 @@ public class Bot : Spiller
                         }
                     case nameof(ScoreBoard.Yatzy):
                         {
-                            MyScore = results[i].Item1;
+                            if (results[i].Item1 == 50)
+                                MyScore = int.MaxValue;
+
                             break;
                         }
                 }
