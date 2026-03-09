@@ -144,7 +144,7 @@ namespace Yatzy
 
                 await Task.Delay(awaitTime * mellemKast * 6);
 
-                CheckTerningValues();
+                //CheckTerningValues();
 
                 FindRows();
                 // Finishing 'KastTertinger'
@@ -230,7 +230,7 @@ namespace Yatzy
 
             void ChanceImange(int index)
             {
-                if (FuncLayer.Spil.Kasted == 0)
+                if (true)
                 {
                     // Chance'ing an dice at random
                     chance(rnd.Next(0, TerningSides.Count()) + 1);
@@ -238,7 +238,7 @@ namespace Yatzy
                 else
                 {
                     // Chance'ing an dice at developer choose
-                    int[] TerningSides = new int[5] { 5, 5, 2, 4, 4 };
+                    int[] TerningSides = new int[5] { 1, 1, 4, 3, 2 };
                     chance(TerningSides[index]);
                 }
 

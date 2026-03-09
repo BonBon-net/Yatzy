@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -265,6 +266,7 @@ public class Bot : Spiller
     {
         ScoreBoard scoreBoard = spil.SpillerTur.ScoreBoard;
         List<Terning> terninger = spil.Terninger;
+        int[] calculatedValues = CalculateValues();
 
         bool[] holdTerninger = new bool[terninger.Count];
         for (int i = 0; i < holdTerninger.Length; i++)
@@ -275,7 +277,7 @@ public class Bot : Spiller
         string header = string.Empty;
 
         double? optimal = null;
-        double MyScore = 0;
+        double MyScore = double.MinValue;
 
         int Missing;
         int score;
@@ -316,10 +318,76 @@ public class Bot : Spiller
                     }
                 case nameof(ScoreBoard.EtPar):
                     {
+                        int missing = 0;
+                        double ScoreA = 0;
+                        //double? MyScoreA = null;
+                        for (int j = 1; j < 7; j++)
+                        {
+                            missing = 2 - calculatedValues[j - 1];
+                            if (missing < 0)
+                            {
+                                missing = 0;
+                            }
+
+                            ScoreA = ((j * 2) - 12 + (j * 2)) * Math.Pow((1d / 6d), missing) * (3 + missing);
+
+                            if (ScoreA > MyScore)
+                            {
+                                MyScore = ScoreA;
+                                HoldTerninger(j, 2);
+                            }
+                        }
                         break;
                     }
                 case nameof(ScoreBoard.ToPar):
                     {
+                        int missingA = 0;
+                        int missingB = 0;
+                        double ScoreA = 0;
+                        for (int j = 1; j < 6; j++)
+                        {
+                            missingA = 2 - calculatedValues[j - 1];
+                            if (missingA < 0)
+                            {
+                                missingA = 0;
+                            }
+                            missingB = 2 - calculatedValues[j];
+                            if (missingB < 0)
+                            {
+                                missingB = 0;
+                            }
+
+                            ScoreA = ((j * 2) - 12 + (j * 2)) * Math.Pow((1d / 6d), missingA) * (3 + missingA) * Math.Pow((1d / 6d), missingB) * (2 + missingB);
+
+                        }
+
+                        //int missing = 0;
+                        //double ScoreA = 0;
+                        //double MyScoreA = double.MinValue;
+                        //double MyScoreB = double.MinValue;
+                        //for (int k = 0; k < 2; k++)
+                        //{
+                        //    for (int j = 1; j < 7; j++)
+                        //    {
+                        //        missing = 2 - calculatedValues[j - 1];
+                        //        if (missing < 0)
+                        //        {
+                        //            missing = 0;
+                        //        }
+
+                        //        ScoreA = ((j * 2) - 12 + (j * 2)) * Math.Pow((1d / 6d), missing) * (3 + missing);
+
+                        //        if (k == 0 && ScoreA > MyScoreA)
+                        //        {
+                        //            MyScoreA = ScoreA;
+                        //        }
+                        //        else if (k == 1 && ScoreA > MyScoreB && MyScoreB != MyScoreA)
+                        //        {
+                        //            MyScoreB = ScoreA;
+                        //        }
+                        //    }
+                        //}
+
                         break;
                     }
                 case nameof(ScoreBoard.TreEns):
@@ -373,12 +441,12 @@ public class Bot : Spiller
         void CalculateMyScoreOgHoldTerninger(int diceValue)
         {
             CalculateMyScore(diceValue - 1, diceValue);
-            HoldTerninger(diceValue);
+            HoldTerninger(diceValue, 5);
         }
 
         void CalculateMyScore(int index, int diceValue)
         {
-            if (index > results.Count || index < 0)
+            if (index >= results.Count || index < 0)
             {
                 throw new NullReferenceException();
             }
@@ -401,19 +469,51 @@ public class Bot : Spiller
             MyScore = score * probability;
         }
 
-        void HoldTerninger(int diceValue)
+        void HoldTerninger(int diceValue, int antal)
         {
-            if (optimal == null || MyScore > optimal)
+            StopHoldTerninger();
+            StartHoldTerninger();
+
+            void StartHoldTerninger()
             {
-                for (int k = 0; k < terninger.Count; k++)
+                if (antal > 0 && (optimal == null || MyScore > optimal))
                 {
-                    holdTerninger[k] = false;
-                    if (terninger[k].DiceValue == diceValue)
+                    for (int k = 0; k < terninger.Count; k++)
                     {
-                        holdTerninger[k] = true;
+                        //holdTerninger[k] = false;
+                        if (terninger[k].DiceValue == diceValue)
+                        {
+                            holdTerninger[k] = true;
+                            antal--;
+                        }
+                        if (antal == 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }
+            void StopHoldTerninger()
+            {
+                for (int k = 0; k < terninger.Count; k++)
+                {
+                    if (spil.Terninger[k].DiceValue == diceValue)
+                    {
+                        holdTerninger[k] = false;
+                    }
+                }
+            }
+        }
+
+        int[] CalculateValues()
+        {
+            int[] values = new int[6];
+            for (int i = 0; i < spil.Terninger.Count; i++)
+            {
+                int diceValue = spil.Terninger[i].DiceValue;
+                values[diceValue - 1] += 1;
+            }
+            return values;
         }
     }
 
