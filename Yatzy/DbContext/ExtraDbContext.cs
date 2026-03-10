@@ -334,72 +334,60 @@ public class Bot : Spiller
                             if (ScoreA > MyScore)
                             {
                                 MyScore = ScoreA;
-                                HoldTerninger(j, 2);
+                                HoldTerninger(new (int diceValue, int antalTerninger)[] { (j, 2) });
                             }
                         }
                         break;
                     }
                 case nameof(ScoreBoard.ToPar):
                     {
-                        int missingA = 0;
-                        int missingB = 0;
                         double ScoreA = 0;
-                        for (int j = 1; j < 6; j++)
+                        double chance;
+                        int missingTerningerJ = 0;
+                        int missingTerningerK = 0;
+                        for (int j = 1; j < 7; j++)
                         {
-                            missingA = 2 - calculatedValues[j - 1];
-                            if (missingA < 0)
+                            missingTerningerJ = 2 - calculatedValues[j - 1];
+                            if (missingTerningerJ < 0)
                             {
-                                missingA = 0;
+                                missingTerningerJ = 0;
                             }
-                            missingB = 2 - calculatedValues[j];
-                            if (missingB < 0)
+                            for (int k = j + 1; k < 7; k++)
                             {
-                                missingB = 0;
+                                missingTerningerK = 2 - calculatedValues[j];
+                                if (missingTerningerK < 0)
+                                {
+                                    missingTerningerK = 0;
+                                }
+                                ScoreA = (j * 2) + (k * 2);
+
+                                chance = (Math.Pow((1d / 6d), missingTerningerJ) * (5 - missingTerningerJ)) *
+                                    (Math.Pow((1d / 6d), missingTerningerK) * (5 - missingTerningerK - 2));
+
+                                ScoreA = ScoreA * chance;
+
+                                if (ScoreA > MyScore)
+                                {
+                                    MyScore = ScoreA;
+                                    HoldTerninger(new (int diceValue, int antalTerninger)[] { (j, 2), (k, 2) });
+                                }
                             }
-
-                            ScoreA = ((j * 2) - 12 + (j * 2)) * Math.Pow((1d / 6d), missingA) * (3 + missingA) * Math.Pow((1d / 6d), missingB) * (2 + missingB);
-
                         }
-
-                        //int missing = 0;
-                        //double ScoreA = 0;
-                        //double MyScoreA = double.MinValue;
-                        //double MyScoreB = double.MinValue;
-                        //for (int k = 0; k < 2; k++)
-                        //{
-                        //    for (int j = 1; j < 7; j++)
-                        //    {
-                        //        missing = 2 - calculatedValues[j - 1];
-                        //        if (missing < 0)
-                        //        {
-                        //            missing = 0;
-                        //        }
-
-                        //        ScoreA = ((j * 2) - 12 + (j * 2)) * Math.Pow((1d / 6d), missing) * (3 + missing);
-
-                        //        if (k == 0 && ScoreA > MyScoreA)
-                        //        {
-                        //            MyScoreA = ScoreA;
-                        //        }
-                        //        else if (k == 1 && ScoreA > MyScoreB && MyScoreB != MyScoreA)
-                        //        {
-                        //            MyScoreB = ScoreA;
-                        //        }
-                        //    }
-                        //}
-
                         break;
                     }
                 case nameof(ScoreBoard.TreEns):
                     {
+                        tmp_optimal();
                         break;
                     }
                 case nameof(ScoreBoard.FireEns):
                     {
+                        tmp_optimal();
                         break;
                     }
                 case nameof(ScoreBoard.LilleStraight):
                     {
+
                         break;
                     }
                 case nameof(ScoreBoard.StorStraight):
@@ -412,10 +400,12 @@ public class Bot : Spiller
                     }
                 case nameof(ScoreBoard.Chance):
                     {
+                        tmp_optimal();
                         break;
                     }
                 case nameof(ScoreBoard.Yatzy):
                     {
+                        tmp_optimal();
                         break;
                     }
             }
@@ -438,10 +428,25 @@ public class Bot : Spiller
 
         return holdTerninger;
 
+        void tmp_optimal()
+        {
+            int optiaml = 0;
+
+            for (int j = 0; j < calculatedValues.Length; j++)
+            {
+                if (calculatedValues[j] > optiaml)
+                {
+                    optiaml = j;
+                }
+            }
+
+            CalculateMyScoreOgHoldTerninger(optiaml);
+        }
+
         void CalculateMyScoreOgHoldTerninger(int diceValue)
         {
             CalculateMyScore(diceValue - 1, diceValue);
-            HoldTerninger(diceValue, 5);
+            HoldTerninger(new (int diceValue, int antalTerninger)[] { (diceValue, 5) });
         }
 
         void CalculateMyScore(int index, int diceValue)
@@ -469,26 +474,32 @@ public class Bot : Spiller
             MyScore = score * probability;
         }
 
-        void HoldTerninger(int diceValue, int antal)
+        void HoldTerninger((int diceValue, int antalTerninger)[] values)
         {
             StopHoldTerninger();
             StartHoldTerninger();
 
             void StartHoldTerninger()
             {
-                if (antal > 0 && (optimal == null || MyScore > optimal))
+                for (int i = 0; i < values.Length; i++)
                 {
-                    for (int k = 0; k < terninger.Count; k++)
+                    int antalTerninger = values[i].antalTerninger;
+                    int diceValue = values[i].diceValue;
+
+                    if (antalTerninger > 0 && (optimal == null || MyScore > optimal))
                     {
-                        //holdTerninger[k] = false;
-                        if (terninger[k].DiceValue == diceValue)
+                        for (int k = 0; k < terninger.Count; k++)
                         {
-                            holdTerninger[k] = true;
-                            antal--;
-                        }
-                        if (antal == 0)
-                        {
-                            break;
+                            //holdTerninger[k] = false;
+                            if (terninger[k].DiceValue == diceValue)
+                            {
+                                holdTerninger[k] = true;
+                                antalTerninger--;
+                            }
+                            if (antalTerninger == 0)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -497,10 +508,7 @@ public class Bot : Spiller
             {
                 for (int k = 0; k < terninger.Count; k++)
                 {
-                    if (spil.Terninger[k].DiceValue == diceValue)
-                    {
-                        holdTerninger[k] = false;
-                    }
+                    holdTerninger[k] = false;
                 }
             }
         }
