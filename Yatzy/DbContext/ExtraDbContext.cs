@@ -8,11 +8,13 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Yatzy;
 using Yatzy.YatzyDbContext;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Yatzy.YatzyDbContext
 {
@@ -269,6 +271,7 @@ public class Bot : Spiller
         int[] calculatedValues = CalculateValues();
 
         bool[] holdTerninger = new bool[terninger.Count];
+        bool[] ResultholdTerninger = new bool[terninger.Count];
         for (int i = 0; i < holdTerninger.Length; i++)
         {
             holdTerninger[i] = false;
@@ -288,32 +291,32 @@ public class Bot : Spiller
             {
                 case nameof(ScoreBoard.Enere):
                     {
-                        CalculateMyScoreOgHoldTerninger(1);
+                        CalculateMyScoreOgHoldTerninger(i, 1);
                         break;
                     }
                 case nameof(ScoreBoard.Toere):
                     {
-                        CalculateMyScoreOgHoldTerninger(2);
+                        CalculateMyScoreOgHoldTerninger(i, 2);
                         break;
                     }
                 case nameof(ScoreBoard.Treere):
                     {
-                        CalculateMyScoreOgHoldTerninger(3);
+                        CalculateMyScoreOgHoldTerninger(i, 3);
                         break;
                     }
                 case nameof(ScoreBoard.Firere):
                     {
-                        CalculateMyScoreOgHoldTerninger(4);
+                        CalculateMyScoreOgHoldTerninger(i, 4);
                         break;
                     }
                 case nameof(ScoreBoard.Femmere):
                     {
-                        CalculateMyScoreOgHoldTerninger(5);
+                        CalculateMyScoreOgHoldTerninger(i, 5);
                         break;
                     }
                 case nameof(ScoreBoard.Seksere):
                     {
-                        CalculateMyScoreOgHoldTerninger(6);
+                        CalculateMyScoreOgHoldTerninger(i, 6);
                         break;
                     }
                 case nameof(ScoreBoard.EtPar):
@@ -359,6 +362,7 @@ public class Bot : Spiller
                                 {
                                     missingTerningerK = 0;
                                 }
+
                                 ScoreA = (j * 2) + (k * 2);
 
                                 chance = (Math.Pow((1d / 6d), missingTerningerJ) * (5 - missingTerningerJ)) *
@@ -377,35 +381,93 @@ public class Bot : Spiller
                     }
                 case nameof(ScoreBoard.TreEns):
                     {
-                        tmp_optimal();
+                        tmp_optimal(i);
                         break;
                     }
                 case nameof(ScoreBoard.FireEns):
                     {
-                        tmp_optimal();
+                        tmp_optimal(i);
                         break;
                     }
                 case nameof(ScoreBoard.LilleStraight):
                     {
+                        int missingTerninger = 0;
+                        for (int j = 0; j < calculatedValues.Length - 1; j++)
+                        {
+                            if (calculatedValues[j]! > 0)
+                            {
+                                missingTerninger++;
+                            }
+                        }
+
+                        double chance = (Math.Pow((1d / 6d), missingTerninger) * (5 - missingTerninger));
+
+                        if (chance > MyScore)
+                        {
+                            MyScore = chance;
+                            HoldTerninger(new (int diceValue, int antalTerninger)[] { (1, 1), (2, 1), (3, 1), (4, 1), (5, 1) });
+                        }
 
                         break;
                     }
                 case nameof(ScoreBoard.StorStraight):
                     {
+                        int missingTerninger = 0;
+                        for (int j = 1; j < calculatedValues.Length; j++)
+                        {
+                            if (calculatedValues[j]! > 0)
+                            {
+                                missingTerninger++;
+                            }
+                        }
+
+                        double chance = (Math.Pow((1d / 6d), missingTerninger) * (5 - missingTerninger));
+
+                        if (chance > MyScore)
+                        {
+                            MyScore = chance;
+                            HoldTerninger(new (int diceValue, int antalTerninger)[] { (2, 1), (3, 1), (4, 1), (5, 1), (6, 1) });
+                        }
+
                         break;
                     }
                 case nameof(ScoreBoard.Hus):
                     {
+                        double ScoreA = 0;
+                        double chance = 0;
+                        int missingTerningerJ = 0;
+                        int missingTerningerK = 0;
+                        for (int j = 0; j < 7; j++)
+                        {
+                            missingTerningerJ = 2 - calculatedValues[j - 1];
+                            if (missingTerningerJ < 0)
+                            {
+                                missingTerningerJ = 0;
+                            }
+
+                            for (int k = j; k < 7; k++)
+                            {
+                                missingTerningerK = 2 - calculatedValues[j];
+                                if (missingTerningerK < 0)
+                                {
+                                    missingTerningerK = 0;
+                                }
+
+                                ScoreA = (j * 2) + (k * 2);
+                            }
+                        }
+
+
                         break;
                     }
                 case nameof(ScoreBoard.Chance):
                     {
-                        tmp_optimal();
+                        tmp_optimal(i);
                         break;
                     }
                 case nameof(ScoreBoard.Yatzy):
                     {
-                        tmp_optimal();
+                        tmp_optimal(i);
                         break;
                     }
             }
@@ -416,6 +478,7 @@ public class Bot : Spiller
                 if (MyScore > optimal)
                 {
                     optimal = MyScore;
+                    ResultholdTerninger = holdTerninger.Clone() as bool[];
                     //header = results[i].Item2;
                 }
             }
@@ -426,9 +489,9 @@ public class Bot : Spiller
             }
         }
 
-        return holdTerninger;
+        return ResultholdTerninger;
 
-        void tmp_optimal()
+        void tmp_optimal(int index)
         {
             int optiaml = 0;
 
@@ -440,12 +503,13 @@ public class Bot : Spiller
                 }
             }
 
-            CalculateMyScoreOgHoldTerninger(optiaml);
+            CalculateMyScoreOgHoldTerninger(index, optiaml);
         }
 
-        void CalculateMyScoreOgHoldTerninger(int diceValue)
+        void CalculateMyScoreOgHoldTerninger(int i, int diceValue)
         {
-            CalculateMyScore(diceValue - 1, diceValue);
+            // Find index for 1'ere, 2'ere, 3'ere eller hvad diceValue nu er
+            CalculateMyScore(i, diceValue);
             HoldTerninger(new (int diceValue, int antalTerninger)[] { (diceValue, 5) });
         }
 
@@ -490,7 +554,6 @@ public class Bot : Spiller
                     {
                         for (int k = 0; k < terninger.Count; k++)
                         {
-                            //holdTerninger[k] = false;
                             if (terninger[k].DiceValue == diceValue)
                             {
                                 holdTerninger[k] = true;
