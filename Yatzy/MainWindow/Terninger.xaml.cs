@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yatzy.Bots;
 using Yatzy.YatzyDbContext;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Yatzy
 {
@@ -61,6 +60,9 @@ namespace Yatzy
         Style SelectedColumnStyle = new Style(typeof(DataGridCell));
         Style UnselectedColumnStyle = new Style(typeof(DataGridCell));
         Style ScoreAbilityColumnStyle = new Style(typeof(DataGridCell));
+        Style LastRegisteredCell = new Style(typeof(DataGridCell));
+        DataGridCell? CellLastRegistered = null;
+        DataGridCell? LastSelectedCell = null;
 
         bool ManualDeveloper_CheckDataIsTrue = true;
         private IUserControlManager UserControlManager { get; set; }
@@ -410,6 +412,7 @@ namespace Yatzy
                 else
                 {
                     FuncLayer.Registrer(header, FuncLayer.Spil.Terninger);
+                    LastSelectedCell!.Style = LastRegisteredCell;
                     if (FuncLayer.Spil.Spillere.Count == FuncLayer.Spil.NullPlayerCount)
                     {
                         btnKast.IsEnabled = false;
@@ -481,6 +484,8 @@ namespace Yatzy
                     dgSpillerScoreBoard.SelectedItem = null;
                     btnSaveGame.IsEnabled = false;
                     cbAutoStartBots.IsChecked = false;
+                    LastSelectedCell = null;
+                    CellLastRegistered = null;
                     ResetUi();
                 }
             }
@@ -739,6 +744,12 @@ namespace Yatzy
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
             ScoreAbilityColumnStyle.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
+
+            LastRegisteredCell = new Style(typeof(DataGridCell));
+            LastRegisteredCell.Setters.Add(new Setter(DataGridCell.BackgroundProperty, Brushes.Blue));
+            LastRegisteredCell.Setters.Add(new Setter(DataGridCell.ForegroundProperty, Brushes.Black));
+            LastRegisteredCell.Setters.Add(new Setter(DataGridCell.LayoutTransformProperty, new RotateTransform(270)));
+            LastRegisteredCell.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
         }
 
         private void dgSpillerScoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -749,6 +760,19 @@ namespace Yatzy
                 if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
                 {
                     btnRegister.IsEnabled = true;
+                    DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+                    string header = cell.Column.Header.ToString()!;
+                    for (int i = 0; i < FuncLayer.Headers.Length; i++)
+                    {
+                        if (FuncLayer.Headers[i] == header && (i + 1 == 7 || i + 1 == 8))
+                        {
+                            LastSelectedCell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 3);
+                        }
+                        else if (FuncLayer.Headers[i] == header)
+                        {
+                            LastSelectedCell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 1);
+                        }
+                    }
                 }
                 else
                 {
@@ -763,7 +787,6 @@ namespace Yatzy
 
         public void FindRows()
         {
-            //PropertyInfo[] properties = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperties();
             for (int i = 0; i < FuncLayer.Headers.Length; i++)
             {
                 PropertyInfo? property = FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.Headers[i]);
@@ -778,7 +801,6 @@ namespace Yatzy
                     if (calculatedScore > 0)
                     {
                         FuncLayer.SpillerTur.ScoreBoard.GetType().GetProperty(FuncLayer.Headers[i])!.SetValue(FuncLayer.SpillerTur.ScoreBoard, calculatedScore);
-                        //dgSpillerScoreBoard.Items.Refresh();
 
                         DataGridCell cell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 1);
 
@@ -800,9 +822,22 @@ namespace Yatzy
             try
             {
                 int value = Kastet;
+                DataGridCellInfo cell = dgSpillerScoreBoard.SelectedCells[0];
+                string header = FuncLayer.TrimString(cell.Column.Header.ToString()!);
                 if (dgSpillerScoreBoard.CurrentColumn != null && value > 0)
                 {
                     btnRegister.IsEnabled = true;
+                    for (int i = 0; i < FuncLayer.Headers.Length; i++)
+                    {
+                        if (FuncLayer.Headers[i] == header && i >= 6)
+                        {
+                            LastSelectedCell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 3);
+                        }
+                        else if (FuncLayer.Headers[i] == header)
+                        {
+                            LastSelectedCell = VisualTreeHelpers.GetCell(dgSpillerScoreBoard, FuncLayer.Spil.SpillerTurIndex, i + 1);
+                        }
+                    }
                 }
                 else
                 {

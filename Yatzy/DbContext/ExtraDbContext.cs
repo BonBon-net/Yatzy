@@ -89,8 +89,8 @@ namespace Yatzy.YatzyDbContext
             }
         }
 
-        public int SpillerTurIndex { get; set; } = 0;
-        public int NullPlayerCount { get; set; } = 0;
+        public int SpillerTurIndex { get; set; } = default;
+        public int NullPlayerCount { get; set; } = default;
         public SpillerSpil? HighestScorePlayer { get; set; } = null;
         public bool IsStarted { get; set; } = false;
     }
@@ -437,7 +437,7 @@ public class Bot : Spiller
                         double chance = 0;
                         int missingTerningerJ = 0;
                         int missingTerningerK = 0;
-                        for (int j = 0; j < 7; j++)
+                        for (int j = 1; j < 7; j++)
                         {
                             missingTerningerJ = 2 - calculatedValues[j - 1];
                             if (missingTerningerJ < 0)
@@ -445,15 +445,26 @@ public class Bot : Spiller
                                 missingTerningerJ = 0;
                             }
 
-                            for (int k = j; k < 7; k++)
+                            for (int k = j + 1; k < 7; k++)
                             {
-                                missingTerningerK = 2 - calculatedValues[j];
+                                missingTerningerK = 3 - calculatedValues[j];
                                 if (missingTerningerK < 0)
                                 {
                                     missingTerningerK = 0;
                                 }
 
                                 ScoreA = (j * 2) + (k * 2);
+
+                                chance = Math.Pow((1d / 6d), missingTerningerJ) * (2 - missingTerningerJ) *
+                                    Math.Pow((1d / 6d), missingTerningerK) * (3 - missingTerningerK);
+
+                                ScoreA = ScoreA * chance;
+
+                                if (ScoreA > MyScore)
+                                {
+                                    MyScore = ScoreA;
+                                    HoldTerninger(new (int diceValue, int antalTerninger)[] { (j, 2), (k, 2) });
+                                }
                             }
                         }
 
@@ -479,13 +490,11 @@ public class Bot : Spiller
                 {
                     optimal = MyScore;
                     ResultholdTerninger = holdTerninger.Clone() as bool[];
-                    //header = results[i].Item2;
                 }
             }
             else
             {
                 optimal = MyScore;
-                //header = results[i].Item2;
             }
         }
 
@@ -497,13 +506,8 @@ public class Bot : Spiller
 
             for (int j = 0; j < calculatedValues.Length; j++)
             {
-                if (calculatedValues[j] > optiaml)
-                {
-                    optiaml = j;
-                }
+                CalculateMyScoreOgHoldTerninger(index, j + 1);
             }
-
-            CalculateMyScoreOgHoldTerninger(index, optiaml);
         }
 
         void CalculateMyScoreOgHoldTerninger(int i, int diceValue)
@@ -535,7 +539,10 @@ public class Bot : Spiller
 
             score = 3 * diceValue;
 
-            MyScore = score * probability;
+            if ((score * probability) >= MyScore)
+                MyScore = score * probability;
+
+            //MyScore = score * probability;
         }
 
         void HoldTerninger((int diceValue, int antalTerninger)[] values)
